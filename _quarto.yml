@@ -1,0 +1,31 @@
+project:
+  type: website
+
+website:
+  title: "<strong>Devansh</strong> Lodha"
+  navbar:
+    right:
+      - href: https://craftreesolitary.github.io/
+        text: about
+      - href: https://craftreesolitary.github.io/blog/
+        text: blog
+      - href: https://craftreesolitary.github.io/publications/
+        text: publications
+      - href: https://craftreesolitary.github.io/projects/
+        text: projects
+      - href: https://craftreesolitary.github.io/repositories/
+        text: repositories
+
+format:
+  html:
+    smooth-scroll: true
+    theme:
+      light: theme-light.scss
+      dark: theme-dark.scss
+    css: styles.css
+    highlight-style: github
+      # light: github
+      # dark: monokai
+
+execute:
+  freeze: auto

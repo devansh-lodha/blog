@@ -1,0 +1,5 @@
+quarto_docs
+.DS_Store
+/.quarto/
+venv_blog
+/_site/

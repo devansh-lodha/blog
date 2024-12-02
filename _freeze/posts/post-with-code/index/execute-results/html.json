@@ -1,0 +1,12 @@
+{
+  "hash": "c074212cb0071c3a2863d7a7016d7038",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Post With Code\"\nauthor: \"Devansh Lodha\"\ndate: \"2024-12-01\"\ncategories: [news, code, analysis]\nimage: \"image.jpg\"\njupyter: python3\nformat:\n    html:\n        code-fold: true\n        code-tools: true\n---\n\n\nThis is a post with executable code.\n\n## Matplotlib\n\n::: {#cell-fig-limits .cell execution_count=1}\n``` {.python .cell-code}\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nfig.set_size_inches(12, 7)\n\nx = np.arange(10)\ny = 2.5 * np.sin(x / 20 * np.pi)\nyerr = np.linspace(0.05, 0.2, 10)\n\nplt.errorbar(x, y + 3, yerr=yerr, label='both limits (default)')\nplt.errorbar(x, y + 2, yerr=yerr, uplims=True, label='uplims=True')\nplt.errorbar(x, y + 1, yerr=yerr, uplims=True, lolims=True,\n             label='uplims=True, lolims=True')\n\nupperlimits = [True, False] * 5\nlowerlimits = [False, True] * 5\nplt.errorbar(x, y, yerr=yerr, uplims=upperlimits, lolims=lowerlimits,\n             label='subsets of uplims and lolims')\n\nplt.legend(loc='lower right')\nplt.show(fig)\n```\n\n::: {.cell-output .cell-output-display}\n![Errorbar limit selector](index_files/figure-html/fig-limits-output-1.png){#fig-limits width=930 height=559}\n:::\n:::\n\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
