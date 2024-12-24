@@ -1,1 +1,1 @@
-Sitemap: https://CraftreeSolitary.github.io/blog/sitemap.xml
+Sitemap: https://devansh-lodha.github.io/blog/sitemap.xml

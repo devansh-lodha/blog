@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/histogram_matching/histogram_matching.html",
       "/posts/otsu_thresholding/otsu_thresholding.html"
     ]
   }

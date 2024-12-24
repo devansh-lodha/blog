@@ -8,9 +8,9 @@
 
 <meta name="author" content="Devansh Lodha">
 <meta name="dcterms.date" content="2024-12-02">
-<meta name="description" content="We’ll binarize images of Tom and Jerry, Pink Panther and some book pages. Then, we’ll challenge Otsu’s method with noisy inputs.">
+<meta name="description" content="This post explores histogram matching and equalization between images of Elon Musk, Lenna, a Panda and the IIT Gandhinagar campus.">
 
-<title>Otsu’s Threshold Algorithm – Devansh's Blog</title>
+<title>Histogram Equalization and Matching – Devansh’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -190,10 +190,10 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <div class="quarto-title-block"><div><h1 class="title">Otsu’s Threshold Algorithm</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+      <div class="quarto-title-block"><div><h1 class="title">Histogram Equalization and Matching</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
                   <div>
         <div class="description">
-          We’ll binarize images of Tom and Jerry, Pink Panther and some book pages. Then, we’ll challenge Otsu’s method with noisy inputs.
+          This post explores histogram matching and equalization between images of Elon Musk, Lenna, a Panda and the IIT Gandhinagar campus.
         </div>
       </div>
                           <div class="quarto-categories">
@@ -234,8 +234,8 @@ window.Quarto = {
    
   <ul>
   <li><a href="#creating-the-histogram-of-an-image" id="toc-creating-the-histogram-of-an-image" class="nav-link active" data-scroll-target="#creating-the-histogram-of-an-image">Creating the Histogram of an Image</a></li>
-  <li><a href="#implementing-otsus-algorithm" id="toc-implementing-otsus-algorithm" class="nav-link" data-scroll-target="#implementing-otsus-algorithm">Implementing Otsu’s Algorithm</a></li>
-  <li><a href="#adding-gaussian-noise-and-applying-otsus-algorithm" id="toc-adding-gaussian-noise-and-applying-otsus-algorithm" class="nav-link" data-scroll-target="#adding-gaussian-noise-and-applying-otsus-algorithm">Adding Gaussian Noise and Applying Otsu’s Algorithm</a></li>
+  <li><a href="#histogram-equalization" id="toc-histogram-equalization" class="nav-link" data-scroll-target="#histogram-equalization">Histogram Equalization</a></li>
+  <li><a href="#histogram-matching" id="toc-histogram-matching" class="nav-link" data-scroll-target="#histogram-matching">Histogram Matching</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -247,8 +247,7 @@ window.Quarto = {
 
 
 
-<p>The Otsu method is used to find the threshold value for a grayscale image. The threshold value is used to separate the image into two parts: the background and the foreground. The Otsu method is based on the assumption that the image has two classes of pixels: the background and the foreground. The method calculates the threshold value that minimizes the intra-class variance and maximizes the inter-class variance. The threshold value is used to separate the image into two parts: the background and the foreground. The Otsu method is widely used in image processing and computer vision applications.</p>
-<div id="cell-2" class="cell" data-outputid="f93a0291-4386-4155-9487-bfe08694dfb6" data-execution_count="100">
+<div id="cell-1" class="cell" data-outputid="8cc4fc62-e950-4789-fb5f-7e9281a56ec8" data-execution_count="4">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
@@ -258,19 +257,19 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-3" class="cell" data-execution_count="101">
+<div id="cell-2" class="cell" data-execution_count="5">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bookpage_1 <span class="op">=</span> cv2.imread(<span class="st">"bookpage_1.jpeg"</span>,<span class="dv">0</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bookpage_2 <span class="op">=</span> cv2.imread(<span class="st">"bookpage_2.jpeg"</span>,<span class="dv">0</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>panther <span class="op">=</span> cv2.imread(<span class="st">"panther.jpeg"</span>,<span class="dv">0</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>tom <span class="op">=</span> cv2.imread(<span class="st">"tom.jpeg"</span>,<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>panda <span class="op">=</span> cv2.imread(<span class="st">"grey_1.png"</span>,<span class="dv">0</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>lenna <span class="op">=</span> cv2.imread(<span class="st">"grey_2.png"</span>,<span class="dv">0</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>campus <span class="op">=</span> cv2.imread(<span class="st">"grey_3.png"</span>,<span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>elon <span class="op">=</span> cv2.imread(<span class="st">"grey_4.png"</span>,<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="creating-the-histogram-of-an-image" class="level2">
 <h2 class="anchored" data-anchor-id="creating-the-histogram-of-an-image">Creating the Histogram of an Image</h2>
-<p>We have a discrete grayscale image <span class="math inline">\(\{x\}\)</span> with <span class="math inline">\(n_i\)</span> as the number of occurences of gray level <span class="math inline">\(i\)</span>. The probability of occurence of a pixel of level <span class="math inline">\(i\)</span> in the image is <span class="math display">\[p_x(i)=p(x=i)=\frac{n_i}{n}, \qquad 0\leq i &lt; L\]</span> where <span class="math inline">\(L\)</span> is the total number of grey levels in the image (here <span class="math inline">\(L=256\)</span>), <span class="math inline">\(n\)</span> is the total number of pixels in the image, and <span class="math inline">\(p_x(i)\)</span> is the image’s histogram for pixel value <span class="math inline">\(i\)</span> normalized to <span class="math inline">\([0,1]\)</span></p>
-<div id="cell-6" class="cell" data-execution_count="102">
+<p>We have a discrete grayscale image <span class="math inline">\(\{x\}\)</span> with <span class="math inline">\(n_i\)</span> as the number of occurences of gray level <span class="math inline">\(i\)</span>. The probability of occurence of a pixel of level <span class="math inline">\(i\)</span> in the image is <span class="math display">\[p_x(i)=p(x=i)=\frac{n_i}{n}, \qquad 0\leq i &lt; L\]</span> where <span class="math inline">\(L\)</span> is the total number of grey levels in the image (here <span class="math inline">\(L=256\)</span>), <span class="math inline">\(n\)</span> is the total number of pixels in the image (here <span class="math inline">\(n = 512 \times 512\)</span>), and <span class="math inline">\(p_x(i)\)</span> is the image’s histogram for pixel value <span class="math inline">\(i\)</span> normalized to <span class="math inline">\([0,1]\)</span></p>
+<div id="cell-5" class="cell" data-execution_count="6">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> imgToHist(img):</span>
@@ -289,212 +288,186 @@ window.Quarto = {
 </details>
 </div>
 </section>
-<section id="implementing-otsus-algorithm" class="level2">
-<h2 class="anchored" data-anchor-id="implementing-otsus-algorithm">Implementing Otsu’s Algorithm</h2>
-<p>The algorithm exhaustively searches for the threshold that minimizes the intra-class variance, defined as a weighted sum of variances of the two classes: <span class="math display">\[\sigma_w^2 (t) = w_0(t)\sigma_0^2 (t)+w_1(t)\sigma_1^2 (t)\]</span> Weights <span class="math inline">\(w_0\)</span> and <span class="math inline">\(w_1\)</span> are the probabilities of the two classes separated by a threshold <span class="math inline">\(t\)</span>, and <span class="math inline">\(\sigma_0^2\)</span> and <span class="math inline">\(\sigma_1^2\)</span> are variance of these two classes. The class probability <span class="math inline">\(w_{\{0,1\}}(t)\)</span> is computed from the <span class="math inline">\(L\)</span> bins of the histogram: <span class="math display">\[w_0(t) = \sum\limits_{i=0}^{t-1}p(i)\]</span> <span class="math display">\[w_1(t) = \sum\limits_{i=t}^{L-1}p(i)\]</span> For two classes, minimized the intra-class variance is equivalent to maximizing inter-class variance: <span class="math display">\[\sigma_b^2(t) = \sigma^2 -\sigma_w^2(t) = w_0(t)(\mu_0-\mu_T)^2 + w_1(t)(\mu_1-\mu_T)^2 = w_0(t)w_1(t)[\mu_0(t)-\mu_1(t)]^2\]</span> which is expressed in terms of class probabilities <span class="math inline">\(w\)</span> and class means <span class="math inline">\(\mu\)</span> where the class means <span class="math inline">\(\mu_0(t)\)</span>, <span class="math inline">\(\mu_1(t), \mu_T\)</span> are: <span class="math display">\[\mu_0(t) = \frac{\sum\limits_{i=0}^{t-1}ip(i)}{w_0(t)}\]</span> <span class="math display">\[\mu_1(t) = \frac{\sum\limits_{i=t}^{L-1}ip(i)}{w_1(t)}\]</span> <span class="math display">\[\mu_T = \sum\limits_{i=0}^{L-1}ip(i)\]</span></p>
-<section id="algorithm" class="level4">
-<h4 class="anchored" data-anchor-id="algorithm">Algorithm</h4>
-<ol type="1">
-<li>Compute histogram and probabilites of each intensity level</li>
-<li>Set up initial w_i(0) and u_i(0)</li>
-<li>Step through all possible thresholds <span class="math inline">\(t=1,...,\text{maximum intensity}\)</span></li>
-<li>Update <span class="math inline">\(w_i\)</span> and <span class="math inline">\(\mu_i\)</span></li>
-<li>Compute <span class="math inline">\(\sigma_b^2(t)\)</span></li>
-<li>Desired threshold corresponds to maximum <span class="math inline">\(\sigma_b^2(t)\)</span></li>
-</ol>
-<div id="cell-9" class="cell" data-execution_count="103">
+<section id="histogram-equalization" class="level2">
+<h2 class="anchored" data-anchor-id="histogram-equalization">Histogram Equalization</h2>
+<p>We define the cumulative distribution function corresponsing to <span class="math inline">\(i\)</span> as <span class="math display">\[\text{cdf}_x(i)=\sum\limits_{j=0}^{i}p_x(x=j)\]</span> which is also the image’s accumulated normalized histogram. \ We would like to create a transformation of the form <span class="math inline">\(y=T(x)\)</span> to produce a new image <span class="math inline">\(\{y\}\)</span>, with a flat histogram. Such as image would have a linearized cumulative distribution function across the value range <span class="math display">\[\text{cdf}_y(i)=(i+1)K, \qquad 0 \leq i &lt; L\]</span> for some constant K. The properties of the CDF allow us to perform such a transform: <span class="math display">\[y = T(k) = \text{cdf}_x(k)\]</span> where k is in the range <span class="math inline">\([0, L-1]\)</span>. <span class="math inline">\(T\)</span> maps the levels into <span class="math inline">\([0,1]\)</span> since we’re using normalized histogram of <span class="math inline">\(\{x\}\)</span>. In order to map the map the values into their original range, the following transformation needs to be applied: <span class="math display">\[y' = y \cdot (\text{max}\{x\} - \text{min}\{x\}) + \text{min}\{x\} = y \cdot (L-1)\]</span> <span class="math inline">\(y\)</span> is a real value while <span class="math inline">\(y'\)</span> has to be integer. The mapped value <span class="math inline">\(y'\)</span> should be <span class="math inline">\(0\)</span> for the range of <span class="math inline">\(0 &lt; y \leq \frac{1}{L}\)</span>. And <span class="math inline">\(y' = 1\)</span> for <span class="math inline">\(\frac{1}{L}&lt;y\leq \frac{2}{L}\)</span>, <span class="math inline">\(y' = 2\)</span> for <span class="math inline">\(\frac{2}{L}&lt;y\leq \frac{3}{L}\)</span>, … <span class="math inline">\(y' = L-1\)</span> for <span class="math inline">\(\frac{L-1}{L}&lt;y\leq 1\)</span>. Then the quantization formula for <span class="math inline">\(y\)</span> to <span class="math inline">\(y'\)</span> should be <span class="math display">\[y'=\text{ceil}(L \cdot y)-1\]</span> (<span class="math inline">\(y'=-1\)</span> when <span class="math inline">\(y=0\)</span>, however, it does not happen just because <span class="math inline">\(y=0\)</span> means that there is no pixel corresponding to that value.)</p>
+<div id="cell-8" class="cell" data-execution_count="7">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> otsu(img):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  hist <span class="op">=</span> imgToHist(img)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  inter_class_variances <span class="op">=</span> []</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>):</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    w0 <span class="op">=</span> <span class="bu">sum</span>(hist[<span class="dv">0</span>:i])</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    w1 <span class="op">=</span> <span class="bu">sum</span>(hist[i:])</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    u0 <span class="op">=</span> <span class="bu">sum</span>([x<span class="op">*</span>hist[x]<span class="op">/</span>w0 <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,i)])</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    u1 <span class="op">=</span> <span class="bu">sum</span>([x<span class="op">*</span>hist[x]<span class="op">/</span>w1 <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(i,<span class="dv">256</span>)])</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    sigma0 <span class="op">=</span> <span class="bu">sum</span>([((x<span class="op">-</span>u0)<span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>hist[x] <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,i)])</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    sigma1 <span class="op">=</span> <span class="bu">sum</span>([((x<span class="op">-</span>u1)<span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>hist[x] <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(i,<span class="dv">256</span>)])</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    sigmaw <span class="op">=</span> w0<span class="op">*</span>sigma0 <span class="op">+</span> w1<span class="op">*</span>sigma1</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    sigmab<span class="op">=</span>w0<span class="op">*</span>w1<span class="op">*</span>(u0<span class="op">-</span>u1)<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    inter_class_variances.append(sigmab)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># maximizing inter-class variance</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  threshold <span class="op">=</span> inter_class_variances.index(<span class="bu">max</span>(inter_class_variances))</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  binarized_image <span class="op">=</span> np.zeros_like(img)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x_pixel <span class="kw">in</span> <span class="bu">range</span>(img.shape[<span class="dv">0</span>]):</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> y_pixel <span class="kw">in</span> <span class="bu">range</span>(img.shape[<span class="dv">1</span>]):</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>              pixel_value <span class="op">=</span> <span class="bu">int</span>(img[x_pixel, y_pixel])</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>              <span class="cf">if</span> pixel_value <span class="op">&gt;</span> threshold:</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                binarized_image[x_pixel, y_pixel] <span class="op">=</span> <span class="dv">255</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>              <span class="cf">else</span>:</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>                binarized_image[x_pixel, y_pixel] <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> threshold, binarized_image</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> equalize(img):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  hist_data <span class="op">=</span> imgToHist(img)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  cdf_hist <span class="op">=</span> np.cumsum(hist_data) <span class="co"># gives the CDF</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  equalized_hist <span class="op">=</span> np.ceil(cdf_hist <span class="op">*</span> <span class="dv">256</span>) <span class="op">-</span> <span class="dv">1</span> <span class="co"># maps back into original range</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  enhancedImg <span class="op">=</span> np.zeros_like(img)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># now we need to replace initial pixel values with final pixel values</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x_pixel <span class="kw">in</span> <span class="bu">range</span>(img.shape[<span class="dv">0</span>]):</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> y_pixel <span class="kw">in</span> <span class="bu">range</span>(img.shape[<span class="dv">1</span>]):</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>              pixel_val <span class="op">=</span> <span class="bu">int</span>(img[x_pixel, y_pixel])</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>              enhancedImg[x_pixel, y_pixel] <span class="op">=</span> equalized_hist[pixel_val]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> enhancedImg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-10" class="cell" data-execution_count="104">
+<p>A function is defined to plot an images and their histograms before and after equalization. <code>cmap</code> is explicity defined to be <code>gray</code> since the default color map is <code>virdis</code></p>
+<div id="cell-10" class="cell" data-execution_count="8">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> showBinarizedImg(source_img):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># source image</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].imshow(source_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(<span class="vs">r'Source Image'</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].axis(<span class="st">'off'</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># binarized image</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    threshold, binarized_img <span class="op">=</span> otsu(source_img)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].imshow(binarized_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(<span class="vs">r"Binarized Image"</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].axis(<span class="st">'off'</span>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># figure title based on threshold with LaTeX formatting</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    fig.suptitle(<span class="vs">fr"Otsu's Threshold: $</span><span class="sc">{</span>threshold<span class="sc">}</span><span class="vs">$"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> showEqualizedImg(image, enhanced_image):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  source_histogram <span class="op">=</span> imgToHist(image)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  equalized_histogram <span class="op">=</span> imgToHist(enhanced_image)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">4</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># source image</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">0</span>].imshow(image, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">0</span>].set_title(<span class="st">'Source Image'</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">0</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># source histogram</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">1</span>].bar(np.arange(<span class="bu">len</span>(source_histogram)), source_histogram, color <span class="op">=</span> <span class="st">"Blue"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">1</span>].set_title(<span class="st">'Source Histogram'</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># equalized histogram</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">2</span>].bar(np.arange(<span class="bu">len</span>(equalized_histogram)), equalized_histogram, color <span class="op">=</span> <span class="st">"Red"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">2</span>].set_title(<span class="st">'Equalized Histogram'</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># enhanced image</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">3</span>].imshow(enhanced_image, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">3</span>].set_title(<span class="st">'Enhanced Image'</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  axes[<span class="dv">3</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  plt.tight_layout()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-11" class="cell" data-outputid="650d23f3-7cdc-4ed5-cb48-b551191d4d13" data-execution_count="105">
+<div id="cell-11" class="cell" data-outputid="f6c7a4c7-ed6d-4e03-cb1a-cf4acf878536" data-execution_count="9">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>showBinarizedImg(bookpage_1)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>showBinarizedImg(bookpage_2)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>showBinarizedImg(panther)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>showBinarizedImg(tom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>showEqualizedImg(panda, equalize(panda))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>showEqualizedImg(lenna, equalize(lenna))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>showEqualizedImg(campus, equalize(campus))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>showEqualizedImg(elon, equalize(elon))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-1.png" width="511" height="397" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-7-output-1.png" width="1569" height="388" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-2.png" width="521" height="397" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-7-output-2.png" width="1569" height="388" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-3.png" width="519" height="397" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-7-output-3.png" width="1569" height="388" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-4.png" width="590" height="365" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-7-output-4.png" width="1563" height="388" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-</section>
-<section id="adding-gaussian-noise-and-applying-otsus-algorithm" class="level2">
-<h2 class="anchored" data-anchor-id="adding-gaussian-noise-and-applying-otsus-algorithm">Adding Gaussian Noise and Applying Otsu’s Algorithm</h2>
-<p>By adding noise to an image, we can simulate real-world scenarios where images are often corrupted by various noise sources (e.g., sensor noise, transmission errors). This allows us to evaluate how well Otsu’s method performs under different noise conditions and its robustness to noise.</p>
-<div id="cell-14" class="cell" data-execution_count="106">
+<section id="histogram-matching" class="level2">
+<h2 class="anchored" data-anchor-id="histogram-matching">Histogram Matching</h2>
+<p>Consider a grayscale input image <span class="math inline">\(X\)</span>. It has a probability density function <span class="math inline">\(p_r(r)\)</span>, where <span class="math inline">\(r\)</span> is a grayscale value, and <span class="math inline">\(p_r(r)\)</span> is the probability of that value. This probability can easily be computed from the histogram of the image by <span class="math display">\[p_r(r_j)=\frac{n_j}{n}\]</span> Where <span class="math inline">\(n_j\)</span> is the frequency of the grayscale value <span class="math inline">\(r_j\)</span>, and <span class="math inline">\(n\)</span> is the total number of pixels in the image. Now consider a desired output probability density function <span class="math inline">\(p_z(z)\)</span>. A transformation of <span class="math inline">\(p_r(r)\)</span> is needed to convert it to <span class="math inline">\(p_z(z)\)</span>. \ Each pdf (probability density function) can be mapped to its cumulative distribution function by <span class="math display">\[S(r_k)=\sum\limits_{j=0}^{k}p_r(r_j), \qquad k =0,1,2,...,L-1\]</span> <span class="math display">\[G(z_k)=\sum\limits_{j=0}^{k}p_z(z_j), \qquad k =0,1,2,...,L-1\]</span> Where L is the total number of gray levels (here <span class="math inline">\(L=256\)</span>). \ The idea is to map each <span class="math inline">\(r\)</span> value in <span class="math inline">\(X\)</span> to the <span class="math inline">\(z\)</span> value that has the same probability in the desired pdf: <span class="math display">\[S(r_j) = G(z_i) \text{ or } z = G^{-1}(S(r))\]</span></p>
+<p><strong>Algorithm</strong> \ Given two images, the reference and the target images, we compute their histograms. Following, we calculate the cumulative distribution functions of the two images’ histograms: <span class="math inline">\(F_1\)</span> for for the reference image and <span class="math inline">\(F_2\)</span> for the target image. Then for each gray level <span class="math inline">\(G_1 \in [0, 255]\)</span>, we find the gray level <span class="math inline">\(G_2\)</span> for which <span class="math inline">\(F_1(G_1)=F_2(G_2)\)</span> and this is the result of histogram matching function: <span class="math inline">\(M(G_1) = G_2\)</span>. Finally, we apply the function <span class="math inline">\(M\)</span> on each pixel of the reference image.</p>
+<div id="cell-14" class="cell" data-execution_count="10">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addGaussianNoise(img, variance):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  mean <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  std <span class="op">=</span> np.sqrt(variance)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  noisy_img <span class="op">=</span> img <span class="op">+</span> np.random.normal(mean, std, img.shape)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  noisy_img_clipped <span class="op">=</span> np.clip(noisy_img, <span class="dv">0</span>, <span class="dv">255</span> )</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> noisy_img_clipped</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> match(source_image, target_image):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  source_hist <span class="op">=</span> imgToHist(source_image)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  target_hist <span class="op">=</span> imgToHist(target_image)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  cdf_source_hist <span class="op">=</span> np.cumsum(source_hist) <span class="co"># F1</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  cdf_target_hist <span class="op">=</span> np.cumsum(target_hist) <span class="co"># F2</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  matched <span class="op">=</span> np.zeros_like(source_image)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x_pixel <span class="kw">in</span> <span class="bu">range</span>(source_image.shape[<span class="dv">0</span>]):</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> y_pixel <span class="kw">in</span> <span class="bu">range</span>(source_image.shape[<span class="dv">1</span>]):</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      pixel_val <span class="op">=</span> source_image[x_pixel, y_pixel] <span class="co"># G1</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      index <span class="op">=</span> <span class="dv">255</span> <span class="co"># assume G2</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="co"># to find G2</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">256</span>):</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> cdf_target_hist[i] <span class="op">-</span> cdf_source_hist[pixel_val] <span class="op">&gt;=</span> <span class="dv">0</span>:</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>          index <span class="op">=</span> i</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>          <span class="cf">break</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      <span class="co"># applying function on each pixel</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      matched[x_pixel, y_pixel] <span class="op">=</span> index</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> matched</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-15" class="cell" data-execution_count="113">
+<p>A function is defined to source image, target image and image obtained upon matching. \ <code>cmap</code> is explicity defined to be <code>gray</code> since the default color map is <code>virdis</code></p>
+<div id="cell-16" class="cell" data-execution_count="11">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> showBinarizedImgWithNoise(source_img, variance):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    threshold, binarized_img <span class="op">=</span> otsu(source_img)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    noisy_source_img <span class="op">=</span> addGaussianNoise(source_img, variance)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    noisy_threshold, binarized_noisy_img <span class="op">=</span> otsu(noisy_source_img)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">4</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Source and Binarized Image Titles (without noise)</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    source_title <span class="op">=</span> <span class="vs">r"Source Image"</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    binary_title <span class="op">=</span> <span class="vs">fr"Binarized Image (Threshold: $</span><span class="sc">{</span>threshold<span class="sc">}</span><span class="vs">$)"</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Noisy Source and Binarized Image Titles (with noise)</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    noisy_source_title <span class="op">=</span> <span class="vs">fr"Source Image with Noise ($\sigma^2=</span><span class="sc">{</span>variance<span class="sc">}</span><span class="vs">$)"</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    noisy_binary_title <span class="op">=</span> <span class="vs">fr"Binarized Image (Threshold: $</span><span class="sc">{</span>noisy_threshold<span class="sc">}</span><span class="vs">$)"</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> showMatchedImg(source_img, target_img, matched_img):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># source image</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].imshow(source_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(<span class="st">'Source Image'</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># target image</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].imshow(target_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(<span class="st">'Target Image'</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># matched image</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].imshow(matched_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].set_title(<span class="st">'Matched Image'</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].axis(<span class="st">'off'</span>)</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Source image</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].imshow(source_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].set_title(source_title)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">0</span>].axis(<span class="st">'off'</span>)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Binarized image</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].imshow(binarized_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].set_title(binary_title)</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].axis(<span class="st">'off'</span>)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Source image with noise</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].imshow(noisy_source_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].set_title(noisy_source_title)</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">2</span>].axis(<span class="st">'off'</span>)</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Binarized image with noise</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">3</span>].imshow(binarized_noisy_img, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">3</span>].set_title(noisy_binary_title)</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">3</span>].axis(<span class="st">'off'</span>)</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-16" class="cell" data-outputid="ee408fb7-2d5e-4ca4-93fe-b48f9629a70d" data-execution_count="114">
+<div id="cell-17" class="cell" data-outputid="2f2f974c-3ad1-4c57-964e-a5e5076b6791" data-execution_count="12">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>showBinarizedImgWithNoise(bookpage_1, var)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>showBinarizedImgWithNoise(bookpage_2, var)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>showBinarizedImgWithNoise(panther, var)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>showBinarizedImgWithNoise(tom, var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> imageMatch(sourceImage, targetImage):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  matchedImage <span class="op">=</span> match(sourceImage, targetImage)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  showMatchedImg(sourceImage, targetImage, matchedImage)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># according to submission requirements</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>imageMatch(panda, lenna)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>imageMatch(elon, campus)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>imageMatch(lenna, elon)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>imageMatch(campus, panda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-1.png" width="1129" height="390" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-10-output-1.png" width="1174" height="406" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-2.png" width="1140" height="390" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-10-output-2.png" width="1174" height="406" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-3.png" width="1138" height="390" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-10-output-3.png" width="1174" height="406" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-4.png" width="1189" height="320" class="figure-img"></p>
+<p><img src="histogram_matching_files/figure-html/cell-10-output-4.png" width="1174" height="406" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The threshold value obtained from Otsu’s method may vary significantly depending on the noise level. Higher noise levels can lead to less accurate thresholding.</p>
-<p>The quality of the binarized image can degrade with increasing noise. Noisy pixels can be incorrectly classified as foreground or background, leading to a loss of detail and accuracy.</p>
-<p>By analyzing the results under different noise levels, we can assess the robustness of Otsu’s method. Some variations of Otsu’s method, such as adaptive thresholding, may be more resilient to noise.</p>
-<p>We might consider pre-processing techniques like noise reduction filters to improve the input image quality before applying Otsu’s method.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
-<p>Wikipedia Contributors, “Otsu’s method,” Wikipedia, Aug.&nbsp;16, 2020. <a href="https://en.wikipedia.org/wiki/Otsu%27s_method">https://en.wikipedia.org/wiki/Otsu%27s_method</a></p>
+<p>[1] Wikipedia Contributors, “Histogram equalization,” Wikipedia, May 18, 2018. https://en.wikipedia.org/wiki/Histogram_equalization</p>
+<p>[2] “Histogram matching,” Wikipedia, Feb.&nbsp;07, 2022. https://en.wikipedia.org/wiki/Histogram_matching</p>
 
 
 </section>
