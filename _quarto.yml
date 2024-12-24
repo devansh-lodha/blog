@@ -2,7 +2,9 @@ project:
   type: website
 
 website:
-  title: "<strong>Devansh</strong> Lodha"
+  title: "Devansh's Blog"
+  favicon: favicon.png
+
   navbar:
     right:
       - href: https://craftreesolitary.github.io/
