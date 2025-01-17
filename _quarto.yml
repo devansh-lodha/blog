@@ -7,15 +7,15 @@ website:
 
   navbar:
     right:
-      - href: https://craftreesolitary.github.io/
+      - href: https://devansh-lodha.github.io/
         text: about
-      - href: https://craftreesolitary.github.io/blog/
+      - href: https://devansh-lodha.github.io/blog/
         text: blog
-      - href: https://craftreesolitary.github.io/publications/
+      - href: https://devansh-lodha.github.io/publications/
         text: publications
-      - href: https://craftreesolitary.github.io/projects/
+      - href: https://devansh-lodha.github.io/projects/
         text: projects
-      - href: https://craftreesolitary.github.io/repositories/
+      - href: https://devansh-lodha.github.io/repositories/
         text: repositories
 
 format:
