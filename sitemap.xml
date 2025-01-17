@@ -2,14 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://devansh-lodha.github.io/blog/index.html</loc>
-    <lastmod>2024-12-24T07:07:57.798Z</lastmod>
+    <lastmod>2025-01-17T09:43:37.674Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
+    <lastmod>2025-01-17T09:43:37.734Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
-    <lastmod>2024-12-24T07:07:57.866Z</lastmod>
+    <lastmod>2025-01-17T09:43:37.801Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
+    <lastmod>2025-01-17T09:43:37.961Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
-    <lastmod>2024-12-24T07:07:57.942Z</lastmod>
+    <lastmod>2025-01-17T09:43:38.037Z</lastmod>
   </url>
 </urlset>

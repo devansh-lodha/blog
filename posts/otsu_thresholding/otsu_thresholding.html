@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -73,8 +73,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0626ff4d7a71b55c8707dcae1d04a9b6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-e25cc82807363e79c52e96bc8b7855f1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-33f0761162c4ce9be0e7b52747341904.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -159,23 +159,23 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://craftreesolitary.github.io/"> 
+    <a class="nav-link" href="https://devansh-lodha.github.io/"> 
 <span class="menu-text">about</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://craftreesolitary.github.io/blog/"> 
+    <a class="nav-link" href="https://devansh-lodha.github.io/blog/"> 
 <span class="menu-text">blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://craftreesolitary.github.io/publications/"> 
+    <a class="nav-link" href="https://devansh-lodha.github.io/publications/"> 
 <span class="menu-text">publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://craftreesolitary.github.io/projects/"> 
+    <a class="nav-link" href="https://devansh-lodha.github.io/projects/"> 
 <span class="menu-text">projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://craftreesolitary.github.io/repositories/"> 
+    <a class="nav-link" href="https://devansh-lodha.github.io/repositories/"> 
 <span class="menu-text">repositories</span></a>
   </li>  
 </ul>
@@ -199,7 +199,7 @@ window.Quarto = {
                           <div class="quarto-categories">
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">probability theory</div>
-                <div class="quarto-category">computer vision</div>
+                <div class="quarto-category">image processing</div>
               </div>
                   </div>
   </div>
@@ -235,6 +235,7 @@ window.Quarto = {
   <ul>
   <li><a href="#creating-the-histogram-of-an-image" id="toc-creating-the-histogram-of-an-image" class="nav-link active" data-scroll-target="#creating-the-histogram-of-an-image">Creating the Histogram of an Image</a></li>
   <li><a href="#implementing-otsus-algorithm" id="toc-implementing-otsus-algorithm" class="nav-link" data-scroll-target="#implementing-otsus-algorithm">Implementing Otsu’s Algorithm</a></li>
+  <li><a href="#binarizing-images-and-plotting-them" id="toc-binarizing-images-and-plotting-them" class="nav-link" data-scroll-target="#binarizing-images-and-plotting-them">Binarizing Images and Plotting Them</a></li>
   <li><a href="#adding-gaussian-noise-and-applying-otsus-algorithm" id="toc-adding-gaussian-noise-and-applying-otsus-algorithm" class="nav-link" data-scroll-target="#adding-gaussian-noise-and-applying-otsus-algorithm">Adding Gaussian Noise and Applying Otsu’s Algorithm</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -254,8 +255,7 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div id="cell-3" class="cell" data-execution_count="101">
@@ -331,7 +331,11 @@ window.Quarto = {
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> threshold, binarized_image</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-10" class="cell" data-execution_count="104">
+</section>
+</section>
+<section id="binarizing-images-and-plotting-them" class="level2">
+<h2 class="anchored" data-anchor-id="binarizing-images-and-plotting-them">Binarizing Images and Plotting Them</h2>
+<div id="cell-12" class="cell" data-execution_count="104">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> showBinarizedImg(source_img):</span>
@@ -354,7 +358,7 @@ window.Quarto = {
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-11" class="cell" data-outputid="650d23f3-7cdc-4ed5-cb48-b551191d4d13" data-execution_count="105">
+<div id="cell-13" class="cell" data-outputid="650d23f3-7cdc-4ed5-cb48-b551191d4d13" data-execution_count="105">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>showBinarizedImg(bookpage_1)</span>
@@ -365,38 +369,37 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-1.png" width="511" height="397" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-8-output-1.png" width="511" height="397" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-2.png" width="521" height="397" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-8-output-2.png" width="521" height="397" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-3.png" width="519" height="397" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-8-output-3.png" width="519" height="397" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-7-output-4.png" width="590" height="365" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-8-output-4.png" width="590" height="365" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
 </section>
 <section id="adding-gaussian-noise-and-applying-otsus-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="adding-gaussian-noise-and-applying-otsus-algorithm">Adding Gaussian Noise and Applying Otsu’s Algorithm</h2>
 <p>By adding noise to an image, we can simulate real-world scenarios where images are often corrupted by various noise sources (e.g., sensor noise, transmission errors). This allows us to evaluate how well Otsu’s method performs under different noise conditions and its robustness to noise.</p>
-<div id="cell-14" class="cell" data-execution_count="106">
+<div id="cell-16" class="cell" data-execution_count="106">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addGaussianNoise(img, variance):</span>
@@ -407,7 +410,7 @@ window.Quarto = {
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> noisy_img_clipped</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-15" class="cell" data-execution_count="113">
+<div id="cell-17" class="cell" data-execution_count="113">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> showBinarizedImgWithNoise(source_img, variance):</span>
@@ -449,7 +452,7 @@ window.Quarto = {
 <span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cell-16" class="cell" data-outputid="ee408fb7-2d5e-4ca4-93fe-b48f9629a70d" data-execution_count="114">
+<div id="cell-18" class="cell" data-outputid="ee408fb7-2d5e-4ca4-93fe-b48f9629a70d" data-execution_count="114">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> <span class="dv">1000</span></span>
@@ -461,28 +464,28 @@ window.Quarto = {
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-1.png" width="1129" height="390" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-11-output-1.png" width="1129" height="390" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-2.png" width="1140" height="390" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-11-output-2.png" width="1140" height="390" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-3.png" width="1138" height="390" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-11-output-3.png" width="1138" height="390" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="otsu_thresholding_files/figure-html/cell-10-output-4.png" width="1189" height="320" class="figure-img"></p>
+<p><img src="otsu_thresholding_files/figure-html/cell-11-output-4.png" width="1189" height="320" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -495,6 +498,22 @@ window.Quarto = {
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <p>Wikipedia Contributors, “Otsu’s method,” Wikipedia, Aug.&nbsp;16, 2020. <a href="https://en.wikipedia.org/wiki/Otsu%27s_method">https://en.wikipedia.org/wiki/Otsu%27s_method</a></p>
+<div id="cell-21" class="cell" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>intervals <span class="op">=</span> [(<span class="dv">1</span>,<span class="dv">4</span>), (<span class="dv">4</span>, <span class="dv">7</span>)]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> i<span class="op">!=</span><span class="bu">len</span>(intervals)<span class="op">-</span><span class="dv">1</span>:</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> intervals[i][<span class="dv">1</span>] <span class="op">&gt;</span> intervals[i<span class="op">+</span><span class="dv">1</span>][<span class="dv">0</span>]:</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        intervals <span class="op">=</span> intervals[:i]<span class="op">+</span>[(intervals[i][<span class="dv">0</span>], intervals[i<span class="op">+</span><span class="dv">1</span>][<span class="dv">1</span>])]<span class="op">+</span>intervals[i<span class="op">+</span><span class="dv">2</span>:]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        i<span class="op">+=</span><span class="dv">1</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>intervals</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>[(1, 4), (4, 7)]</code></pre>
+</div>
+</div>
 
 
 </section>

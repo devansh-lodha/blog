@@ -2,6 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/carvana_seg_resnet18/carvana_seg_resnet18.html",
+      "/posts/matrix_factorization/matrix_factorization.html",
       "/posts/histogram_matching/histogram_matching.html",
       "/posts/otsu_thresholding/otsu_thresholding.html"
     ]
