@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
-    <lastmod>2025-01-17T09:43:37.674Z</lastmod>
-  </url>
-  <url>
     <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
-    <lastmod>2025-01-17T09:43:37.734Z</lastmod>
+    <lastmod>2025-02-26T12:30:05.286Z</lastmod>
   </url>
   <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
-    <lastmod>2025-01-17T09:43:37.801Z</lastmod>
+    <loc>https://devansh-lodha.github.io/blog/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html</loc>
+    <lastmod>2025-02-26T12:30:05.601Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
-    <lastmod>2025-01-17T09:43:37.961Z</lastmod>
+    <lastmod>2025-02-26T12:30:05.514Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
+    <lastmod>2025-02-26T12:30:05.215Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
-    <lastmod>2025-01-17T09:43:38.037Z</lastmod>
+    <lastmod>2025-02-26T12:30:05.591Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
+    <lastmod>2025-02-26T12:30:05.354Z</lastmod>
   </url>
 </urlset>
