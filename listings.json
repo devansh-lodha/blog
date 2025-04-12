@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/ml_publication_trends/ml_publication_trends.html",
       "/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html",
       "/posts/carvana_seg_resnet18/carvana_seg_resnet18.html",
       "/posts/matrix_factorization/matrix_factorization.html",
