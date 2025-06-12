@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Devansh Lodha">
+<meta name="dcterms.date" content="2025-04-19">
+<meta name="description" content="Building a Simple 8-bit Processor from Scratch with Verilog!">
+
+<title>Processor Design in Verilog – Devansh’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f8dd60e654e2b9c8d5523d7f632da173.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-bb815ccc591fed04ba3f41ececb64847.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-f8dd60e654e2b9c8d5523d7f632da173.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Devansh’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/"> 
+<span class="menu-text">about</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/blog/"> 
+<span class="menu-text">blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/publications/"> 
+<span class="menu-text">publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/projects/"> 
+<span class="menu-text">projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/repositories/"> 
+<span class="menu-text">repositories</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Processor Design in Verilog</h1>
+                  <div>
+        <div class="description">
+          Building a Simple 8-bit Processor from Scratch with Verilog!
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">verilog</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Devansh Lodha </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 19, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-big-picture-our-processors-architecture" id="toc-the-big-picture-our-processors-architecture" class="nav-link active" data-scroll-target="#the-big-picture-our-processors-architecture">The Big Picture: Our Processor’s Architecture</a></li>
+  <li><a href="#the-language-of-the-machine-our-instruction-set" id="toc-the-language-of-the-machine-our-instruction-set" class="nav-link" data-scroll-target="#the-language-of-the-machine-our-instruction-set">The Language of the Machine: Our Instruction Set</a></li>
+  <li><a href="#diving-deep-the-verilog-modules" id="toc-diving-deep-the-verilog-modules" class="nav-link" data-scroll-target="#diving-deep-the-verilog-modules">Diving Deep: The Verilog Modules</a>
+  <ul class="collapse">
+  <li><a href="#the-top-module-processor.v" id="toc-the-top-module-processor.v" class="nav-link" data-scroll-target="#the-top-module-processor.v">The Top Module: <code>processor.v</code></a></li>
+  <li><a href="#storing-the-program-the-instruction_memory.v-module" id="toc-storing-the-program-the-instruction_memory.v-module" class="nav-link" data-scroll-target="#storing-the-program-the-instruction_memory.v-module">Storing the Program: The <code>instruction_memory.v</code> Module</a></li>
+  <li><a href="#the-processors-scratchpad-register_file.v" id="toc-the-processors-scratchpad-register_file.v" class="nav-link" data-scroll-target="#the-processors-scratchpad-register_file.v">The Processor’s Scratchpad: <code>register_file.v</code></a></li>
+  <li><a href="#the-calculator-alu.v-arithmetic-logic-unit" id="toc-the-calculator-alu.v-arithmetic-logic-unit" class="nav-link" data-scroll-target="#the-calculator-alu.v-arithmetic-logic-unit">The Calculator: <code>alu.v</code> (Arithmetic Logic Unit)</a></li>
+  <li><a href="#the-central-register-accumulator.v" id="toc-the-central-register-accumulator.v" class="nav-link" data-scroll-target="#the-central-register-accumulator.v">The Central Register: <code>accumulator.v</code></a></li>
+  <li><a href="#the-brains-of-the-operation-control_unit.v" id="toc-the-brains-of-the-operation-control_unit.v" class="nav-link" data-scroll-target="#the-brains-of-the-operation-control_unit.v">The Brains of the Operation: <code>control_unit.v</code></a></li>
+  </ul></li>
+  <li><a href="#making-sure-it-works-the-testbench" id="toc-making-sure-it-works-the-testbench" class="nav-link" data-scroll-target="#making-sure-it-works-the-testbench">Making Sure It Works: The Testbench</a></li>
+  <li><a href="#the-moment-of-truth-simulation-results" id="toc-the-moment-of-truth-simulation-results" class="nav-link" data-scroll-target="#the-moment-of-truth-simulation-results">The Moment of Truth: Simulation Results</a>
+  <ul class="collapse">
+  <li><a href="#testing-individual-operations" id="toc-testing-individual-operations" class="nav-link" data-scroll-target="#testing-individual-operations">Testing Individual Operations</a></li>
+  <li><a href="#running-a-full-program" id="toc-running-a-full-program" class="nav-link" data-scroll-target="#running-a-full-program">Running a Full Program</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<p>Ever wondered what goes on inside your computer? How does it understand commands and perform calculations? It all boils down to the processor, the brain of the operation. In this post, we’ll pull back the curtain build a simple, yet functional, 8-bit processor using Verilog.</p>
+<hr>
+<section id="the-big-picture-our-processors-architecture" class="level2">
+<h2 class="anchored" data-anchor-id="the-big-picture-our-processors-architecture">The Big Picture: Our Processor’s Architecture</h2>
+<p>A processor might seem like a single, monolithic entity, but it’s actually a collection of specialized components working in harmony. For our design, we took a modular approach, creating separate Verilog modules for each part.</p>
+<p>Here are the key components of our processor:</p>
+<ul>
+<li><strong>Instruction Memory (<code>instruction_memory.v</code>)</strong>: This is where our program, a sequence of instructions, is stored. We’ve designed a 32-byte memory for this purpose.</li>
+<li><strong>Program Counter (PC)</strong>: This is a special register that holds the memory address of the <em>next</em> instruction to be executed. After each instruction, it usually just increments by one, unless a branch or return instruction tells it to jump to a different address.</li>
+<li><strong>Register File (<code>register_file.v</code>)</strong>: Think of this as the processor’s short-term memory. It’s a bank of 16 individual 8-bit registers that can be used to store data temporarily.</li>
+<li><strong>Accumulator (ACC)</strong>: A special 8-bit register that’s central to many operations. For instructions that need two numbers (operands), one comes from the register file and the other comes from the accumulator. The result of the calculation is then stored back in the accumulator.</li>
+<li><strong>Arithmetic Logic Unit (ALU)</strong>: This is the mathematical and logical core of the processor. It performs all the calculations like addition, subtraction, multiplication, and logical operations (AND, XOR).</li>
+<li><strong>Control Unit (<code>control_unit.v</code>)</strong>: The director of the show. It reads the instruction from the memory, decodes it, and then generates all the necessary control signals to tell the other components (like the ALU and Register File) what to do.</li>
+<li><strong>Special Registers (EXT and C/B)</strong>:
+<ul>
+<li>The <strong>EXT (Extended) Register</strong> is an 8-bit register used exclusively for multiplication to store the higher-order 8 bits of the 16-bit result.</li>
+<li>The <strong>C/B (Carry/Borrow) Register</strong> is a 1-bit register that holds the carry-out from an addition or the borrow from a subtraction. It’s crucial for conditional branching, where the program’s flow can change based on the result of a comparison.</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="processor.png" class="img-fluid figure-img"></p>
+<figcaption>Diagram of our Processor Architecture</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="the-language-of-the-machine-our-instruction-set" class="level2">
+<h2 class="anchored" data-anchor-id="the-language-of-the-machine-our-instruction-set">The Language of the Machine: Our Instruction Set</h2>
+<p>Every processor has an <strong>Instruction Set Architecture (ISA)</strong>, which is the specific set of commands it understands. Our instruction set is simple but powerful enough to write meaningful programs. Instructions are 8 bits long and generally fall into two formats.</p>
+<p>The following table details every instruction our processor can execute.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 8%">
+<col style="width: 81%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Opcode</th>
+<th style="text-align: left;">Instruction</th>
+<th style="text-align: left;">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>0000 0000</code></td>
+<td style="text-align: left;"><code>NOP</code></td>
+<td style="text-align: left;">No operation. The processor does nothing for one cycle.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0001 xxxx</code></td>
+<td style="text-align: left;"><code>ADD Ri</code></td>
+<td style="text-align: left;">Adds the content of Register <code>i</code> to the ACC. Updates the C/B register.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>0010 xxxx</code></td>
+<td style="text-align: left;"><code>SUB Ri</code></td>
+<td style="text-align: left;">Subtracts the content of Register <code>i</code> from the ACC. Updates the C/B register.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0011 xxxx</code></td>
+<td style="text-align: left;"><code>MUL Ri</code></td>
+<td style="text-align: left;">Multiplies the content of Register <code>i</code> with the ACC. Stores the lower 8 bits in ACC and upper 8 in EXT.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>0101 xxxx</code></td>
+<td style="text-align: left;"><code>AND Ri</code></td>
+<td style="text-align: left;">Performs a bitwise AND between ACC and Register <code>i</code>. C/B is not updated.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0110 xxxx</code></td>
+<td style="text-align: left;"><code>XRA Ri</code></td>
+<td style="text-align: left;">Performs a bitwise XOR between ACC and Register <code>i</code>. C/B is not updated.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>0111 xxxx</code></td>
+<td style="text-align: left;"><code>CMP Ri</code></td>
+<td style="text-align: left;">Compares ACC with Register <code>i</code> (by subtracting) and updates C/B. If <code>ACC &gt;= Ri</code>, C/B=0; else C/B=1.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>1001 xxxx</code></td>
+<td style="text-align: left;"><code>MOV ACC, Ri</code></td>
+<td style="text-align: left;">Moves the content of Register <code>i</code> into the ACC.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>1010 xxxx</code></td>
+<td style="text-align: left;"><code>MOV Ri, ACC</code></td>
+<td style="text-align: left;">Moves the content of the ACC into Register <code>i</code>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0000 0001</code></td>
+<td style="text-align: left;"><code>LSL ACC</code></td>
+<td style="text-align: left;">Logical shift left on the ACC.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>0000 0010</code></td>
+<td style="text-align: left;"><code>LSR ACC</code></td>
+<td style="text-align: left;">Logical shift right on the ACC.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0000 0011</code></td>
+<td style="text-align: left;"><code>CIR ACC</code></td>
+<td style="text-align: left;">Circular shift right on the ACC.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>0000 0100</code></td>
+<td style="text-align: left;"><code>CIL ACC</code></td>
+<td style="text-align: left;">Circular shift left on the ACC.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0000 0101</code></td>
+<td style="text-align: left;"><code>ASR ACC</code></td>
+<td style="text-align: left;">Arithmetic shift right on the ACC.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>0000 0110</code></td>
+<td style="text-align: left;"><code>INC ACC</code></td>
+<td style="text-align: left;">Increments the ACC. Updates C/B on overflow.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>0000 0111</code></td>
+<td style="text-align: left;"><code>DEC ACC</code></td>
+<td style="text-align: left;">Decrements the ACC. Updates C/B on underflow.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>1000 xxxx</code></td>
+<td style="text-align: left;"><code>Br &lt;addr&gt;</code></td>
+<td style="text-align: left;">If C/B is 1, the PC jumps to the 4-bit address specified in the instruction.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>1011 xxxx</code></td>
+<td style="text-align: left;"><code>Ret &lt;addr&gt;</code></td>
+<td style="text-align: left;">The PC jumps to the 4-bit address specified. Used for returning from subroutines.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>1111 1111</code></td>
+<td style="text-align: left;"><code>HLT</code></td>
+<td style="text-align: left;">Halts the processor. The PC stops incrementing.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="diving-deep-the-verilog-modules" class="level2">
+<h2 class="anchored" data-anchor-id="diving-deep-the-verilog-modules">Diving Deep: The Verilog Modules</h2>
+<p>Now, let’s get our hands dirty and look at the Verilog code that brings this processor to life. We’ll go through the modules one by one.</p>
+<section id="the-top-module-processor.v" class="level3">
+<h3 class="anchored" data-anchor-id="the-top-module-processor.v">The Top Module: <code>processor.v</code></h3>
+<p>This is the main module that connects everything else together. It instantiates the instruction memory, register file, accumulator, ALU, and control unit, and wires them up. It also contains the core logic for the Program Counter (PC) and the special EXT and C/B registers.</p>
+<section id="code" class="level4">
+<h4 class="anchored" data-anchor-id="code">Code:</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">`timescale 1ns / 1ps</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> processor <span class="op">(</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> clk<span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> reset<span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> pc<span class="op">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg0<span class="op">,</span> reg1<span class="op">,</span> reg2<span class="op">,</span> reg3<span class="op">,</span> reg4<span class="op">,</span> reg5<span class="op">,</span> reg6<span class="op">,</span> reg7<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg8<span class="op">,</span> reg9<span class="op">,</span> reg10<span class="op">,</span> reg11<span class="op">,</span> reg12<span class="op">,</span> reg13<span class="op">,</span> reg14<span class="op">,</span> reg15<span class="op">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> cb_reg</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// We expose the reg values to see the waveform in simulation</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg0  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg1  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">1</span><span class="op">];</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg2  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">2</span><span class="op">];</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg3  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">3</span><span class="op">];</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg4  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">4</span><span class="op">];</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg5  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">5</span><span class="op">];</span> </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg6  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">6</span><span class="op">];</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg7  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">7</span><span class="op">];</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg8  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">8</span><span class="op">];</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg9  <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">9</span><span class="op">];</span> </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg10 <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">10</span><span class="op">];</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg11 <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">11</span><span class="op">];</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg12 <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">12</span><span class="op">];</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg13 <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">13</span><span class="op">];</span> </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg14 <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">14</span><span class="op">];</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> reg15 <span class="op">=</span> reg_file.regs<span class="op">[</span><span class="dv">15</span><span class="op">];</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Program Counter and Instruction Fetch</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> instruction<span class="op">;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> pc_reg<span class="op">;</span> </span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Instruction Memory</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    instruction_memory ins_mem <span class="op">(</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        .addr<span class="op">(</span>pc_reg<span class="op">),</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        .instruction<span class="op">(</span>instruction<span class="op">)</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span> </span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Other Components</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> data_bus<span class="op">;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> acc_value<span class="op">,</span> alu_result<span class="op">,</span> ext_result<span class="op">;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> alu_carry<span class="op">;</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> ext_reg<span class="op">;</span> </span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Control Signals</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> reg_read_en<span class="op">;</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg_read_addr<span class="op">;</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> reg_write_en<span class="op">;</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg_write_addr<span class="op">;</span> </span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> acc_sel<span class="op">,</span> acc_write_en<span class="op">,</span> acc_output_en<span class="op">;</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> alu_op<span class="op">;</span> </span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> ext_write_en<span class="op">,</span> cb_write_en<span class="op">;</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> next_pc<span class="op">;</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Register File Instantiation</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    register_file regs <span class="op">(</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>        .clk<span class="op">(</span>clk<span class="op">),</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        .read_addr<span class="op">(</span>reg_read_addr<span class="op">),</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>        .read_en<span class="op">(</span>reg_read_en<span class="op">),</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>        .write_addr<span class="op">(</span>reg_write_addr<span class="op">),</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>        .write_en<span class="op">(</span>reg_write_en<span class="op">),</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        .bus<span class="op">(</span>data_bus<span class="op">)</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Accumulator Instantiation</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    accumulator acc <span class="op">(</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>        .clk<span class="op">(</span>clk<span class="op">),</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>        .alu_in<span class="op">(</span>alu_result<span class="op">),</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>        .bus_in<span class="op">(</span>data_bus<span class="op">),</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>        .acc_sel<span class="op">(</span>acc_sel<span class="op">),</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>        .write_en<span class="op">(</span>acc_write_en<span class="op">),</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>        .output_en<span class="op">(</span>acc_output_en<span class="op">),</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>        .acc_value<span class="op">(</span>acc_value<span class="op">),</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>        .bus_out<span class="op">(</span>data_bus<span class="op">)</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span> </span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ALU Instantiation</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    alu alu <span class="op">(</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>        .acc<span class="op">(</span>acc_value<span class="op">),</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>        .bus<span class="op">(</span>data_bus<span class="op">),</span></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>        .alu_op<span class="op">(</span>alu_op<span class="op">),</span></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>        .result<span class="op">(</span>alu_result<span class="op">),</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>        .carry<span class="op">(</span>alu_carry<span class="op">),</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>        .ext_result<span class="op">(</span>ext_result<span class="op">)</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span> </span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Control Unit Instantiation</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>    control_unit ctrl_unt <span class="op">(</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>        .clk<span class="op">(</span>clk<span class="op">),</span></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>        .reset<span class="op">(</span>reset<span class="op">),</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>        .instruction<span class="op">(</span>instruction<span class="op">),</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>        .cb_reg<span class="op">(</span>cb_reg<span class="op">),</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>        .alu_carry<span class="op">(</span>alu_carry<span class="op">),</span></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>        .reg_read_en<span class="op">(</span>reg_read_en<span class="op">),</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>        .reg_read_addr<span class="op">(</span>reg_read_addr<span class="op">),</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>        .reg_write_en<span class="op">(</span>reg_write_en<span class="op">),</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>        .reg_write_addr<span class="op">(</span>reg_write_addr<span class="op">),</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>        .acc_sel<span class="op">(</span>acc_sel<span class="op">),</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>        .acc_write_en<span class="op">(</span>acc_write_en<span class="op">),</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>        .acc_output_en<span class="op">(</span>acc_output_en<span class="op">),</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>        .alu_op<span class="op">(</span>alu_op<span class="op">),</span> </span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>        .ext_write_en<span class="op">(</span>ext_write_en<span class="op">),</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>        .cb_write_en<span class="op">(</span>cb_write_en<span class="op">),</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>        .next_pc<span class="op">(</span>next_pc<span class="op">),</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>        .current_pc<span class="op">(</span>pc_reg<span class="op">),</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>        .bus_value<span class="op">(</span>data_bus<span class="op">)</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span> </span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Logic for PC, C/B, and EXT registers</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    <span class="kw">always</span> <span class="op">@(</span><span class="kw">posedge</span> clk<span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>ext_write_en<span class="op">)</span> ext_reg <span class="op">&lt;=</span> ext_result<span class="op">;</span> </span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>reset<span class="op">)</span> cb_reg <span class="op">&lt;=</span> <span class="dv">0</span><span class="op">;</span> </span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span>cb_write_en<span class="op">)</span> cb_reg <span class="op">&lt;=</span> alu_carry<span class="op">;</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>reset<span class="op">)</span> pc_reg <span class="op">&lt;=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> pc_reg <span class="op">&lt;=</span> next_pc<span class="op">;</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span> </span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> pc <span class="op">=</span> pc_reg<span class="op">;</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation" class="level4">
+<h4 class="anchored" data-anchor-id="explanation">Explanation:</h4>
+<ul>
+<li>The module takes <code>clk</code> and <code>reset</code> as inputs and outputs the program counter (<code>pc</code>) and the values of all 16 registers for easy monitoring during simulation.</li>
+<li>The <code>pc_reg</code> holds the current address, which is fed to the <code>instruction_memory</code> module to fetch the current <code>instruction</code>.</li>
+<li>The various components (<code>regs</code>, <code>acc</code>, <code>alu</code>, <code>ctrl_unt</code>) are instantiated and connected via wires. The <code>data_bus</code> is the main highway for moving data between the register file and the accumulator.</li>
+<li>The <code>always @(posedge clk)</code> block is the sequential heart of the processor. On every rising edge of the clock:
+<ul>
+<li>It updates the <code>ext_reg</code> but only if the control unit asserts the <code>ext_write_en</code> signal (which only happens after a <code>MUL</code> instruction).</li>
+<li>It updates the <code>cb_reg</code> with the carry from the ALU if the <code>cb_write_en</code> signal is high.</li>
+<li>Crucially, it updates the <code>pc_reg</code> with the <code>next_pc</code> value calculated by the control unit. This drives the program forward.</li>
+<li>The <code>reset</code> signal is used to initialize the <code>pc_reg</code> and <code>cb_reg</code> to a known state (0) at the beginning.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="storing-the-program-the-instruction_memory.v-module" class="level3">
+<h3 class="anchored" data-anchor-id="storing-the-program-the-instruction_memory.v-module">Storing the Program: The <code>instruction_memory.v</code> Module</h3>
+<p>This module acts as our processor’s program storage. For this project, instead of loading a program from an external source, we hardcode the instructions directly into a 32-byte memory array within this module.</p>
+<p>A key design choice here is for safety and predictability. After defining our program instructions, we fill the rest of the memory with the <code>HLT</code> (Halt) instruction. This is a defensive measure to prevent the processor from running indefinitely or executing garbage data if the Program Counter ever jumps to an unused memory address.</p>
+<section id="code-1" class="level4">
+<h4 class="anchored" data-anchor-id="code-1">Code:</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> instruction_memory<span class="op">(</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> address<span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> instruction</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> mem<span class="op">;</span> <span class="co">// 32-byte instruction memory </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">integer</span> i<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">initial</span> <span class="kw">begin</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Load test program (Here we can add any set of instructions) </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// For example:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        mem<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="bn">8'b1001_0101</span><span class="op">;</span> <span class="co">// MOV R5 to ACC </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        mem<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="bn">8'b0001_0100</span><span class="op">;</span> <span class="co">// ADD R4 WITH ACC </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        mem<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <span class="bn">8'b1111_1111</span><span class="op">;</span> <span class="co">// HALT </span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Here we fill the rest of the memory with HALT because if</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">// in case PC jumps to address value other than above then</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">// we do not want the program to run indefinitely. </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// This also ensures that the memory it is pointing to is</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">// always defined. </span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="kw">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">3</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">32</span><span class="op">;</span> i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            mem<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bn">8'b1111_1111</span><span class="op">;</span> </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">end</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> instruction <span class="op">=</span> mem<span class="op">[</span>address<span class="op">];</span> </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation-1" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-1">Explanation:</h4>
+<ul>
+<li>The module has a simple interface: it takes an 8-bit <code>address</code> (from the PC) and outputs the 8-bit <code>instruction</code> stored at that address.</li>
+<li><code>reg [7:0] mem [0:32];</code> declares our 32-byte memory.</li>
+<li>The <code>initial</code> block is executed only once at the very beginning of the simulation. We use it to load our program into the <code>mem</code> array.</li>
+<li>The final <code>assign instruction = mem[address];</code> line implements the read functionality. This is a combinational assignment, meaning the <code>instruction</code> output will instantly change whenever the <code>address</code> input changes. There’s no clock involved, making it a simple read-only memory.</li>
+</ul>
+</section>
+</section>
+<section id="the-processors-scratchpad-register_file.v" class="level3">
+<h3 class="anchored" data-anchor-id="the-processors-scratchpad-register_file.v">The Processor’s Scratchpad: <code>register_file.v</code></h3>
+<p>The register file is the processor’s primary workspace. It consists of 16 fast, 8-bit registers that can be used to hold operands and temporary results. The Control Unit dictates whether to read data from a register onto the main data bus or to write data from the bus into a register.</p>
+<p>For easier testing, we initialize the registers with some default values at the start (<code>R0=0x00</code>, <code>R1=0x01</code>, etc.).</p>
+<section id="code-2" class="level4">
+<h4 class="anchored" data-anchor-id="code-2">Code:</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">`timescale 1ns / 1ps</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> register_file <span class="op">(</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> clk<span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> read_addr<span class="op">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> read_en<span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> write_addr<span class="op">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> write_en<span class="op">,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">inout</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> bus</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> regs<span class="op">[</span><span class="dv">0</span><span class="op">:</span><span class="dv">15</span><span class="op">];</span> </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Initialize at start of the clock</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">integer</span> i<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">initial</span> <span class="kw">begin</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">for</span> <span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">16</span><span class="op">;</span> i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            regs<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bn">8'h00</span> <span class="op">+</span> i<span class="op">;</span> </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">end</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg_out <span class="op">=</span> read_en <span class="op">?</span> regs<span class="op">[</span>read_addr<span class="op">]</span> <span class="op">:</span> <span class="bn">8'bz</span><span class="op">;</span> </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> bus <span class="op">=</span> reg_out<span class="op">;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">always</span> <span class="op">@(</span><span class="kw">posedge</span> clk<span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>write_en<span class="op">)</span> regs<span class="op">[</span>write_addr<span class="op">]</span> <span class="op">&lt;=</span> bus<span class="op">;</span> </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation-2" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-2">Explanation:</h4>
+<ul>
+<li>The module has inputs for clock, read/write addresses, and read/write enable signals from the Control Unit. The <code>bus</code> is <code>inout</code> because the register file can both drive data onto the bus (read) and accept data from it (write).</li>
+<li><strong>Reading</strong>: The line <code>wire [7:0] reg_out = read_en ? regs[read_addr] : 8'bz;</code> is the core of the read logic. If <code>read_en</code> is high, the data from the selected register (<code>regs[read_addr]</code>) is placed on <code>reg_out</code>. If <code>read_en</code> is low, it outputs <code>8'bz</code>, which represents a high-impedance (or disconnected) state. This is critical because multiple components connect to the <code>bus</code>; using <code>bz</code> ensures that only one component drives the bus at any given time.</li>
+<li><strong>Writing</strong>: The <code>always @(posedge clk)</code> block handles writing. If the <code>write_en</code> signal is high, the value on the <code>bus</code> is captured and stored into the selected register (<code>regs[write_addr]</code>) on the next rising clock edge. This is a sequential operation, ensuring that the register file’s state only changes at discrete moments in time controlled by the clock.</li>
+</ul>
+</section>
+</section>
+<section id="the-calculator-alu.v-arithmetic-logic-unit" class="level3">
+<h3 class="anchored" data-anchor-id="the-calculator-alu.v-arithmetic-logic-unit">The Calculator: <code>alu.v</code> (Arithmetic Logic Unit)</h3>
+<p>The Arithmetic Logic Unit (ALU) is the computational engine of our processor. This is where all the math and logic happens. It’s a purely combinational module, meaning it doesn’t have a clock or any memory of its own. It simply takes two 8-bit operands (one from the accumulator and one from the data bus) and an operation code from the Control Unit, and instantly produces a result.</p>
+<p>Our ALU handles a variety of operations, including addition, subtraction, multiplication, bitwise AND/XOR, and various shift operations.</p>
+<section id="code-3" class="level4">
+<h4 class="anchored" data-anchor-id="code-3">Code:</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">`timescale 1ns / 1ps</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> alu <span class="op">(</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> acc<span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> bus<span class="op">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> alu_op<span class="op">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> result<span class="op">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> carry<span class="op">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> ext_result</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Parameters for readable code</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">parameter</span> ADD<span class="op">=</span><span class="dv">0</span><span class="op">,</span> SUB<span class="op">=</span><span class="dv">1</span><span class="op">,</span> MUL<span class="op">=</span><span class="dv">2</span><span class="op">,</span> AND<span class="op">=</span><span class="dv">3</span><span class="op">,</span> XRA<span class="op">=</span><span class="dv">4</span><span class="op">,</span> LS<span class="op">=</span><span class="dv">5</span><span class="op">,</span> RS<span class="op">=</span><span class="dv">6</span><span class="op">,</span> CRS<span class="op">=</span><span class="dv">7</span><span class="op">,</span> CLS<span class="op">=</span><span class="dv">8</span><span class="op">,</span> ASR<span class="op">=</span><span class="dv">9</span><span class="op">,</span> INC<span class="op">=</span><span class="dv">10</span><span class="op">,</span> DEC<span class="op">=</span><span class="dv">11</span><span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">always</span> <span class="op">@(</span>*<span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span>carry<span class="op">,</span> result<span class="op">}</span> <span class="op">=</span> <span class="bn">9'b0</span><span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        ext_result <span class="op">=</span> <span class="bn">8'b0</span><span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> <span class="op">(</span>alu_op<span class="op">)</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="dv">ADD:</span> <span class="op">{</span>carry<span class="op">,</span> result<span class="op">}</span> <span class="op">=</span> acc <span class="op">+</span> bus<span class="op">;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="dv">SUB:</span> <span class="op">{</span>carry<span class="op">,</span> result<span class="op">}</span> <span class="op">=</span> acc <span class="op">-</span> bus<span class="op">;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="dv">MUL:</span> <span class="op">{</span>ext_result<span class="op">,</span> result<span class="op">}</span> <span class="op">=</span> acc * bus<span class="op">;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            <span class="dv">AND:</span> result <span class="op">=</span> acc <span class="op">&amp;</span> bus<span class="op">;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            <span class="dv">XRA:</span> result <span class="op">=</span> acc <span class="op">^</span> bus<span class="op">;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>            <span class="dv">LS:</span> result <span class="op">=</span> <span class="op">{</span>acc<span class="op">[</span><span class="dv">6</span><span class="op">:</span><span class="dv">0</span><span class="op">],</span> <span class="bn">1'b0</span><span class="op">};</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            <span class="dv">RS:</span> result <span class="op">=</span> <span class="op">{</span><span class="bn">1'b0</span><span class="op">,</span> acc<span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">1</span><span class="op">]};</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            <span class="dv">CRS:</span> result <span class="op">=</span> <span class="op">{</span>acc<span class="op">[</span><span class="dv">0</span><span class="op">],</span> acc<span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">1</span><span class="op">]};</span>          </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            <span class="dv">CLS:</span> result <span class="op">=</span> <span class="op">{</span>acc<span class="op">[</span><span class="dv">6</span><span class="op">:</span><span class="dv">0</span><span class="op">],</span> acc<span class="op">[</span><span class="dv">7</span><span class="op">]};</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            <span class="dv">ASR:</span> result <span class="op">=</span> <span class="op">{</span>acc<span class="op">[</span><span class="dv">7</span><span class="op">],</span> acc<span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">1</span><span class="op">]};</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            <span class="dv">INC:</span> <span class="op">{</span>carry<span class="op">,</span> result<span class="op">}</span> <span class="op">=</span> <span class="op">{</span><span class="bn">1'b0</span><span class="op">,</span> acc<span class="op">}</span> <span class="op">+</span> <span class="bn">9'h1</span><span class="op">;</span> </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>            <span class="dv">DEC:</span> <span class="op">{</span>carry<span class="op">,</span> result<span class="op">}</span> <span class="op">=</span> <span class="op">{</span><span class="bn">1'b0</span><span class="op">,</span> acc<span class="op">}</span> <span class="op">-</span> <span class="bn">9'h1</span><span class="op">;</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>            <span class="kw">default</span><span class="op">:</span> result <span class="op">=</span> acc<span class="op">;</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">endcase</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation-3" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-3">Explanation:</h4>
+<ul>
+<li>The <code>parameter</code> definitions at the top replace magic numbers (like 0, 1, 2) with human-readable names (<code>ADD</code>, <code>SUB</code>, <code>MUL</code>), making the <code>case</code> statement much easier to follow.</li>
+<li>The <code>always @(*)</code> block tells the synthesizer to re-evaluate the block whenever <em>any</em> of the inputs (<code>acc</code>, <code>bus</code>, or <code>alu_op</code>) change.</li>
+<li><strong><code>ADD</code>/<code>SUB</code></strong>: The addition <code>acc + bus</code> produces a 9-bit result. We capture this entire result in a 9-bit wire <code>{carry, result}</code>. The most significant bit becomes our <code>carry</code> (or borrow for <code>SUB</code>), and the lower 8 bits become the main <code>result</code>.</li>
+<li><strong><code>MUL</code></strong>: The multiplication <code>acc * bus</code> produces a 16-bit result. We split this into two 8-bit parts: <code>{ext_result, result}</code>. The lower 8 bits (<code>result</code>) will go back to the accumulator, while the upper 8 bits (<code>ext_result</code>) are sent to the special EXT register.</li>
+<li><strong>Shifts</strong>: Operations like logical shift left (<code>LS</code>) are implemented using Verilog’s concatenation operator. For <code>LS</code>, we take the 7 most significant bits of the accumulator (<code>acc[6:0]</code>) and append a <code>0</code> at the end.</li>
+<li><strong><code>default</code></strong>: This is a fallback case. If the ALU receives an undefined <code>alu_op</code>, it simply passes the accumulator value through without modification.</li>
+</ul>
+</section>
+</section>
+<section id="the-central-register-accumulator.v" class="level3">
+<h3 class="anchored" data-anchor-id="the-central-register-accumulator.v">The Central Register: <code>accumulator.v</code></h3>
+<p>The accumulator (<code>ACC</code>) is a special 8-bit register that plays a central role in our processor’s design. It implicitly serves as one of the source operands for two-operand instructions, and it’s also the destination where the result is stored.</p>
+<p>The accumulator can be loaded from two different sources: the output of the ALU (after a calculation) or directly from the data bus (for a <code>MOV</code> instruction). The Control Unit decides which source to use.</p>
+<section id="code-4" class="level4">
+<h4 class="anchored" data-anchor-id="code-4">Code:</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">`timescale 1ns / 1ps</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> accumulator <span class="op">(</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> clk<span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> alu_in<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> bus_in<span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> acc_sel<span class="op">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> write_en<span class="op">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> output_en<span class="op">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> acc_value<span class="op">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">inout</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> bus_out</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> next_acc <span class="op">=</span> acc_sel <span class="op">?</span> alu_in <span class="op">:</span> bus_in<span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assign</span> bus_out <span class="op">=</span> output_en <span class="op">?</span> acc_value <span class="op">:</span> <span class="bn">8'bz</span><span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">always</span> <span class="op">@(</span><span class="kw">posedge</span> clk<span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>write_en<span class="op">)</span> acc_value <span class="op">&lt;=</span> next_acc<span class="op">;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation-4" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-4">Explanation:</h4>
+<ul>
+<li><code>wire [7:0] next_acc = acc_sel ? alu_in : bus_in;</code> is a 2-to-1 multiplexer. If the control signal <code>acc_sel</code> is high, the value for the accumulator comes from the ALU (<code>alu_in</code>). If it’s low, the value comes from the main data bus (<code>bus_in</code>).</li>
+<li><code>assign bus_out = output_en ? acc_value : 8'bz;</code> is the output gate. When the <code>output_en</code> signal is high, the accumulator’s current value is placed onto the <code>bus_out</code>. Otherwise, it outputs high-impedance (<code>bz</code>), letting another component use the bus.</li>
+<li><code>always @(posedge clk)</code> makes this a register. The accumulator’s value (<code>acc_value</code>) is only updated on the rising edge of the clock, and only if the <code>write_en</code> signal is asserted by the Control Unit.</li>
+</ul>
+</section>
+</section>
+<section id="the-brains-of-the-operation-control_unit.v" class="level3">
+<h3 class="anchored" data-anchor-id="the-brains-of-the-operation-control_unit.v">The Brains of the Operation: <code>control_unit.v</code></h3>
+<p>If the ALU is the calculator, the Control Unit is the operator. This module is the true brain of our processor. It takes the 8-bit instruction fetched from memory and, like a master puppeteer, pulls all the right strings. It decodes the instruction and generates the specific set of <code>enable</code>, <code>select</code>, and <code>address</code> signals that command the other components—the Register File, Accumulator, and ALU—to perform the required task.</p>
+<p>This is a large, purely combinational module. Its logic is essentially a giant decoder implemented with a <code>case</code> statement. A crucial design pattern here is to set all control signals to a “safe” default state (usually ‘0’ or “off”) at the beginning of the <code>always</code> block. Then, for each specific instruction, we only assert the signals that need to be active. This prevents accidental behavior and ensures stability.</p>
+<section id="code-5" class="level4">
+<h4 class="anchored" data-anchor-id="code-5">Code:</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">`timescale 1ns / 1ps</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> control_unit <span class="op">(</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> clk<span class="op">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> reset<span class="op">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> instruction<span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> cb_reg<span class="op">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> alu_carry<span class="op">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> reg_read_en<span class="op">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg_read_addr<span class="op">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> reg_write_en<span class="op">,</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg_write_addr<span class="op">,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> acc_sel<span class="op">,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> acc_write_en<span class="op">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> acc_output_en<span class="op">,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> alu_op<span class="op">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> ext_write_en<span class="op">,</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> cb_write_en<span class="op">,</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">output</span> <span class="dt">reg</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> next_pc<span class="op">,</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> current_pc<span class="op">,</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">input</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> bus_value</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">parameter</span> ADD<span class="op">=</span><span class="dv">0</span><span class="op">,</span> SUB<span class="op">=</span><span class="dv">1</span><span class="op">,</span> MUL<span class="op">=</span><span class="dv">2</span><span class="op">,</span> AND<span class="op">=</span><span class="dv">3</span><span class="op">,</span> XOR<span class="op">=</span><span class="dv">4</span><span class="op">,</span> LS<span class="op">=</span><span class="dv">5</span><span class="op">,</span> RS<span class="op">=</span><span class="dv">6</span><span class="op">,</span> CRS<span class="op">=</span><span class="dv">7</span><span class="op">,</span> CLS<span class="op">=</span><span class="dv">8</span><span class="op">,</span> ASR<span class="op">=</span><span class="dv">9</span><span class="op">,</span> INC<span class="op">=</span><span class="dv">10</span><span class="op">,</span> DEC<span class="op">=</span><span class="dv">11</span><span class="op">;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">always</span> <span class="op">@(</span>*<span class="op">)</span> <span class="kw">begin</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Default values</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        reg_read_en <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        reg_read_addr <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        reg_write_en <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        reg_write_addr <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        acc_sel <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        acc_write_en <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        acc_output_en <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        alu_op <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        ext_write_en <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        cb_write_en <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        next_pc <span class="op">=</span> current_pc <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>        <span class="kw">casez</span> <span class="op">(</span>instruction<span class="op">)</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b0001_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// ADD</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                reg_read_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>                reg_read_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>                alu_op <span class="op">=</span> ADD<span class="op">;</span> </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>                acc_sel <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                acc_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>                cb_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b0010_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// SUB</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                reg_read_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>                reg_read_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>                alu_op <span class="op">=</span> SUB<span class="op">;</span> </span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>                acc_sel <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>                acc_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>                cb_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b0011_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// MUL</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>                reg_read_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>                reg_read_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>                alu_op <span class="op">=</span> MUL<span class="op">;</span> </span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>                acc_sel <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>                acc_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>                ext_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b0000_0001</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// LS</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>                alu_op <span class="op">=</span> LS<span class="op">;</span> </span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>                acc_sel <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>                acc_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b0101_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// AND</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>                reg_read_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>                reg_read_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>                alu_op <span class="op">=</span> AND<span class="op">;</span> </span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>                acc_sel <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>                acc_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b0111_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// CMP</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>                reg_read_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>                reg_read_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>                alu_op <span class="op">=</span> SUB<span class="op">;</span> </span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>                cb_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b1000_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// Conditional branch</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>                <span class="kw">if</span> <span class="op">(</span>cb_reg<span class="op">)</span> next_pc <span class="op">=</span> <span class="op">{</span><span class="bn">4'b0</span><span class="op">,</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">]};</span> </span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span> </span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b1001_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// MOV Ri to ACC</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>                reg_read_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>                reg_read_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>                acc_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b1010_zzzz</span><span class="op">:</span> <span class="kw">begin</span> <span class="co">// MOV ACC to Ri</span></span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>                acc_output_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>                reg_write_en <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>                reg_write_addr <span class="op">=</span> instruction<span class="op">[</span><span class="dv">3</span><span class="op">:</span><span class="dv">0</span><span class="op">];</span> </span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>            <span class="bn">8'b1111_1111</span><span class="op">:</span> next_pc <span class="op">=</span> current_pc<span class="op">;</span> <span class="co">// HALT </span></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>            <span class="kw">default</span><span class="op">:</span> <span class="kw">begin</span></span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>                next_pc <span class="op">=</span> current_pc <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> </span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>        <span class="kw">endcase</span></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation-5" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-5">Explanation:</h4>
+<ul>
+<li>By default, the <code>next_pc</code> is set to <code>current_pc + 1</code>, ensuring the program progresses sequentially.</li>
+<li>The <code>casez</code> statement allows us to use <code>z</code> as a “don’t care” character. This is incredibly useful for instructions like <code>ADD Ri</code> (<code>8'b0001_zzzz</code>), where the upper 4 bits define the operation, and the lower 4 bits define the register operand.</li>
+<li><strong>Let’s trace <code>ADD R1</code> (<code>8'b0001_0001</code>)</strong>:
+<ol type="1">
+<li>The <code>casez</code> statement matches <code>8'b0001_zzzz</code>.</li>
+<li><code>reg_read_en</code> is set to 1, telling the register file to get ready to read.</li>
+<li><code>reg_read_addr</code> is set to <code>instruction[3:0]</code>, which is <code>0001</code>. The register file will output the contents of <code>R1</code> onto the data bus.</li>
+<li><code>alu_op</code> is set to <code>ADD</code>, telling the ALU to add its inputs.</li>
+<li><code>acc_write_en</code> and <code>acc_sel=1</code> are asserted, telling the accumulator to take the result from the ALU and store it on the next clock cycle.</li>
+<li><code>cb_write_en</code> is asserted, so the C/B register will be updated with the carry-out of the addition.</li>
+</ol></li>
+<li><strong>Conditional Branch (<code>Br</code>)</strong>: This instruction is special. It checks the value of the <code>cb_reg</code>. If <code>cb_reg</code> is 1, it overrides the default <code>next_pc</code> and loads it with the 4-bit address from the instruction itself. Otherwise, it does nothing, and the PC increments as usual.</li>
+<li><strong>Halt (<code>HLT</code>)</strong>: The simplest, yet most important instruction for ending a program. It sets <code>next_pc = current_pc</code>, causing the processor to get stuck in an intentional, one-instruction loop, effectively stopping execution.</li>
+</ul>
+<hr>
+</section>
+</section>
+</section>
+<section id="making-sure-it-works-the-testbench" class="level2">
+<h2 class="anchored" data-anchor-id="making-sure-it-works-the-testbench">Making Sure It Works: The Testbench</h2>
+<p>We’ve designed all the components, but how do we know they actually work together? We need to test them. In Verilog, this is done using a <strong>testbench</strong>. A testbench is a separate Verilog module that doesn’t represent actual hardware. Instead, its purpose is to instantiate our processor, generate the necessary inputs like a clock and reset signal, and let us observe the outputs.</p>
+<section id="code-6" class="level4">
+<h4 class="anchored" data-anchor-id="code-6">Code:</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode verilog code-with-copy"><code class="sourceCode verilog"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">`timescale 1ns / 1ps</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> processor_TB<span class="op">();</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">reg</span> clk<span class="op">,</span> reset<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> pc<span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> <span class="op">[</span><span class="dv">7</span><span class="op">:</span><span class="dv">0</span><span class="op">]</span> reg0<span class="op">,</span> reg1<span class="op">,</span> reg2<span class="op">,</span> reg3<span class="op">,</span> reg4<span class="op">,</span> reg5<span class="op">,</span> reg6<span class="op">,</span> reg7<span class="op">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>               reg8<span class="op">,</span> reg9<span class="op">,</span> reg10<span class="op">,</span> reg11<span class="op">,</span> reg12<span class="op">,</span> reg13<span class="op">,</span> reg14<span class="op">,</span> reg15<span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">wire</span> cb_reg<span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Instantiate the Unit Under Test (UUT)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    processor uut <span class="op">(</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        .clk<span class="op">(</span>clk<span class="op">),</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        .reset<span class="op">(</span>reset<span class="op">),</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        .pc<span class="op">(</span>pc<span class="op">),</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        .cb_reg<span class="op">(</span>cb_reg<span class="op">),</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        .reg0<span class="op">(</span>reg0<span class="op">),</span>  .reg1<span class="op">(</span>reg1<span class="op">),</span>  .reg2<span class="op">(</span>reg2<span class="op">),</span>  .reg3<span class="op">(</span>reg3<span class="op">),</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        .reg4<span class="op">(</span>reg4<span class="op">),</span>  .reg5<span class="op">(</span>reg5<span class="op">),</span>  .reg6<span class="op">(</span>reg6<span class="op">),</span>  .reg7<span class="op">(</span>reg7<span class="op">),</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        .reg8<span class="op">(</span>reg8<span class="op">),</span>  .reg9<span class="op">(</span>reg9<span class="op">),</span>  .reg10<span class="op">(</span>reg10<span class="op">),</span>.reg11<span class="op">(</span>reg11<span class="op">),</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        .reg12<span class="op">(</span>reg12<span class="op">),</span>.reg13<span class="op">(</span>reg13<span class="op">),</span>.reg14<span class="op">(</span>reg14<span class="op">),</span>.reg15<span class="op">(</span>reg15<span class="op">)</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Clock generator</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">always</span> <span class="bn">#5</span> clk <span class="op">=</span> <span class="op">~</span>clk<span class="op">;</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">initial</span> <span class="kw">begin</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Initialize signals</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        clk <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        reset <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Release reset after 10ns</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="bn">#10</span> reset <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Run simulation for a while and then stop</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="bn">#100</span> <span class="dt">$finish</span><span class="op">;</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="kw">endmodule</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="explanation-6" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-6">Explanation:</h4>
+<ul>
+<li>We instantiate our <code>processor</code>, which we label <code>uut</code> (Unit Under Test).</li>
+<li>The <code>always #5 clk = ~clk;</code> line creates a clock signal with a 10ns period (5ns high, 5ns low).</li>
+<li>The <code>initial</code> block controls the simulation sequence. It starts the clock, asserts <code>reset</code> for 10ns to initialize the processor, and then de-asserts it to let the program run. The <code>#100 $finish;</code> command simply stops the simulation after 100ns.</li>
+</ul>
+</section>
+</section>
+<section id="the-moment-of-truth-simulation-results" class="level2">
+<h2 class="anchored" data-anchor-id="the-moment-of-truth-simulation-results">The Moment of Truth: Simulation Results</h2>
+<p>With the design coded and the testbench written, we can finally run the simulation. By loading different programs into the <code>instruction_memory.v</code> module, we can generate waveform diagrams that provide a cycle-by-cycle view of the processor’s internal state. This is how we verify that every instruction and every component behaves exactly as expected.</p>
+<section id="testing-individual-operations" class="level3">
+<h3 class="anchored" data-anchor-id="testing-individual-operations">Testing Individual Operations</h3>
+<p>First, we can test instructions in isolation to confirm their specific functionality. Let’s look at a couple of key functions.</p>
+<section id="example-1-sub-and-the-cb-flag" class="level4">
+<h4 class="anchored" data-anchor-id="example-1-sub-and-the-cb-flag">Example 1: <code>SUB</code> and the C/B Flag</h4>
+<p>This test checks the subtraction operation and verifies that the Carry/Borrow (C/B) flag is set correctly on an underflow (borrow).</p>
+<ul>
+<li><strong>Program in Memory:</strong>
+<ul>
+<li><code>mem[0] = 8'b1001_0101;</code> // MOV R5 -&gt; ACC</li>
+<li><code>mem[1] = 8'b0010_0011;</code> // SUB R3 -&gt; ACC</li>
+<li><code>mem[2] = 8'b1001_0111;</code> // MOV R7 -&gt; ACC</li>
+<li><code>mem[3] = 8'b0010_1000;</code> // SUB R8 -&gt; ACC (Causes underflow)</li>
+<li><code>mem[4] = 8'b1111_1111;</code> // HALT</li>
+</ul></li>
+<li><strong>Execution Analysis:</strong>
+<ul>
+<li><strong>Cycle 1 (PC=0):</strong> The <code>MOV R5 -&gt; ACC</code> instruction executes. The initial value of <code>R5</code> is <code>0x05</code>. The accumulator <code>acc_value</code> is loaded with <code>5</code>.</li>
+<li><strong>Cycle 2 (PC=1):</strong> The <code>SUB R3 -&gt; ACC</code> instruction executes. The value of <code>R3</code> (<code>0x03</code>) is subtracted from the accumulator. <code>acc_value</code> becomes <code>5 - 3 = 2</code>. Since there’s no borrow, <code>cb_reg</code> remains <code>0</code>.</li>
+<li><strong>Cycle 3 (PC=2):</strong> The <code>MOV R7 -&gt; ACC</code> instruction executes. The <code>acc_value</code> is updated with the value of <code>R7</code>, which is <code>7</code>.</li>
+<li><strong>Cycle 4 (PC=3):</strong> The <code>SUB R8 -&gt; ACC</code> instruction executes. The ALU attempts to subtract the value of <code>R8</code> (<code>8</code>) from the <code>acc_value</code> (<code>7</code>). This operation, <code>7 - 8</code>, results in an underflow. The <code>acc_value</code> wraps around to <code>255</code> (<code>0xFF</code>), and critically, the <code>cb_reg</code> is set to <code>1</code> to indicate a borrow occurred.</li>
+<li><strong>Cycle 5 (PC=4):</strong> The <code>HALT</code> instruction is fetched, and the PC stops incrementing.</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="sub_sim.png" class="img-fluid figure-img"></p>
+<figcaption>Testbench of SUB</figcaption>
+</figure>
+</div>
+</section>
+<section id="example-2-mov-register-to-register" class="level4">
+<h4 class="anchored" data-anchor-id="example-2-mov-register-to-register">Example 2: <code>MOV</code> (Register to Register)</h4>
+<p>This test demonstrates moving data between registers, using the accumulator as an intermediary. It’s a fundamental operation for rearranging data.</p>
+<ul>
+<li><strong>Program in Memory:</strong>
+<ul>
+<li><code>mem[0] = 8'b1001_0001;</code> // MOV R1 -&gt; ACC</li>
+<li><code>mem[1] = 8'b1010_0010;</code> // MOV ACC -&gt; R2</li>
+<li><code>mem[2] = 8'b1111_1111;</code> // HALT</li>
+</ul></li>
+<li><strong>Execution Analysis:</strong>
+<ul>
+<li>At the start, the registers are initialized with their index values, so <code>R1</code> holds <code>1</code> and <code>R2</code> holds <code>2</code>.</li>
+<li><strong>Cycle 1 (PC=0):</strong> The <code>MOV R1 -&gt; ACC</code> instruction is executed. The value of <code>R1</code> (<code>1</code>) is loaded into the accumulator. <code>acc_value</code> becomes <code>1</code>.</li>
+<li><strong>Cycle 2 (PC=1):</strong> The <code>MOV ACC -&gt; R2</code> instruction executes. The value currently in the accumulator (<code>1</code>) is written into register <code>R2</code>. The waveform clearly shows the value of <code>reg2[7:0]</code> changing from its initial value of <code>02</code> to <code>01</code>.</li>
+<li><strong>Cycle 3 (PC=2):</strong> The <code>HALT</code> instruction stops the processor.</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mov_sim.png" class="img-fluid figure-img"></p>
+<figcaption>Testbench of MOV</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="running-a-full-program" class="level3">
+<h3 class="anchored" data-anchor-id="running-a-full-program">Running a Full Program</h3>
+<p>Finally, we’ll look at a combined operation set that uses arithmetic, a shift, and a conditional branch to perform a more complex task.</p>
+<ul>
+<li><strong>Program from Report “Combined Operations C”:</strong>
+<ul>
+<li><code>mem[0] = 8'b1001_0010;</code> // MOV R2 -&gt; ACC</li>
+<li><code>mem[1] = 8'b0001_0011;</code> // ADD R3</li>
+<li><code>mem[2] = 8'b0000_0001;</code> // SHL ACC (Shift Left)</li>
+<li><code>mem[3] = 8'b0111_0100;</code> // CMP R4 (Compare with R4)</li>
+<li><code>mem[4] = 8'b1000_0101;</code> // Branch to 5 if C/B=1</li>
+<li><code>mem[5] = 8'b1111_1111;</code> // HALT</li>
+</ul></li>
+<li><strong>Execution Analysis:</strong>
+<ol type="1">
+<li><strong><code>MOV R2 -&gt; ACC</code></strong>: The value of <code>R2</code> (<code>2</code>, or <code>0b00000010</code>) is loaded into the accumulator.</li>
+<li><strong><code>ADD R3</code></strong>: The value of <code>R3</code> (<code>3</code>) is added. <code>acc_value</code> becomes <code>2 + 3 = 5</code> (<code>0b00000101</code>).</li>
+<li><strong><code>SHL ACC</code></strong>: The accumulator value is shifted left by one bit. <code>acc_value</code> becomes <code>10</code> (<code>0b00001010</code>).</li>
+<li><strong><code>CMP R4</code></strong>: The <code>acc_value</code> (<code>10</code>) is compared with <code>R4</code> (<code>4</code>). The ALU performs <code>10 - 4</code>. Since the result is positive, there is no borrow, and <code>cb_reg</code> is set to <code>0</code>.</li>
+<li><strong><code>Branch to 5 if C/B=1</code></strong>: The control unit checks the <code>cb_reg</code> and finds it is <code>0</code>. The branch condition is false, so the branch is <strong>not</strong> taken. The processor proceeds to the next instruction in sequence.</li>
+<li><strong><code>HALT</code></strong>: The PC, having incremented normally to 5, fetches the <code>HALT</code> instruction and stops.</li>
+</ol></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="full_sim.png" class="img-fluid figure-img"></p>
+<figcaption>Testbench of our Full Program</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>And there you have it—a simple 8-bit processor, designed, implemented in Verilog, and tested from the ground up. It highlights how a complex machine like a processor is built from a set of simpler, well-defined modules, all coordinated by a central control unit that speaks the language of the instruction set.</p>
+<p>Building this processor reinforced a core engineering principle: breaking a large problem into smaller, manageable parts is the key to success. In a world increasingly dominated by software, taking a moment to understand the fundamental hardware that powers it all is an incredibly valuable experience.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/devansh-lodha\.github\.io\/blog\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

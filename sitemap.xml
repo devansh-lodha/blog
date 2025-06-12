@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
-    <lastmod>2025-04-23T11:57:47.251Z</lastmod>
-  </url>
-  <url>
     <loc>https://devansh-lodha.github.io/blog/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html</loc>
-    <lastmod>2025-04-23T11:57:47.662Z</lastmod>
+    <lastmod>2025-06-12T19:15:06.458Z</lastmod>
   </url>
   <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/ml_publication_trends/ml_publication_trends.html</loc>
-    <lastmod>2025-04-23T11:57:47.489Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
-    <lastmod>2025-04-23T11:57:47.190Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
-    <lastmod>2025-04-23T11:57:47.480Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
-    <lastmod>2025-04-23T11:57:47.651Z</lastmod>
+    <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
+    <lastmod>2025-06-12T19:15:06.041Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
-    <lastmod>2025-04-23T11:57:47.318Z</lastmod>
+    <lastmod>2025-06-12T19:15:06.108Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/processor_verilog/processor_verilog.html</loc>
+    <lastmod>2025-06-12T19:15:06.446Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
+    <lastmod>2025-06-12T19:15:05.982Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
+    <lastmod>2025-06-12T19:15:06.267Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
+    <lastmod>2025-06-12T19:15:06.435Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/ml_publication_trends/ml_publication_trends.html</loc>
+    <lastmod>2025-06-12T19:15:06.276Z</lastmod>
   </url>
 </urlset>
