@@ -2,34 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html</loc>
-    <lastmod>2025-06-12T19:15:06.458Z</lastmod>
+    <lastmod>2025-06-12T20:19:23.622Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
-    <lastmod>2025-06-12T19:15:06.041Z</lastmod>
+    <lastmod>2025-06-12T20:19:23.204Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
-    <lastmod>2025-06-12T19:15:06.108Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/processor_verilog/processor_verilog.html</loc>
-    <lastmod>2025-06-12T19:15:06.446Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
-    <lastmod>2025-06-12T19:15:05.982Z</lastmod>
+    <lastmod>2025-06-12T20:19:23.271Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
-    <lastmod>2025-06-12T19:15:06.267Z</lastmod>
+    <lastmod>2025-06-12T20:19:23.430Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
+    <lastmod>2025-06-12T20:19:23.145Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/processor_verilog/processor_verilog.html</loc>
+    <lastmod>2025-06-12T20:19:23.609Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/remote_ssh_servers/remote_ssh_servers.html</loc>
+    <lastmod>2025-06-12T20:19:23.610Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
-    <lastmod>2025-06-12T19:15:06.435Z</lastmod>
+    <lastmod>2025-06-12T20:19:23.598Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/ml_publication_trends/ml_publication_trends.html</loc>
-    <lastmod>2025-06-12T19:15:06.276Z</lastmod>
+    <lastmod>2025-06-12T20:19:23.438Z</lastmod>
   </url>
 </urlset>

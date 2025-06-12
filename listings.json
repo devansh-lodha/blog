@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/remote_ssh_servers/remote_ssh_servers.html",
       "/posts/processor_verilog/processor_verilog.html",
       "/posts/ml_publication_trends/ml_publication_trends.html",
       "/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html",
