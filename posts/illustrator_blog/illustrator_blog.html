@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Devansh Lodha">
+<meta name="dcterms.date" content="2024-10-15">
+<meta name="description" content="A Guide to Design Fundamentals and Adobe Illustrator, inspired by TEDxIITGandhinagar 2025’s Design Meets.">
+
+<title>Guide to Design Fundamentals and Adobe Illustrator – Devansh’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f8dd60e654e2b9c8d5523d7f632da173.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-bb815ccc591fed04ba3f41ececb64847.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-f8dd60e654e2b9c8d5523d7f632da173.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Devansh’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/"> 
+<span class="menu-text">about</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/blog/"> 
+<span class="menu-text">blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/publications/"> 
+<span class="menu-text">publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/projects/"> 
+<span class="menu-text">projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/repositories/"> 
+<span class="menu-text">repositories</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Guide to Design Fundamentals and Adobe Illustrator</h1>
+                  <div>
+        <div class="description">
+          A Guide to Design Fundamentals and Adobe Illustrator, inspired by TEDxIITGandhinagar 2025’s Design Meets.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">design</div>
+                <div class="quarto-category">adobe</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Devansh Lodha </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 15, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-good-design-matters" id="toc-why-good-design-matters" class="nav-link active" data-scroll-target="#why-good-design-matters">Why Good Design Matters</a></li>
+  <li><a href="#part-1-understanding-color" id="toc-part-1-understanding-color" class="nav-link" data-scroll-target="#part-1-understanding-color">Part 1: Understanding Color</a></li>
+  <li><a href="#part-2-getting-started-with-adobe-illustrator" id="toc-part-2-getting-started-with-adobe-illustrator" class="nav-link" data-scroll-target="#part-2-getting-started-with-adobe-illustrator">Part 2: Getting Started with Adobe Illustrator</a></li>
+  <li><a href="#part-3-your-illustrator-arsenal" id="toc-part-3-your-illustrator-arsenal" class="nav-link" data-scroll-target="#part-3-your-illustrator-arsenal">Part 3: Your Illustrator Arsenal</a></li>
+  <li><a href="#part-4-workflow-and-efficiency" id="toc-part-4-workflow-and-efficiency" class="nav-link" data-scroll-target="#part-4-workflow-and-efficiency">Part 4: Workflow and Efficiency</a></li>
+  <li><a href="#part-5-advanced-illustrator-techniques" id="toc-part-5-advanced-illustrator-techniques" class="nav-link" data-scroll-target="#part-5-advanced-illustrator-techniques">Part 5: Advanced Illustrator Techniques</a></li>
+  <li><a href="#part-6-automating-your-workflow" id="toc-part-6-automating-your-workflow" class="nav-link" data-scroll-target="#part-6-automating-your-workflow">Part 6: Automating Your Workflow</a></li>
+  <li><a href="#part-7-exporting-your-masterpiece" id="toc-part-7-exporting-your-masterpiece" class="nav-link" data-scroll-target="#part-7-exporting-your-masterpiece">Part 7: Exporting Your Masterpiece</a></li>
+  <li><a href="#part-8-design-resource-list" id="toc-part-8-design-resource-list" class="nav-link" data-scroll-target="#part-8-design-resource-list">Part 8: Design Resource List</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<section id="why-good-design-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-good-design-matters">Why Good Design Matters</h3>
+<p>Before diving into the tools, it’s crucial to understand the “why.” Good design is about effective communication. For TEDx, while the classic Red, White, and Black is iconic, understanding broader design principles allows for more creative and impactful visuals.</p>
+<hr>
+</section>
+<section id="part-1-understanding-color" class="level3">
+<h3 class="anchored" data-anchor-id="part-1-understanding-color">Part 1: Understanding Color</h3>
+<p>Color is one of the most powerful tools in a designer’s arsenal. It can evoke emotions, draw attention, and create visual harmony.</p>
+<section id="rgb-vs.-cmyk-digital-vs.-print" class="level4">
+<h4 class="anchored" data-anchor-id="rgb-vs.-cmyk-digital-vs.-print"><strong>RGB vs.&nbsp;CMYK: Digital vs.&nbsp;Print</strong></h4>
+<p>At its core, how we perceive color depends on the medium.</p>
+<ul>
+<li><strong>RGB (Red, Green, Blue):</strong> This is the <strong>additive color model</strong> used for digital screens. It starts with black and adds colored light to create the spectrum. The more light you add, the brighter the color. When red, green, and blue light are combined at full intensity, they create pure white light. Think of it as mixing light waves, which is how our eyes perceive color.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/rgb_color_model.png" class="img-fluid figure-img"></p>
+<figcaption>RGB Color Model</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>CMYK (Cyan, Magenta, Yellow, Key/Black):</strong> This is the <strong>subtractive color model</strong> used for physical printing. It’s called “subtractive” because you start with a white surface (like paper) and subtract light by adding ink. Printers use these four colors to produce a vast range of hues on physical media.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/cmyk_color_model.png" class="img-fluid figure-img"></p>
+<figcaption>CMYK Color Model</figcaption>
+</figure>
+</div>
+</section>
+<section id="the-color-wheel-your-guide-to-harmony" class="level4">
+<h4 class="anchored" data-anchor-id="the-color-wheel-your-guide-to-harmony"><strong>The Color Wheel: Your Guide to Harmony</strong></h4>
+<p>The color wheel is a fundamental tool for combining colors effectively.</p>
+<ul>
+<li><strong>Primary Colors:</strong> Red, Yellow, Blue.</li>
+<li><strong>Secondary Colors:</strong> Green, Orange, Purple (created by mixing primary colors).</li>
+<li><strong>Tertiary Colors:</strong> Created by mixing a primary and a secondary color (e.g., blue-green, red-violet).</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/color_wheel.png" class="img-fluid figure-img"></p>
+<figcaption>Color Wheel</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>Warm and Cool Colors:</strong> A line drawn through the center of the wheel separates the warm colors (reds, oranges, yellows) from the cool colors (blues, greens, purples).
+<ul>
+<li><strong>Warm colors</strong> are associated with energy, brightness, and action.</li>
+<li><strong>Cool colors</strong> often evoke feelings of calm, peace, and serenity.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Warm Colors</th>
+<th style="text-align: center;">Cool Colors</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="images/warm_colors.png" class="img-fluid" alt="Warm Colors"></td>
+<td style="text-align: center;"><img src="images/cool_colors.png" class="img-fluid" alt="Cool Colors"></td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+</section>
+<section id="hue-shade-tint-and-tone" class="level4">
+<h4 class="anchored" data-anchor-id="hue-shade-tint-and-tone"><strong>Hue, Shade, Tint, and Tone</strong></h4>
+<p>These terms help us describe variations of a single color.</p>
+<ul>
+<li><strong>Hue:</strong> A pure color from the color wheel.</li>
+<li><strong>Tint:</strong> A hue with white added (e.g., red + white = pink).</li>
+<li><strong>Shade:</strong> A hue with black added (e.g., red + black = burgundy).</li>
+<li><strong>Tone:</strong> A hue with grey (both black and white) added.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 25%">
+<col style="width: 24%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Hue</th>
+<th style="text-align: center;">Tint</th>
+<th style="text-align: center;">Shade</th>
+<th style="text-align: center;">Tone</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="images/hue.png" class="img-fluid" alt="Image of Hue"></td>
+<td style="text-align: center;"><img src="images/tint.png" class="img-fluid" alt="Image of Tint"></td>
+<td style="text-align: center;"><img src="images/shade.png" class="img-fluid" alt="Image of Shade"></td>
+<td style="text-align: center;"><img src="images/tone.png" class="img-fluid" alt="Image of Tone"></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="basic-color-schemes" class="level4">
+<h4 class="anchored" data-anchor-id="basic-color-schemes"><strong>Basic Color Schemes</strong></h4>
+<p>Here are a few simple, foolproof ways to create a color palette:</p>
+<ul>
+<li><strong>Complementary:</strong> Two colors that are opposite each other on the color wheel.</li>
+<li><strong>Analogous:</strong> Three colors that are side-by-side on the color wheel.</li>
+<li><strong>Triadic:</strong> Three colors that are evenly spaced around the color wheel.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 33%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Complementary</th>
+<th style="text-align: center;">Analogous</th>
+<th style="text-align: center;">Triadic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="images/complementary.png" class="img-fluid" alt="Complementary Colors"></td>
+<td style="text-align: center;"><img src="images/analogous.png" class="img-fluid" alt="Analogous Colors"></td>
+<td style="text-align: center;"><img src="images/triadic.png" class="img-fluid" alt="Triadic Colors"></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="part-2-getting-started-with-adobe-illustrator" class="level3">
+<h3 class="anchored" data-anchor-id="part-2-getting-started-with-adobe-illustrator">Part 2: Getting Started with Adobe Illustrator</h3>
+<p>Now that we’ve covered the basics of color, let’s jump into the tool that brings our ideas to life: Adobe Illustrator.</p>
+<section id="setting-up-your-document" class="level4">
+<h4 class="anchored" data-anchor-id="setting-up-your-document"><strong>Setting Up Your Document</strong></h4>
+<ol type="1">
+<li>To start, click <strong>‘New File’</strong>. You can choose from various presets. For general digital work, navigate to the <strong>‘Web’</strong> tab.</li>
+<li>Ensure your workspace is set to <strong>“Essentials”</strong> from the top right to have a standard layout.</li>
+</ol>
+</section>
+<section id="understanding-the-workspace-artboard-and-canvas" class="level4">
+<h4 class="anchored" data-anchor-id="understanding-the-workspace-artboard-and-canvas"><strong>Understanding the Workspace: Artboard and Canvas</strong></h4>
+<ul>
+<li><strong>Canvas:</strong> The large, typically grey area in the background.</li>
+<li><strong>Artboard:</strong> The white, printable/exportable areas where you create your designs. You can have multiple artboards in a single document.</li>
+<li>Artboards can be edited using the <strong>‘Edit Artboards’</strong> button in the properties panel when no objects are selected. The artboard system is incredibly useful for creating multiple versions of a design or different assets for a single project.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="part-3-your-illustrator-arsenal" class="level3">
+<h3 class="anchored" data-anchor-id="part-3-your-illustrator-arsenal">Part 3: Your Illustrator Arsenal</h3>
+<p>Illustrator is packed with powerful tools. Mastering the essentials will dramatically speed up your workflow. Let’s walk through the most important ones.</p>
+<section id="selection-and-manipulation-tools" class="level4">
+<h4 class="anchored" data-anchor-id="selection-and-manipulation-tools"><strong>Selection and Manipulation Tools</strong></h4>
+<ul>
+<li><strong>Selection Tool (V):</strong> Functions as a typical cursor, allowing you to select, click, and drag objects and text around your screen.</li>
+<li><strong>Direct Selection Tool (A):</strong> Allows you to individually select and edit specific anchor points of vector shapes or lines. Where the regular selection tool would select the entire shape, the Direct Selection Tool enables you to edit one angle, side, point, or curve at a time.</li>
+<li><strong>Group Selection tool:</strong> Used to select and edit an object inside a group.</li>
+<li><strong>Lasso Tool (Q):</strong> Allows you to draw around an area of points you want to select so that you can easily select several at a time.</li>
+</ul>
+</section>
+<section id="creation-tools" class="level4">
+<h4 class="anchored" data-anchor-id="creation-tools"><strong>Creation Tools</strong></h4>
+<ul>
+<li><strong>Pen Tool (P):</strong> This is arguably the <strong>most important tool of the entire program</strong>. It allows you to click in your workspace to create anchor points. By clicking and dragging these anchor points, you can maneuver their “handles,” which give your paths curvature and shape. Connecting several anchor points with this tool allows you to create unique, hand-drawn vector shapes.</li>
+<li><strong>Type Tool (T):</strong> This tool allows you to add text to your Illustrator document. You can either click on your artboard and begin typing—which allows you to type without any boundaries—or you can click and drag to create a text box, which will restrict your text to stay within that box.
+<ul>
+<li><strong>Area Type Tool:</strong> The area type tool allows you to convert an existing shape into a text box and type within it.</li>
+<li><strong>Type on a Path Tool:</strong> This tool allows you to use an existing line or shape as a path to type on.</li>
+</ul></li>
+<li><strong>Line Segment Tool (<code>\</code>):</strong> This tool draws individual straight lines. If you hold down the shift key you can create a line at a 0, 45, or 90-degree angle.</li>
+<li><strong>Rectangle Tool (M):</strong> This tool creates squares and rectangles. If you want a perfect square you can hold down the shift key as you click and drag.</li>
+<li><strong>Rounded Rectangle Tool:</strong> This tool works exactly the same as the rectangle tool, but the corners are rounded instead of squared.</li>
+<li><strong>Ellipse Tool (L):</strong> This tool is used to create circles and ovals. To create a circle, hold down the shift key. If you want an oval, just click and drag.</li>
+<li><strong>Polygon Tool:</strong> The polygon tool makes any number of sided shapes, from triangles to hexagons and beyond. With the tool selected, all you need to do is click once on your artboard and define how many sides you want your shape to have.</li>
+<li><strong>Star Tool:</strong> This tool makes stars. With this tool, you can choose how many points you want your star to have.</li>
+<li><strong>Flare Tool:</strong> This tool makes a weird multi-circular shape with some weird gradient flares.</li>
+</ul>
+</section>
+<section id="modification-and-editing-tools" class="level4">
+<h4 class="anchored" data-anchor-id="modification-and-editing-tools"><strong>Modification and Editing Tools</strong></h4>
+<ul>
+<li><strong>Eraser Tool (Shift+E):</strong> The eraser tool erases sections of a vector object or path.</li>
+<li><strong>Scissors Tool (C):</strong> The scissors tool can be used to cut apart a vector object or path.</li>
+<li><strong>Knife Tool:</strong> The knife tool allows you to cut a shape by clicking and dragging the knife through the shape.</li>
+<li><strong>Shape Builder Tool (Shift+M):</strong> This tool allows you to easily combine multiple, overlapping shapes in order to create one large, combined shape.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="part-4-workflow-and-efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="part-4-workflow-and-efficiency">Part 4: Workflow and Efficiency</h3>
+<p>Working smart is just as important as knowing the tools. Here are some tips on organization and shortcuts.</p>
+<section id="layers-and-groups" class="level4">
+<h4 class="anchored" data-anchor-id="layers-and-groups"><strong>Layers and Groups</strong></h4>
+<ul>
+<li><strong>Groups (<code>Ctrl + G</code>):</strong> Grouping allows you to treat multiple objects as a single unit. To ungroup, use <code>Shift + Ctrl + G</code>.</li>
+<li><strong>Layers:</strong> Proper layer management is key for complex designs. It is recommended to go through Adobe’s Page on Layers for a deeper understanding.</li>
+</ul>
+</section>
+<section id="productivity-hacks" class="level4">
+<h4 class="anchored" data-anchor-id="productivity-hacks"><strong>Productivity Hacks</strong></h4>
+<ul>
+<li><strong>Transform Again (<code>Ctrl + D</code>):</strong> This shortcut allows you to repeat the previous action you did.</li>
+</ul>
+</section>
+<section id="essential-keyboard-shortcuts" class="level4">
+<h4 class="anchored" data-anchor-id="essential-keyboard-shortcuts"><strong>Essential Keyboard Shortcuts</strong></h4>
+<p>Knowing your shortcuts is the fastest way to speed up your workflow. Here are some of the most common ones broken down by category:</p>
+<p><strong>Files</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Shortcut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">New</td>
+<td style="text-align: left;"><code>Ctrl + N</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Open</td>
+<td style="text-align: left;"><code>Ctrl + O</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Close</td>
+<td style="text-align: left;"><code>Ctrl + W</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Save</td>
+<td style="text-align: left;"><code>Ctrl + S</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Save As</td>
+<td style="text-align: left;"><code>Shift + Ctrl + S</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Close All</td>
+<td style="text-align: left;"><code>Alt + Ctrl + W</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tools</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tool</th>
+<th style="text-align: left;">Shortcut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code>V</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Direct Selection</td>
+<td style="text-align: left;"><code>A</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lasso</td>
+<td style="text-align: left;"><code>Q</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pen</td>
+<td style="text-align: left;"><code>P</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Type</td>
+<td style="text-align: left;"><code>T</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rectangle</td>
+<td style="text-align: left;"><code>M</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ellipse</td>
+<td style="text-align: left;"><code>L</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Basic Operations</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Shortcut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Select All</td>
+<td style="text-align: left;"><code>Ctrl + A</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Deselect</td>
+<td style="text-align: left;"><code>Shift + Ctrl + A</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cut</td>
+<td style="text-align: left;"><code>Ctrl + X</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Copy</td>
+<td style="text-align: left;"><code>Ctrl + C</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Paste</td>
+<td style="text-align: left;"><code>Ctrl + V</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Paste in Front</td>
+<td style="text-align: left;"><code>Ctrl + F</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Paste in Back</td>
+<td style="text-align: left;"><code>Ctrl + B</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Undo</td>
+<td style="text-align: left;"><code>Ctrl + Z</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Redo</td>
+<td style="text-align: left;"><code>Shift + Ctrl + Z</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Object Editing</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Shortcut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Group</td>
+<td style="text-align: left;"><code>Ctrl + G</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ungroup</td>
+<td style="text-align: left;"><code>Shift + Ctrl + G</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bring to Front</td>
+<td style="text-align: left;"><code>Shift + Ctrl + ]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Send to Back</td>
+<td style="text-align: left;"><code>Shift + Ctrl + [</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bring Forward</td>
+<td style="text-align: left;"><code>Ctrl + ]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Send Backward</td>
+<td style="text-align: left;"><code>Ctrl + [</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Transform Again</td>
+<td style="text-align: left;"><code>Ctrl + D</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Join</td>
+<td style="text-align: left;"><code>Ctrl + J</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lock Selection</td>
+<td style="text-align: left;"><code>Ctrl + 2</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Unlock All</td>
+<td style="text-align: left;"><code>Alt + Ctrl + 2</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Views and Navigation</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Shortcut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hand Tool</td>
+<td style="text-align: left;"><code>H</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Zoom Tool</td>
+<td style="text-align: left;"><code>Z</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fit Artboard in Window</td>
+<td style="text-align: left;"><code>Ctrl + 0</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fit All in Window</td>
+<td style="text-align: left;"><code>Alt + Ctrl + 0</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Actual Size</td>
+<td style="text-align: left;"><code>Ctrl + 1</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="part-5-advanced-illustrator-techniques" class="level3">
+<h3 class="anchored" data-anchor-id="part-5-advanced-illustrator-techniques">Part 5: Advanced Illustrator Techniques</h3>
+<p>With the fundamentals down, let’s explore some of Illustrator’s more powerful features that can elevate your designs.</p>
+<section id="image-trace-from-pixels-to-vectors" class="level4">
+<h4 class="anchored" data-anchor-id="image-trace-from-pixels-to-vectors"><strong>Image Trace: From Pixels to Vectors</strong></h4>
+<p>Ever found a raster image (like a JPG or PNG) that you wish was a scalable vector? Image Trace is your solution. The task of manually tracing an image, can be done in a single click with this tool.</p>
+<ol type="1">
+<li>Select the raster image on your artboard.</li>
+<li>Click <strong>‘Image Trace’</strong> in the Properties panel. The default setting often works well for simple images.</li>
+<li><strong>Crucially</strong>, click <strong>‘Expand’</strong> to convert the trace into an editable vector object.</li>
+<li>You may need to ungroup (<code>Ctrl + Shift + G</code>) the result to manipulate individual elements.</li>
+</ol>
+<p>You can experiment with different presets like ‘3-color’, ‘6-color’, or ‘High Fidelity’ for more complex images. For a deeper dive, check out Adobe’s official guide on <a href="https://helpx.adobe.com/in/illustrator/using/image-trace.html">Image Trace</a>.</p>
+</section>
+<section id="clipping-masks-framing-your-content" class="level4">
+<h4 class="anchored" data-anchor-id="clipping-masks-framing-your-content"><strong>Clipping Masks: Framing Your Content</strong></h4>
+<p>A clipping mask is an object whose shape masks other artwork so that only the art within the shape is visible. Think of it as using one shape to create a window through which you can see another. Adobe’s page on <a href="https://helpx.adobe.com/in/illustrator/using/clipping-masks.html">Clipping Masks</a> covers all the edge cases and is a great resource.</p>
+</section>
+<section id="d-and-materials" class="level4">
+<h4 class="anchored" data-anchor-id="d-and-materials"><strong>3D and Materials</strong></h4>
+<p>Illustrator’s 3D tools allow you to add depth to your 2D designs. * The <strong>Inflate</strong> tool is especially fun and looks fantastic on text, giving it a soft, pillowy appearance. * You can also apply realistic materials to your 3D objects. For even more options, you can get additional resources from Adobe’s Substance 3D Assets page.</p>
+</section>
+<section id="the-effects-gallery" class="level4">
+<h4 class="anchored" data-anchor-id="the-effects-gallery"><strong>The Effects Gallery</strong></h4>
+<p>Don’t overlook the <strong>Effects</strong> menu at the top. It contains a gallery of powerful effects like <strong>Grain</strong>, <strong>Gaussian Blur</strong>, and more. While they may seem like subtle changes, adding a texture like grain to a background can make it look far more interesting than a simple flat color.</p>
+<hr>
+</section>
+</section>
+<section id="part-6-automating-your-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="part-6-automating-your-workflow">Part 6: Automating Your Workflow</h3>
+<p>For repetitive tasks, automation is a game-changer. Illustrator provides powerful tools to save you hours of manual work.</p>
+<section id="actions-record-and-replay" class="level4">
+<h4 class="anchored" data-anchor-id="actions-record-and-replay"><strong>Actions: Record and Replay</strong></h4>
+<p>The Actions panel (<code>Window &gt; Actions</code>) lets you record a sequence of commands and then play it back on any object. Think of it as creating your own custom shortcut.</p>
+<p><strong>Use Case:</strong> Imagine you have 50 icons that all need to be resized to 100x100 pixels, given a specific color, and exported as a PNG. Instead of doing this manually 50 times, you can: 1. Click ‘Create New Action’ in the Actions panel. 2. Hit ‘Begin Recording’. 3. Perform the sequence of tasks on one icon. 4. Stop recording. 5. Now, simply select any other icon and press the play button for your new action.</p>
+</section>
+<section id="variables-data-driven-graphics" class="level4">
+<h4 class="anchored" data-anchor-id="variables-data-driven-graphics"><strong>Variables: Data-Driven Graphics</strong></h4>
+<p>This is one of the most powerful automation features, especially for personalized content. We used this to automatically generate materials with different texts from a single design. Here’s how it works:</p>
+<ol type="1">
+<li><strong>Prepare your Data:</strong> Create a CSV file (a spreadsheet) with the variable data. For different names, you would have one column titled “Name” with each person’s name in a new row.</li>
+<li><strong>Set up the Illustrator Template:</strong> Create your design. For the text that will change (the name), use the Type Tool to create a placeholder text box.</li>
+<li><strong>Define Variables:</strong>
+<ul>
+<li>Open the <strong>Variables Panel</strong> (<code>Window &gt; Variables</code>).</li>
+<li>Select the placeholder text object on your artboard.</li>
+<li>In the Variables panel, click <strong>‘Make Text Dynamic’</strong>. This creates a new variable (e.g., <code>variable1</code>). Give it a clear name, like “RecipientName”.</li>
+</ul></li>
+<li><strong>Import Data:</strong>
+<ul>
+<li>From the Variables panel menu, click <strong>‘Load Variable Library’</strong> and select your CSV file.</li>
+<li>The data from your spreadsheet will be loaded as Data Sets. You can now toggle through the different names, and the text on your artboard will update automatically.</li>
+</ul></li>
+<li><strong>Automate Export with Actions:</strong>
+<ul>
+<li>Create a new Action.</li>
+<li>Record the steps: <code>File &gt; Export &gt; Export As...</code>, save the file as a PNG or your desired format.</li>
+<li>After the export step, add the “Next Data Set” command to your action by selecting it from the Actions panel menu.</li>
+<li>Stop recording.</li>
+</ul></li>
+<li><strong>Run the Batch:</strong>
+<ul>
+<li>From the Actions panel menu, select <strong>‘Batch…’</strong>.</li>
+<li>Choose your Action, set the source to “Data Sets”, and pick a destination folder for your exported files.</li>
+<li>Click OK, and watch as Illustrator automatically generates a unique certificate for every name in your list.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="part-7-exporting-your-masterpiece" class="level3">
+<h3 class="anchored" data-anchor-id="part-7-exporting-your-masterpiece">Part 7: Exporting Your Masterpiece</h3>
+<p>Once your design is complete, you need to export it correctly.</p>
+<ul>
+<li>Go to <code>File &gt; Export &gt; Export As...</code>.</li>
+<li>In the export dialog, tick <strong>‘Use Artboards’</strong>. This ensures you only export the content on your artboards, not the entire canvas. You can choose to export all artboards or a specific range.</li>
+<li><strong>For PNGs:</strong> In the PNG Options window, set the Resolution to <strong>High (300 ppi)</strong> and Anti-aliasing to <strong>‘Art Optimized (Supersampling)’</strong> for the best quality. You can also select a transparent background here.</li>
+<li><strong>For PDFs:</strong> To export a multi-page PDF where each artboard is a page, it’s best to use <code>File &gt; Export &gt; Export for Screens</code>. Select PDF as the format and choose to export as a single file.</li>
+</ul>
+<section id="tip-for-laser-cutting" class="level4">
+<h4 class="anchored" data-anchor-id="tip-for-laser-cutting"><strong>Tip for Laser Cutting</strong></h4>
+<p>You can use Illustrator to create files for laser cutters. * Set your artboard size to match your physical material (e.g., MDF or acrylic sheet). * Create your design using strokes with no fill. * Export the file as a <strong><code>.dxf</code></strong> format, which is compatible with most laser cutting machines. This unlocks incredible possibilities, allowing you to use vector illustrations from sites like Freepik for physical projects.</p>
+<hr>
+</section>
+</section>
+<section id="part-8-design-resource-list" class="level3">
+<h3 class="anchored" data-anchor-id="part-8-design-resource-list">Part 8: Design Resource List</h3>
+<p>Here is a curated list of tools and websites to help you on your design journey. Many of these were shared during our design meets and are fantastic for finding assets and inspiration.</p>
+<section id="fonts" class="level4">
+<h4 class="anchored" data-anchor-id="fonts"><strong>Fonts</strong></h4>
+<ul>
+<li><strong>Font Identifiers:</strong> Found a font you love but don’t know its name? These tools can help.
+<ul>
+<li><a href="https://www.myfonts.com/pages/whatthefont">WhatTheFont</a></li>
+<li><a href="https://www.fontsquirrel.com/matcherator">Font Squirrel Matcherator</a></li>
+</ul></li>
+<li><strong>Font Repositories:</strong> Free and premium fonts for your projects.
+<ul>
+<li><a href="https://fonts.google.com">Google Fonts</a></li>
+<li><a href="https://www.dafont.com">DaFont</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="vectors-illustrations" class="level4">
+<h4 class="anchored" data-anchor-id="vectors-illustrations"><strong>Vectors &amp; Illustrations</strong></h4>
+<ul>
+<li>High-quality vector files (.ai, .eps, .svg) that you can open and edit in Illustrator. Remember to filter by “Free” and “Vectors” on these sites.
+<ul>
+<li><a href="https://www.freepik.com">Freepik</a></li>
+<li><a href="https://www.vecteezy.com">Vecteezy</a></li>
+<li><a href="https://www.flaticon.com">Flaticon</a> (Great for icons)</li>
+<li><a href="https://www.reshot.com/">Reshot</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="colors" class="level4">
+<h4 class="anchored" data-anchor-id="colors"><strong>Colors</strong></h4>
+<ul>
+<li>Tools for creating and discovering beautiful color palettes. You can screenshot a palette you like, paste it into Illustrator, and use the Eyedropper Tool to sample the colors.
+<ul>
+<li><a href="https://coolors.co">Coolors</a></li>
+<li><a href="https://colorhunt.co">Color Hunt</a></li>
+<li><a href="https://palettemaker.com/">Palette Maker</a></li>
+<li><a href="https://color.adobe.com/create/color-wheel">Adobe Color</a></li>
+<li><a href="https://uigradients.com">UI Gradients</a></li>
+<li><a href="https://colordesigner.io/tools">Color Designer</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="image-manipulation" class="level4">
+<h4 class="anchored" data-anchor-id="image-manipulation"><strong>Image Manipulation</strong></h4>
+<ul>
+<li>Quickly remove backgrounds from images.
+<ul>
+<li><a href="https://www.adobe.com/express/feature/image/remove-background">Adobe Express Remove Background</a></li>
+<li><a href="https://www.remove.bg/">Remove.bg</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="inspiration" class="level4">
+<h4 class="anchored" data-anchor-id="inspiration"><strong>Inspiration</strong></h4>
+<ul>
+<li>Browse portfolios from top designers and find visual inspiration.
+<ul>
+<li><a href="https://www.behance.net">Behance</a></li>
+<li><a href="https://pinterest.com">Pinterest</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="presentations" class="level4">
+<h4 class="anchored" data-anchor-id="presentations"><strong>Presentations</strong></h4>
+<ul>
+<li>Templates for your next slideshow.
+<ul>
+<li><a href="https://slidesgo.com">Slidesgo</a></li>
+<li><a href="https://slides.com/">Slides.com</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="cool-stuff" class="level4">
+<h4 class="anchored" data-anchor-id="cool-stuff"><strong>Cool Stuff</strong></h4>
+<ul>
+<li>Explore the cutting edge of digital design.
+<ul>
+<li><a href="https://spline.design">Spline</a> (3D design in the browser)</li>
+</ul></li>
+</ul>
+<hr>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/devansh-lodha\.github\.io\/blog\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      if (authorPrefersDark) {
+          [baseTheme, altTheme] = [altTheme, baseTheme];
+      }
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "devansh-lodha/blog";
+    script.dataset.repoId = "R_kgDONVlj_w";
+    script.dataset.category = "General";
+    script.dataset.categoryId = "DIC_kwDONVlj_84CrcDP";
+    script.dataset.mapping = "title";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "top";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
