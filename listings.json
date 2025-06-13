@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/acm_vlm_tutorial/acm_vlm_tutorial.html",
       "/posts/remote_ssh_servers/remote_ssh_servers.html",
       "/posts/processor_verilog/processor_verilog.html",
       "/posts/ml_publication_trends/ml_publication_trends.html",
