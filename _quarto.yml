@@ -31,3 +31,7 @@ format:
 
 execute:
   freeze: auto
+
+comments:
+  giscus: 
+    repo: devansh-lodha/blog
