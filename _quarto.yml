@@ -17,6 +17,8 @@ website:
         text: projects
       - href: https://devansh-lodha.github.io/repositories/
         text: repositories
+      - href: https://devansh-lodha.github.io/service/
+        text: academic service
 
 format:
   html:
