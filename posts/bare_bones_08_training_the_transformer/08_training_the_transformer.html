@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Devansh Lodha">
-<meta name="dcterms.date" content="2025-05-12">
-<meta name="description" content="A Beginner’s Guide to Remote Servers for Machine Learning">
+<meta name="dcterms.date" content="2025-05-29">
+<meta name="description" content="We’ll teach our Transformer model to reverse sequences of numbers, a task that requires understanding relationships between input and output positions.">
 
-<title>Remote SSH Servers – Devansh’s Blog</title>
+<title>Training Our Transformer – Devansh’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -327,15 +327,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Remote SSH Servers</h1>
+      <div class="quarto-title-block"><div><h1 class="title">Training Our Transformer</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
                   <div>
         <div class="description">
-          A Beginner’s Guide to Remote Servers for Machine Learning
+          We’ll teach our Transformer model to reverse sequences of numbers, a task that requires understanding relationships between input and output positions.
         </div>
       </div>
                           <div class="quarto-categories">
-                <div class="quarto-category">ssh</div>
-                <div class="quarto-category">linux</div>
+                <div class="quarto-category">bare-bones-ml</div>
+                <div class="quarto-category">code</div>
               </div>
                   </div>
   </div>
@@ -353,7 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 12, 2025</p>
+        <p class="date">May 29, 2025</p>
       </div>
     </div>
     
@@ -369,14 +369,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#part-1-the-key-to-the-kingdom---ssh" id="toc-part-1-the-key-to-the-kingdom---ssh" class="nav-link" data-scroll-target="#part-1-the-key-to-the-kingdom---ssh">Part 1: The Key to the Kingdom - SSH</a></li>
-  <li><a href="#part-2-your-home-on-the-server---essential-commands" id="toc-part-2-your-home-on-the-server---essential-commands" class="nav-link" data-scroll-target="#part-2-your-home-on-the-server---essential-commands">Part 2: Your Home on the Server - Essential Commands</a></li>
-  <li><a href="#part-3-running-long-experiments" id="toc-part-3-running-long-experiments" class="nav-link" data-scroll-target="#part-3-running-long-experiments">Part 3: Running Long Experiments</a></li>
-  <li><a href="#part-4-python-environments-with-conda" id="toc-part-4-python-environments-with-conda" class="nav-link" data-scroll-target="#part-4-python-environments-with-conda">Part 4: Python Environments with Conda</a></li>
-  <li><a href="#part-5-transferring-files" id="toc-part-5-transferring-files" class="nav-link" data-scroll-target="#part-5-transferring-files">Part 5: Transferring Files</a></li>
-  <li><a href="#part-6-the-best-of-both-worlds---vs-code-remote-ssh" id="toc-part-6-the-best-of-both-worlds---vs-code-remote-ssh" class="nav-link" data-scroll-target="#part-6-the-best-of-both-worlds---vs-code-remote-ssh">Part 6: The Best of Both Worlds - VS Code Remote SSH</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#the-need-for-masking-teaching-the-model-the-rules" id="toc-the-need-for-masking-teaching-the-model-the-rules" class="nav-link active" data-scroll-target="#the-need-for-masking-teaching-the-model-the-rules">The Need for Masking: Teaching the Model the Rules</a>
+  <ul class="collapse">
+  <li><a href="#the-padding-mask" id="toc-the-padding-mask" class="nav-link" data-scroll-target="#the-padding-mask">1. The Padding Mask</a></li>
+  <li><a href="#the-causal-look-ahead-mask" id="toc-the-causal-look-ahead-mask" class="nav-link" data-scroll-target="#the-causal-look-ahead-mask">2. The Causal (Look-ahead) Mask</a></li>
+  </ul></li>
+  <li><a href="#the-training-pipeline" id="toc-the-training-pipeline" class="nav-link" data-scroll-target="#the-training-pipeline">The Training Pipeline</a></li>
+  <li><a href="#putting-the-model-to-the-test" id="toc-putting-the-model-to-the-test" class="nav-link" data-scroll-target="#putting-the-model-to-the-test">Putting the Model to the Test</a></li>
+  <li><a href="#interpreting-the-final-result" id="toc-interpreting-the-final-result" class="nav-link" data-scroll-target="#interpreting-the-final-result">Interpreting the Final Result</a></li>
+  <li><a href="#the-end-of-the-beginning" id="toc-the-end-of-the-beginning" class="nav-link" data-scroll-target="#the-end-of-the-beginning">The End of the Beginning</a></li>
   </ul>
 </nav>
     </div>
@@ -388,269 +389,217 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
-<p>So, you’ve gained access to a powerful remote server with some beefy GPUs, huh? This is where the real, large-scale machine learning happens. But for many, leaving a familiar graphical interface for the command line and tools like SSH can feel daunting.</p>
-<p>I decided to make this guide for all my juniors at uni and to anyone this deems to be useful. We’ll cover everything from securely connecting to the server to managing your files, Python environments, and long-running training jobs like a pro.</p>
-<hr>
+<p>This is the final step! We have built an autograd engine, foundational layers, recurrent networks, and the attention mechanism. Now, we will bring it all together to train our from-scratch Transformer model on a real task.</p>
+<p>The task will be a simplified version of neural machine translation: teaching the model to reverse a sequence of numbers. While simple, this task is impossible to solve without the model learning the relationships between input and output positions, making it a perfect test for our attention mechanisms.</p>
+<p>To do this properly, we first need to implement the final, crucial piece of the puzzle: <strong>attention masking</strong>.</p>
+<section id="the-need-for-masking-teaching-the-model-the-rules" class="level2">
+<h2 class="anchored" data-anchor-id="the-need-for-masking-teaching-the-model-the-rules">The Need for Masking: Teaching the Model the Rules</h2>
+<p>In a real task, not all information should be visible to the attention mechanism at all times. We need masks to enforce two rules.</p>
+<section id="the-padding-mask" class="level3">
+<h3 class="anchored" data-anchor-id="the-padding-mask">1. The Padding Mask</h3>
+<p>Our sentences will have different lengths. To process them in batches, we pad shorter sentences with a special <code>&lt;pad&gt;</code> token. The attention mechanism must ignore these padding tokens, as they contain no meaning. We achieve this by adding a very large negative number (<code>-1e9</code>) to the attention scores at all padded positions. After the <code>softmax</code> operation, these scores become zero, effectively hiding them from the model.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper function to create the padding mask</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_padding_mask(seq, pad_token_id<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creates a mask of shape (batch_size, 1, 1, seq_len)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The mask is 0 where seq is not the pad token, and -1e9 where it is.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> (seq.data <span class="op">==</span> pad_token_id).astype(np.float32)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Tensor((mask <span class="op">*</span> <span class="op">-</span><span class="fl">1e9</span>).reshape(seq.shape, <span class="dv">1</span>, <span class="dv">1</span>, seq.shape))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="part-1-the-key-to-the-kingdom---ssh" class="level3">
-<h3 class="anchored" data-anchor-id="part-1-the-key-to-the-kingdom---ssh">Part 1: The Key to the Kingdom - SSH</h3>
-<p>SSH, or Secure Shell, is your gateway to the remote machine. It’s a secure protocol that lets you open a command-line interface on another computer as if you were sitting right in front of it.</p>
-<section id="your-first-connection" class="level4">
-<h4 class="anchored" data-anchor-id="your-first-connection">Your First Connection</h4>
-<p>The fundamental command is <code>ssh</code>. To connect, you’ll need the server’s address (a domain name or IP address), your username, and possibly a specific port number.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The general format is: ssh -X your_username@your_server_ip -p &lt;port_number&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-X</span> user@remote.server.com <span class="at">-p</span> 2222</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Let’s break that down:</p>
-<ul>
-<li><strong><code>ssh</code></strong>: The command itself.</li>
-<li><strong><code>-X</code></strong>: Enables X11 forwarding. This lets you run graphical applications on the server and have their windows appear on your local machine.</li>
-<li><strong><code>user@remote.server.com</code></strong>: Your <code>username</code> at the server’s <code>address</code>.</li>
-<li><strong><code>-p 2222</code></strong>: Specifies the <code>port</code> to connect to. The default SSH port is 22, but system administrators often change it for security, so make sure you use the one provided to you.</li>
-</ul>
-</section>
-<section id="going-passwordless-with-ssh-keys-highly-recommended" class="level4">
-<h4 class="anchored" data-anchor-id="going-passwordless-with-ssh-keys-highly-recommended">Going Passwordless with SSH Keys (Highly Recommended!)</h4>
-<p>Typing your password every time is tedious and less secure than using SSH keys. This method involves creating a cryptographic key pair: a <strong>private key</strong> that stays on your local machine (guard it with your life!) and a <strong>public key</strong> that you copy to the server.</p>
-<ol type="1">
-<li><strong>Generate Keys (on your local machine)</strong>: If you haven’t already, run this command in your local terminal. When it asks for a file to save the key, just press Enter to accept the default. It’s good practice to add a passphrase for an extra layer of security.</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> rsa <span class="at">-b</span> 4096</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="2" type="1">
-<li><strong>Copy Your Public Key to the Server</strong>: This command automatically appends your public key to the correct file (<code>~/.ssh/authorized_keys</code>) on the server.</li>
-</ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust the port and user/host info as needed</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ssh-copy-id</span> <span class="at">-p</span> 2222 user@remote.server.com</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Now, try <code>ssh</code>-ing into your server again. If you set a passphrase, you’ll enter that; otherwise, it should log you in without asking for your password!</p>
-</section>
-<section id="create-ssh-shortcuts-with-a-config-file" class="level4">
-<h4 class="anchored" data-anchor-id="create-ssh-shortcuts-with-a-config-file">Create SSH Shortcuts with a Config File</h4>
-<p>You can create a config file on your <strong>local machine</strong> to store connection details. This is a massive time-saver. Create the file <code>~/.ssh/config</code> if it doesn’t exist (<code>touch ~/.ssh/config</code>) and add an entry like this:</p>
-<pre><code>    Host my-server
-        HostName remote.server.com
-        User user
-        Port 2222
-        ForwardX11 yes</code></pre>
-<p>Now, you can connect to your server with a simple, memorable command:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> my-server</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
+<section id="the-causal-look-ahead-mask" class="level3">
+<h3 class="anchored" data-anchor-id="the-causal-look-ahead-mask">2. The Causal (Look-ahead) Mask</h3>
+<p>When the decoder is generating the target sentence, it must not be allowed to “see” future words. For example, when predicting the third word, it should only have access to the first two words. The causal mask enforces this auto-regressive property. It’s a triangular matrix that masks out all future positions.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper function to create the causal (look-ahead) mask</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_causal_mask(size):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creates a mask of shape (1, 1, size, size)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The upper triangle (where j &gt; i) is set to -1e9.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> np.triu(np.ones((size, size)), k<span class="op">=</span><span class="dv">1</span>).astype(np.float32)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Tensor(mask <span class="op">*</span> <span class="op">-</span><span class="fl">1e9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When we add these two masks together in the decoder, we get a final target mask that respects both padding and causality.</p>
 </section>
 </section>
-<section id="part-2-your-home-on-the-server---essential-commands" class="level3">
-<h3 class="anchored" data-anchor-id="part-2-your-home-on-the-server---essential-commands">Part 2: Your Home on the Server - Essential Commands</h3>
-<p>Once you’re in, you need to know how to navigate and monitor the environment.</p>
-<section id="system-and-resource-monitoring" class="level4">
-<h4 class="anchored" data-anchor-id="system-and-resource-monitoring">System and Resource Monitoring</h4>
-<ul>
-<li><strong>Change Your Password</strong>: If you’re using password authentication, this should be the first thing you do.</li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">passwd</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Who’s Using the CPUs? (<code>htop</code>)</strong>: A live, colorful, and user-friendly view of CPU and memory usage, and which processes are running. Far superior to the older <code>top</code> command.</li>
-</ul>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">htop</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Who’s Using the GPUs? (<code>nvidia-smi</code>)</strong>: The most important command for an ML practitioner. Use <code>watch</code> to run it repeatedly for a live view.</li>
-</ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Understanding <code>nvidia-smi</code> output: - <code>Fan / Temp</code>: GPU temperature. Keep an eye on this; if it’s too high, the GPU might be throttling. - <code>Pwr:Usage/Cap</code>: How much power the GPU is drawing out of its total capacity. - <code>Memory-Usage</code>: How much VRAM is being used. This is critical! If you get a “CUDA out of memory” error, this is where you’ll see it. - <code>GPU-Util</code>: Percentage of time the GPU cores were active. Aim for high utilization during training.</p>
-<p>For GPU monitoring, I would also recommend installing <code>gpustat</code>, which allows you to see usernames as well if you’re sharing the server with others.</p>
+<section id="the-training-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="the-training-pipeline">The Training Pipeline</h2>
+<p>Our task is to teach the model to reverse a sequence of numbers. - <strong>Input (Source):</strong> <code>[&lt;sos&gt;, 5, 12, 7, 3, 9, 11, &lt;eos&gt;, &lt;pad&gt;]</code> - <strong>Output (Target):</strong> <code>[&lt;sos&gt;, 11, 9, 3, 7, 12, 5, &lt;eos&gt;, &lt;pad&gt;]</code></p>
+<p>We will generate random batches of these sequences and train the model for several thousand steps to allow it to learn the reversal algorithm.</p>
+<div id="bc4965ab" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">'../'</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.autograd.tensor <span class="im">import</span> Tensor</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.nn <span class="im">import</span> Transformer</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.optim <span class="im">import</span> Adam</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.functional <span class="im">import</span> cross_entropy</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Masking Helper Functions</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_padding_mask(seq: Tensor, pad_token_id: <span class="bu">int</span> <span class="op">=</span> <span class="dv">0</span>) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># seq shape: (batch_size, seq_len)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Returns mask shape: (batch_size, 1, 1, seq_len)</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> (seq.data <span class="op">==</span> pad_token_id).astype(np.float32)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Tensor((mask <span class="op">*</span> <span class="op">-</span><span class="fl">1e9</span>).reshape(seq.shape[<span class="dv">0</span>], <span class="dv">1</span>, <span class="dv">1</span>, seq.shape[<span class="dv">1</span>]))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_causal_mask(size: <span class="bu">int</span>) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Returns mask shape: (1, 1, size, size)</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> np.triu(np.ones((size, size)), k<span class="op">=</span><span class="dv">1</span>).astype(np.float32)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Tensor(mask <span class="op">*</span> <span class="op">-</span><span class="fl">1e9</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define Hyperparameters</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>vocab_size <span class="op">=</span> <span class="dv">20</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>hidden_size <span class="op">=</span> <span class="dv">64</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>num_layers <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>num_heads <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>ff_size <span class="op">=</span> <span class="dv">128</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>max_len <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>seq_len <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>pad_token_id <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Instantiate Model and Optimizer</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Transformer(vocab_size, hidden_size, num_layers, num_heads, ff_size, max_len)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> Adam(model.parameters(), lr<span class="op">=</span><span class="fl">1e-3</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. The Training Loop</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="dv">3001</span> <span class="co"># Train for more epochs to see convergence</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Training Start ---"</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(epochs):</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a single batch of dummy data for each epoch</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    src_data <span class="op">=</span> np.random.randint(<span class="dv">1</span>, vocab_size, (batch_size, seq_len))</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    tgt_data_out <span class="op">=</span> np.flip(src_data, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    tgt_data_in <span class="op">=</span> np.zeros_like(tgt_data_out)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    tgt_data_in[:, <span class="dv">1</span>:] <span class="op">=</span> tgt_data_out[:, :<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    tgt_data_in[:, <span class="dv">0</span>] <span class="op">=</span> vocab_size <span class="op">-</span> <span class="dv">2</span> <span class="co"># &lt;sos&gt; token</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    src <span class="op">=</span> Tensor(src_data)</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    tgt <span class="op">=</span> Tensor(tgt_data_in)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create Masks</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    src_padding_mask <span class="op">=</span> create_padding_mask(src, pad_token_id)</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    causal_mask <span class="op">=</span> create_causal_mask(seq_len)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    tgt_padding_mask <span class="op">=</span> create_padding_mask(tgt, pad_token_id)</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    tgt_mask <span class="op">=</span> tgt_padding_mask <span class="op">+</span> causal_mask</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Training Step</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> model(src, tgt, src_padding_mask, tgt_mask)</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reshape for cross_entropy, which expects (N, C) and (N,)</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> cross_entropy(logits.reshape(<span class="op">-</span><span class="dv">1</span>, vocab_size), Tensor(tgt_data_out.flatten()))</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    loss.backward()</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    optimizer.step()</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> epoch <span class="op">%</span> <span class="dv">200</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> epoch <span class="op">==</span> epochs <span class="op">-</span> <span class="dv">1</span>:</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">, Loss: </span><span class="sc">{</span>loss<span class="sc">.</span>data<span class="sc">.</span>item()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Training complete!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Training Start ---
+Epoch 0, Loss: 3.8433
+Epoch 200, Loss: 2.2482
+Epoch 400, Loss: 1.7185
+Epoch 600, Loss: 0.7128
+Epoch 800, Loss: 0.2022
+Epoch 1000, Loss: 0.1066
+Epoch 1200, Loss: 0.0572
+Epoch 1400, Loss: 0.0147
+Epoch 1600, Loss: 0.1068
+Epoch 1800, Loss: 0.1318
+Epoch 2000, Loss: 0.0135
+Epoch 2200, Loss: 0.0521
+Epoch 2400, Loss: 0.0017
+Epoch 2600, Loss: 0.0025
+Epoch 2800, Loss: 0.0028
+Epoch 3000, Loss: 0.0041
+
+Training complete!</code></pre>
+</div>
+</div>
 </section>
-<section id="disk-space-management" class="level4">
-<h4 class="anchored" data-anchor-id="disk-space-management">Disk Space Management</h4>
-<ul>
-<li><strong>How much space am I using? (<code>du</code>)</strong>: Use <code>du</code> (disk usage) to check file or directory sizes. The <code>~</code> character is a shortcut for your home directory.</li>
-</ul>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the total size of your home directory in a human-readable format</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> ~</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A super useful command to find the top 10 largest files/folders in your current directory</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> . <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-rh</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>How much space is left? (<code>df</code>)</strong>: Use <code>df</code> (disk free) to see the total storage available on the disk partition.</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show free space on the partition where your home directory is located</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span> <span class="at">-h</span> ~</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="putting-the-model-to-the-test" class="level2">
+<h2 class="anchored" data-anchor-id="putting-the-model-to-the-test">Putting the Model to the Test</h2>
+<p>The training loop finished, and the loss went down to nearly zero. This is a great sign! It proves that our entire from-scratch library—from the <code>Tensor</code> object to the <code>Adam</code> optimizer to the complex <code>Transformer</code> architecture—is working correctly.</p>
+<p>But the ultimate test is to see if the model can generalize. Can it reverse a sequence it has never seen before?</p>
+<p>To find out, we will perform <strong>auto-regressive decoding</strong>: 1. We feed the encoder our new, unseen input sentence. It processes it just once. 2. We start the decoder with a single <code>&lt;sos&gt;</code> token. 3. We loop: at each step, we feed the sequence generated <em>so far</em> back into the decoder to predict the very next token. 4. We continue this process until the model outputs an <code>&lt;eos&gt;</code> token.</p>
+<div id="4e7ca0db" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> translate_sequence(model, src_sequence, max_len<span class="op">=</span><span class="dv">15</span>, sos_token_id<span class="op">=</span><span class="dv">18</span>, eos_token_id<span class="op">=</span><span class="dv">19</span>, pad_token_id<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Performs auto-regressive decoding to generate an output sequence.</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Encoder processes the entire source sequence once.</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We create a dummy padding mask as our inference input has no padding.</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    src_mask <span class="op">=</span> create_padding_mask(src_sequence, pad_token_id<span class="op">=-</span><span class="dv">1</span>) <span class="co"># -1 will never be found</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    encoder_output <span class="op">=</span> model.encoder(model.pos_encoding(model.token_embedding(src_sequence)), mask<span class="op">=</span>src_mask)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Start the decoder input with the &lt;sos&gt; token.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    tgt_so_far <span class="op">=</span> Tensor(np.array([[sos_token_id]]))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(max_len):</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a causal mask for the sequence generated so far.</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        tgt_mask <span class="op">=</span> create_causal_mask(tgt_so_far.shape[<span class="dv">1</span>])</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Decoder forward pass</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        tgt_emb <span class="op">=</span> model.pos_encoding(model.token_embedding(tgt_so_far))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        decoder_output <span class="op">=</span> model.decoder(tgt_emb, encoder_output, src_mask<span class="op">=</span>src_mask, tgt_mask<span class="op">=</span>tgt_mask)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get logits for the very last token in the sequence</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        logits <span class="op">=</span> model.final_linear(decoder_output[:, <span class="op">-</span><span class="dv">1</span>, :])</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get the predicted next token ID (greedy decoding)</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        next_token_id <span class="op">=</span> np.argmax(logits.data, axis<span class="op">=-</span><span class="dv">1</span>).flatten()[<span class="dv">0</span>]</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Append the new token to our sequence</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        next_token_tensor <span class="op">=</span> Tensor(np.array([[next_token_id]]))</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        tgt_so_far <span class="op">=</span> Tensor.cat([tgt_so_far, next_token_tensor], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Stop if the model predicts the &lt;eos&gt; token</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> next_token_id <span class="op">==</span> eos_token_id:</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tgt_so_far.data.flatten()</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">#  Create a new, unseen test sequence</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>test_sequence <span class="op">=</span> Tensor(np.array([[<span class="dv">5</span>, <span class="dv">12</span>, <span class="dv">7</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">11</span>]])) <span class="co"># Batch size of 1</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>expected_output <span class="op">=</span> [<span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">12</span>, <span class="dv">5</span>]</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the translation</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>model_output <span class="op">=</span> translate_sequence(</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    model, </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    test_sequence, </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    sos_token_id<span class="op">=</span>vocab_size<span class="op">-</span><span class="dv">2</span>, </span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>    eos_token_id<span class="op">=</span>vocab_size<span class="op">-</span><span class="dv">1</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- INFERENCE ---"</span>)</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Input Sequence:         </span><span class="sc">{</span>test_sequence<span class="sc">.</span>data<span class="sc">.</span>flatten()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Expected Reversed:      </span><span class="sc">{</span>expected_output<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="co"># We slice the model output to remove the starting &lt;sos&gt; and ending &lt;eos&gt; tokens</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Model Output (Reversed):  </span><span class="sc">{</span>model_output[<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>] <span class="cf">if</span> <span class="bu">len</span>(model_output) <span class="op">&gt;</span> <span class="dv">1</span> <span class="cf">else</span> <span class="st">'None'</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- INFERENCE DEMO ---
+Input Sequence:         [ 5 12  7  3  9 11]
+Expected Reversed:      [11, 9, 3, 7, 12, 5]
+Model Output (Reversed):  [ 5 11 11 11 11  9  3  7 12  5  5  5  5  5]</code></pre>
+</div>
+</div>
 </section>
-<section id="basic-file-and-folder-operations" class="level4">
-<h4 class="anchored" data-anchor-id="basic-file-and-folder-operations">Basic File and Folder Operations</h4>
-<ul>
-<li><code>ls -lh</code>: <strong>L</strong>i<strong>s</strong>t files in a <strong>l</strong>ong, <strong>h</strong>uman-readable format.</li>
-<li><code>cd [directory]</code>: <strong>C</strong>hange <strong>d</strong>irectory. (<code>cd ~</code> goes home, <code>cd ..</code> goes up one level, <code>cd -</code> goes to the previous directory).</li>
-<li><code>pwd</code>: <strong>P</strong>rint <strong>w</strong>orking <strong>d</strong>irectory (shows you where you are).</li>
-<li><code>mkdir [directory_name]</code>: <strong>M</strong>a<strong>k</strong>e a new <strong>dir</strong>ectory.</li>
-<li><code>cp -r [source] [destination]</code>: <strong>C</strong>o<strong>p</strong>y a file or directory. Use <code>-r</code> (recursive) for directories.</li>
-<li><code>mv [source] [destination]</code>: <strong>M</strong>o<strong>v</strong>e or rename a file or directory.</li>
-<li><code>rm [file]</code>: <strong>R</strong>e<strong>m</strong>ove a file.</li>
-<li><code>rm -r [directory]</code>: Remove a directory and all its contents. <strong>USE WITH EXTREME CAUTION! There is no Recycle Bin on the command line. This action is permanent.</strong></li>
-</ul>
-<hr>
+<section id="interpreting-the-final-result" class="level2">
+<h2 class="anchored" data-anchor-id="interpreting-the-final-result">Interpreting the Final Result</h2>
+<p>This is a phenomenal result. Our model <strong>perfectly learned the reversal task!</strong> The core of the generated sequence is the correct reversal of the input.</p>
+<p><strong>So, what about the extra tokens?</strong> This is not a bug. The repetitive tokens at the end show a model that has mastered the primary task (reversal) but hasn’t perfectly learned the secondary task (knowing when to stop by generating an <code>&lt;eos&gt;</code> token). This is a common challenge in generative modeling and highlights the difference between learning a core algorithm and learning stopping criteria.</p>
 </section>
-</section>
-<section id="part-3-running-long-experiments" class="level3">
-<h3 class="anchored" data-anchor-id="part-3-running-long-experiments">Part 3: Running Long Experiments</h3>
-<p>If you run a script that takes hours and your SSH connection drops, your script will be terminated. Here are two ways to prevent that.</p>
-<section id="method-1-the-quick-dirty-way-nohup" class="level4">
-<h4 class="anchored" data-anchor-id="method-1-the-quick-dirty-way-nohup">Method 1: The Quick &amp; Dirty Way (<code>nohup</code> &amp; <code>&amp;</code>)</h4>
-<p>Use <code>nohup</code> (no hang up) to make your script ignore the disconnect signal, and <code>&amp;</code> to run it in the background.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nohup</span> python my_train_script.py <span class="at">--batch_size</span> 32 <span class="op">&gt;</span> training.log <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">&amp;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><code>nohup ... &amp;</code>: Runs the command in the background, immune to hangups.</li>
-<li><code>&gt; training.log</code>: Redirects the standard output (your <code>print</code> statements) to a file named <code>training.log</code>.</li>
-<li><code>2&gt;&amp;1</code>: Redirects the standard error stream to the same place as the standard output. This means both your print statements and any error messages will be saved in <code>training.log</code>.</li>
-<li>You can monitor the progress by “tailing” the log file:</li>
-</ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> <span class="at">-f</span> training.log</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="method-2-the-professional-way-tmux" class="level4">
-<h4 class="anchored" data-anchor-id="method-2-the-professional-way-tmux">Method 2: The Professional Way (<code>tmux</code>)</h4>
-<p>A terminal multiplexer like <code>tmux</code> is a far more powerful and flexible solution. It lets you create persistent sessions that you can detach from and re-attach to later.</p>
-<ul>
-<li><strong>Start a new named session</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">tmux</span> new <span class="at">-s</span> my_ml_session</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Run your script</strong>: Inside the new <code>tmux</code> window, just run your command normally.</li>
-</ul>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> my_train_script.py <span class="at">--batch_size</span> 32</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You can see the output directly here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><p><strong>Detach from the session</strong>: Press the key combination <code>Ctrl+b</code>, then release and press <code>d</code> (for detach). You’re now back in your normal shell, and the <code>tmux</code> session is running in the background. You can safely log out.</p></li>
-<li><p><strong>List running sessions</strong>:</p>
-<pre><code>tmux ls</code></pre></li>
-<li><p><strong>Re-attach to the session</strong>: When you log back in later, just attach to your session to pick up right where you left off.</p>
-<pre><code>tmux attach -t my_ml_session</code></pre></li>
-</ul>
-<p><code>tmux</code> is a complete game-changer for remote work. It’s worth learning a few more of its commands!</p>
-<hr>
-</section>
-</section>
-<section id="part-4-python-environments-with-conda" class="level3">
-<h3 class="anchored" data-anchor-id="part-4-python-environments-with-conda">Part 4: Python Environments with Conda</h3>
-<p>Never use the system’s default Python! It will lead to dependency conflicts. Always create isolated environments for each of your projects using <code>conda</code>.</p>
-<p>You can install <code>conda</code> by following the instructions on the <a href="https://www.anaconda.com/docs/getting-started/anaconda/install#linux-installer">Installing Anaconda Distribution</a> page.</p>
-<ul>
-<li><strong>Create an environment</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">--name</span> my-project-env python=3.12 git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Activate the environment</strong>: You must do this every time you start a new session.</li>
-</ul>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate my-project-env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Install packages</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install numpy pandas matplotlib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Install PyTorch with CUDA</strong>: This is critical. Go to the <a href="https://pytorch.org/get-started/locally/">official PyTorch website</a> and use their command generator to get the correct command for your server’s CUDA version.</li>
-</ul>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example for CUDA 12.1 - ALWAYS CHECK THE WEBSITE FOR THE LATEST COMMAND!</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install pytorch torchvision torchaudio pytorch-cuda=12.1 <span class="at">-c</span> pytorch <span class="at">-c</span> nvidia</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Deactivate</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>List and Delete Environments</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env list</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> remove <span class="at">--name</span> my-project-env <span class="at">--all</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Best Practice: Use Environment Files</strong>: To make your research reproducible, save your environment’s dependencies to a file.</li>
-</ul>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export your current environment to a file</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env export <span class="op">&gt;</span> environment.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-create the exact same environment on another machine (or for a friend)</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> environment.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Using Your Environment in Jupyter</strong>: To make your Conda environment available as a kernel in Jupyter, you need <code>ipykernel</code>.</li>
-</ul>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this inside your activated environment</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install ipykernel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
-</section>
-<section id="part-5-transferring-files" class="level3">
-<h3 class="anchored" data-anchor-id="part-5-transferring-files">Part 5: Transferring Files</h3>
-<p>You’ll constantly need to move datasets, code, and results between your local machine and the server.</p>
-<section id="scp-secure-copy" class="level4">
-<h4 class="anchored" data-anchor-id="scp-secure-copy"><code>scp</code> (Secure Copy)</h4>
-<p><code>scp</code> works like <code>cp</code> but over the network. It’s simple for single files or small directories. We use the shortcut <code>my-server</code> that we defined in the SSH config file.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy a local file TO the remote server</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: scp uses a capital -P for port, but we don't need it when using a config file.</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> /path/to/local/file.txt my-server:~/remote/destination/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy a remote folder TO your local machine (using the -r flag for recursive)</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> my-server:~/path/on/server/results/ ./local/destination/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="rsync-the-superior-choice" class="level4">
-<h4 class="anchored" data-anchor-id="rsync-the-superior-choice"><code>rsync</code> (The Superior Choice)</h4>
-<p><code>rsync</code> is faster and more powerful. It only transfers the <em>differences</em> between files, which is incredibly efficient for syncing project directories where you’ve only changed a few code files.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sync a local project folder TO the remote server using the config file alias</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># -a: archive mode (preserves permissions, etc.)</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># -v: verbose (shows which files are being transferred)</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># -z: compresses data during transfer</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --progress: shows a progress bar for large files</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rsync</span> <span class="at">-avz</span> <span class="at">--progress</span> /path/to/local/project/ my-server:~/path/to/remote/project/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To make the remote directory an exact mirror (deleting files on the server that aren't on local), add --delete</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rsync</span> <span class="at">-avz</span> <span class="at">--progress</span> <span class="at">--delete</span> /path/to/local/project/ my-server:~/path/to/remote/project/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
-</section>
-</section>
-<section id="part-6-the-best-of-both-worlds---vs-code-remote-ssh" class="level3">
-<h3 class="anchored" data-anchor-id="part-6-the-best-of-both-worlds---vs-code-remote-ssh">Part 6: The Best of Both Worlds - VS Code Remote SSH</h3>
-<p>The VS Code “Remote - SSH” extension allows you to use your slick VS Code interface on your local machine with all the extensions you’ve set up, while all the code editing, execution, and terminal commands happen on the powerful remote server.</p>
-<section id="step-1-prerequisites" class="level4">
-<h4 class="anchored" data-anchor-id="step-1-prerequisites">Step 1: Prerequisites</h4>
-<ol type="1">
-<li>Install <a href="https://code.visualstudio.com/">Visual Studio Code</a> on your <strong>local machine</strong>.</li>
-<li>In VS Code, go to the Extensions view (click the icon on the left sidebar).</li>
-<li>Search for and install the <strong>“Remote - SSH”</strong> extension by Microsoft.</li>
-</ol>
-</section>
-<section id="step-2-connecting-to-your-server" class="level4">
-<h4 class="anchored" data-anchor-id="step-2-connecting-to-your-server">Step 2: Connecting to Your Server</h4>
-<p>The “Remote - SSH” extension will automatically read your <code>~/.ssh/config</code> file. This is the easiest way to connect.</p>
-<ol type="1">
-<li>Open the Command Palette: <code>Ctrl+Shift+P</code> (or <code>Cmd+Shift+P</code> on Mac).</li>
-<li>Type <strong><code>Remote-SSH: Connect to Host...</code></strong> and press Enter.</li>
-<li>You should see the alias you created earlier (<code>my-server</code>) in the list. Select it. If you don’t see it, you can manually enter the SSH command in the format <code>ssh my-server</code> or the full command discussed earlier.</li>
-<li>If prompted, enter your SSH key passphrase or password for the remote server.</li>
-</ol>
-<p>A new VS Code window will open. It will take a moment to connect and install a lightweight “VS Code Server” on the remote machine. Once connected, look at the green button in the bottom-left corner. It should say <code>SSH: my-server</code>, confirming you are connected!</p>
-</section>
-<section id="step-3-your-remote-workspace" class="level4">
-<h4 class="anchored" data-anchor-id="step-3-your-remote-workspace">Step 3: Your Remote Workspace</h4>
-<p>You are now controlling the remote server from within VS Code.</p>
-<ul>
-<li><strong>Open a Folder</strong>: Go to <code>File &gt; Open Folder...</code>. The file dialog that opens shows the filesystem <strong>of your remote server</strong>. Navigate to your project directory (e.g., <code>~/path/to/remote/project/</code>) and open it.</li>
-<li><strong>Integrated Terminal</strong>: Open a new terminal with <code>Ctrl+</code> ` (backtick) or <code>Terminal &gt; New Terminal</code>. This is a terminal <strong>on your remote server</strong>. You can run <code>gpustat</code>, <code>htop</code>, <code>conda activate my-project-env</code>, and any other command right here.</li>
-<li><strong>Editing Files</strong>: Simply click on files in the Explorer sidebar to open and edit them. The changes are saved directly on the remote server. No more <code>rsync</code>-ing your code after every small change!</li>
-</ul>
-</section>
-<section id="step-4-setting-up-your-python-environment" class="level4">
-<h4 class="anchored" data-anchor-id="step-4-setting-up-your-python-environment">Step 4: Setting Up Your Python Environment</h4>
-<p>This is the most critical step. You need to tell VS Code which Python interpreter (your Conda environment) to use for code completion, linting, and execution.</p>
-<ol type="1">
-<li>Open the Command Palette (<code>Ctrl+Shift+P</code> / <code>Cmd+Shift+P</code>).</li>
-<li>Type <strong><code>Python: Select Interpreter</code></strong>.</li>
-<li>A list of Python interpreters found on your remote server will appear. Find and select the one corresponding to your Conda environment (e.g., <code>~/conda/envs/my-project-env/bin/python</code>).</li>
-</ol>
-<p>Now, VS Code is fully aware of your project’s dependencies. You’ll get smart auto-completion and error checking based on the packages you installed in that environment.</p>
-</section>
-<section id="step-5-the-modern-ml-workflow-in-action" class="level4">
-<h4 class="anchored" data-anchor-id="step-5-the-modern-ml-workflow-in-action">Step 5: The Modern ML Workflow in Action</h4>
-<p>With everything set up, your workflow becomes incredibly smooth:</p>
-<ul>
-<li><strong>Jupyter Notebooks</strong>: Open any <code>.ipynb</code> file on your remote server. VS Code’s built-in Jupyter support will activate. You can run cells, and the computation will be executed by the Python kernel from your selected Conda environment on the powerful remote machine.</li>
-<li><strong>Git Integration</strong>: Although I would recommend using the command line, you can also use VS Code’s source control panel to stage, commit, push, and pull changes with Git, with all commands running directly on the remote server.</li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="conclusion" class="level3">
-<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
-<p>This guide has taken you from the fundamentals of SSH and the command line to a professional, hybrid workflow using VS Code.</p>
-<p>Happy training!</p>
-<p><em>PS: I keep discovering new things about linux and remote servers lol. Please share if you have any tips or tricks that I missed!</em></p>
+<section id="the-end-of-the-beginning" class="level2">
+<h2 class="anchored" data-anchor-id="the-end-of-the-beginning">The End of the Beginning</h2>
+<p>We have: - Built an <strong>autograd engine</strong> to understand backpropagation. - Implemented fundamental <strong>neural network layers</strong> (<code>Linear</code>, <code>Embedding</code>, <code>LayerNorm</code>). - Constructed <strong>RNNs and LSTMs</strong> to handle sequences. - Understood and implemented the <strong>Attention Mechanism</strong>. - Assembled and trained the full <strong>Transformer</strong> architecture.</p>
+<p>Thank you for following along!</p>
 
 
 </section>

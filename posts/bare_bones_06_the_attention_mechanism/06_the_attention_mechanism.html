@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Devansh Lodha">
-<meta name="dcterms.date" content="2025-05-12">
-<meta name="description" content="A Beginner’s Guide to Remote Servers for Machine Learning">
+<meta name="dcterms.date" content="2025-05-27">
+<meta name="description" content="We’ll be implementing the attention mechanism, a powerful technique that allows models to focus on relevant parts of the input sequence at each step.">
 
-<title>Remote SSH Servers – Devansh’s Blog</title>
+<title>The Attention Mechanism – Devansh’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -112,6 +112,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -327,15 +356,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Remote SSH Servers</h1>
+      <div class="quarto-title-block"><div><h1 class="title">The Attention Mechanism</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
                   <div>
         <div class="description">
-          A Beginner’s Guide to Remote Servers for Machine Learning
+          We’ll be implementing the attention mechanism, a powerful technique that allows models to focus on relevant parts of the input sequence at each step.
         </div>
       </div>
                           <div class="quarto-categories">
-                <div class="quarto-category">ssh</div>
-                <div class="quarto-category">linux</div>
+                <div class="quarto-category">bare-bones-ml</div>
+                <div class="quarto-category">code</div>
               </div>
                   </div>
   </div>
@@ -353,7 +382,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 12, 2025</p>
+        <p class="date">May 27, 2025</p>
       </div>
     </div>
     
@@ -369,13 +398,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#part-1-the-key-to-the-kingdom---ssh" id="toc-part-1-the-key-to-the-kingdom---ssh" class="nav-link" data-scroll-target="#part-1-the-key-to-the-kingdom---ssh">Part 1: The Key to the Kingdom - SSH</a></li>
-  <li><a href="#part-2-your-home-on-the-server---essential-commands" id="toc-part-2-your-home-on-the-server---essential-commands" class="nav-link" data-scroll-target="#part-2-your-home-on-the-server---essential-commands">Part 2: Your Home on the Server - Essential Commands</a></li>
-  <li><a href="#part-3-running-long-experiments" id="toc-part-3-running-long-experiments" class="nav-link" data-scroll-target="#part-3-running-long-experiments">Part 3: Running Long Experiments</a></li>
-  <li><a href="#part-4-python-environments-with-conda" id="toc-part-4-python-environments-with-conda" class="nav-link" data-scroll-target="#part-4-python-environments-with-conda">Part 4: Python Environments with Conda</a></li>
-  <li><a href="#part-5-transferring-files" id="toc-part-5-transferring-files" class="nav-link" data-scroll-target="#part-5-transferring-files">Part 5: Transferring Files</a></li>
-  <li><a href="#part-6-the-best-of-both-worlds---vs-code-remote-ssh" id="toc-part-6-the-best-of-both-worlds---vs-code-remote-ssh" class="nav-link" data-scroll-target="#part-6-the-best-of-both-worlds---vs-code-remote-ssh">Part 6: The Best of Both Worlds - VS Code Remote SSH</a></li>
+  <li><a href="#the-attention-formula-queries-keys-and-values" id="toc-the-attention-formula-queries-keys-and-values" class="nav-link active" data-scroll-target="#the-attention-formula-queries-keys-and-values">The Attention Formula: Queries, Keys, and Values</a>
+  <ul class="collapse">
+  <li><a href="#a-simple-demonstration" id="toc-a-simple-demonstration" class="nav-link" data-scroll-target="#a-simple-demonstration">A Simple Demonstration</a></li>
+  </ul></li>
+  <li><a href="#multi-head-attention-focusing-on-many-things-at-once" id="toc-multi-head-attention-focusing-on-many-things-at-once" class="nav-link" data-scroll-target="#multi-head-attention-focusing-on-many-things-at-once">Multi-Head Attention: Focusing on Many Things at Once</a>
+  <ul class="collapse">
+  <li><a href="#a-structural-test" id="toc-a-structural-test" class="nav-link" data-scroll-target="#a-structural-test">A Structural Test</a></li>
+  </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
@@ -388,269 +418,158 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
-<p>So, you’ve gained access to a powerful remote server with some beefy GPUs, huh? This is where the real, large-scale machine learning happens. But for many, leaving a familiar graphical interface for the command line and tools like SSH can feel daunting.</p>
-<p>I decided to make this guide for all my juniors at uni and to anyone this deems to be useful. We’ll cover everything from securely connecting to the server to managing your files, Python environments, and long-running training jobs like a pro.</p>
-<hr>
-</section>
-<section id="part-1-the-key-to-the-kingdom---ssh" class="level3">
-<h3 class="anchored" data-anchor-id="part-1-the-key-to-the-kingdom---ssh">Part 1: The Key to the Kingdom - SSH</h3>
-<p>SSH, or Secure Shell, is your gateway to the remote machine. It’s a secure protocol that lets you open a command-line interface on another computer as if you were sitting right in front of it.</p>
-<section id="your-first-connection" class="level4">
-<h4 class="anchored" data-anchor-id="your-first-connection">Your First Connection</h4>
-<p>The fundamental command is <code>ssh</code>. To connect, you’ll need the server’s address (a domain name or IP address), your username, and possibly a specific port number.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The general format is: ssh -X your_username@your_server_ip -p &lt;port_number&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-X</span> user@remote.server.com <span class="at">-p</span> 2222</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Let’s break that down:</p>
+<p>So far, we have built Recurrent Neural Networks and LSTMs. These models process sequences step-by-step, maintaining a “memory” or hidden state that summarizes all the information seen so far. While powerful, this approach has a fundamental weakness: the hidden state becomes an <strong>information bottleneck</strong>. The model must compress the entire meaning of a long sentence like “The fluffy cat, which had been sleeping all day on the warm, sunny windowsill, finally woke up and…” into a single, fixed-size vector. By the time the model processes “woke up,” the specific details about the “fluffy cat” might be diluted or lost.</p>
+<p>What if, instead of relying on a single summary vector, the model could “look back” at the entire input sequence at every step and decide which parts are most relevant for the current task?</p>
+<p>This is the core intuition behind the <strong>Attention Mechanism</strong>. It’s a technique that allows a model to dynamically focus on the most relevant parts of the input sequence when producing a part of the output sequence. It was the key ingredient that unlocked the power of the Transformer architecture and redefined modern AI.</p>
+<section id="the-attention-formula-queries-keys-and-values" class="level2">
+<h2 class="anchored" data-anchor-id="the-attention-formula-queries-keys-and-values">The Attention Formula: Queries, Keys, and Values</h2>
+<p>Attention can be described beautifully through an analogy to a library retrieval system. You have a question, and you want to find the most relevant books.</p>
 <ul>
-<li><strong><code>ssh</code></strong>: The command itself.</li>
-<li><strong><code>-X</code></strong>: Enables X11 forwarding. This lets you run graphical applications on the server and have their windows appear on your local machine.</li>
-<li><strong><code>user@remote.server.com</code></strong>: Your <code>username</code> at the server’s <code>address</code>.</li>
-<li><strong><code>-p 2222</code></strong>: Specifies the <code>port</code> to connect to. The default SSH port is 22, but system administrators often change it for security, so make sure you use the one provided to you.</li>
+<li><strong>Query (Q):</strong> This is your question. In a model, it represents the current context or the word you are trying to produce (e.g., “I need information about an animal”).</li>
+<li><strong>Key (K):</strong> These are the titles on the spines of all the books in the library. Each input word has a Key vector, like a label that says, “I am about animals” or “I am about places.”</li>
+<li><strong>Value (V):</strong> These are the actual contents of the books. Each input word also has a Value vector, which is its rich, meaningful representation.</li>
 </ul>
-</section>
-<section id="going-passwordless-with-ssh-keys-highly-recommended" class="level4">
-<h4 class="anchored" data-anchor-id="going-passwordless-with-ssh-keys-highly-recommended">Going Passwordless with SSH Keys (Highly Recommended!)</h4>
-<p>Typing your password every time is tedious and less secure than using SSH keys. This method involves creating a cryptographic key pair: a <strong>private key</strong> that stays on your local machine (guard it with your life!) and a <strong>public key</strong> that you copy to the server.</p>
-<ol type="1">
-<li><strong>Generate Keys (on your local machine)</strong>: If you haven’t already, run this command in your local terminal. When it asks for a file to save the key, just press Enter to accept the default. It’s good practice to add a passphrase for an extra layer of security.</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> rsa <span class="at">-b</span> 4096</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="2" type="1">
-<li><strong>Copy Your Public Key to the Server</strong>: This command automatically appends your public key to the correct file (<code>~/.ssh/authorized_keys</code>) on the server.</li>
-</ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust the port and user/host info as needed</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ssh-copy-id</span> <span class="at">-p</span> 2222 user@remote.server.com</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Now, try <code>ssh</code>-ing into your server again. If you set a passphrase, you’ll enter that; otherwise, it should log you in without asking for your password!</p>
-</section>
-<section id="create-ssh-shortcuts-with-a-config-file" class="level4">
-<h4 class="anchored" data-anchor-id="create-ssh-shortcuts-with-a-config-file">Create SSH Shortcuts with a Config File</h4>
-<p>You can create a config file on your <strong>local machine</strong> to store connection details. This is a massive time-saver. Create the file <code>~/.ssh/config</code> if it doesn’t exist (<code>touch ~/.ssh/config</code>) and add an entry like this:</p>
-<pre><code>    Host my-server
-        HostName remote.server.com
-        User user
-        Port 2222
-        ForwardX11 yes</code></pre>
-<p>Now, you can connect to your server with a simple, memorable command:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> my-server</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
-</section>
-</section>
-<section id="part-2-your-home-on-the-server---essential-commands" class="level3">
-<h3 class="anchored" data-anchor-id="part-2-your-home-on-the-server---essential-commands">Part 2: Your Home on the Server - Essential Commands</h3>
-<p>Once you’re in, you need to know how to navigate and monitor the environment.</p>
-<section id="system-and-resource-monitoring" class="level4">
-<h4 class="anchored" data-anchor-id="system-and-resource-monitoring">System and Resource Monitoring</h4>
-<ul>
-<li><strong>Change Your Password</strong>: If you’re using password authentication, this should be the first thing you do.</li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">passwd</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Who’s Using the CPUs? (<code>htop</code>)</strong>: A live, colorful, and user-friendly view of CPU and memory usage, and which processes are running. Far superior to the older <code>top</code> command.</li>
-</ul>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">htop</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Who’s Using the GPUs? (<code>nvidia-smi</code>)</strong>: The most important command for an ML practitioner. Use <code>watch</code> to run it repeatedly for a live view.</li>
-</ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Understanding <code>nvidia-smi</code> output: - <code>Fan / Temp</code>: GPU temperature. Keep an eye on this; if it’s too high, the GPU might be throttling. - <code>Pwr:Usage/Cap</code>: How much power the GPU is drawing out of its total capacity. - <code>Memory-Usage</code>: How much VRAM is being used. This is critical! If you get a “CUDA out of memory” error, this is where you’ll see it. - <code>GPU-Util</code>: Percentage of time the GPU cores were active. Aim for high utilization during training.</p>
-<p>For GPU monitoring, I would also recommend installing <code>gpustat</code>, which allows you to see usernames as well if you’re sharing the server with others.</p>
-</section>
-<section id="disk-space-management" class="level4">
-<h4 class="anchored" data-anchor-id="disk-space-management">Disk Space Management</h4>
-<ul>
-<li><strong>How much space am I using? (<code>du</code>)</strong>: Use <code>du</code> (disk usage) to check file or directory sizes. The <code>~</code> character is a shortcut for your home directory.</li>
-</ul>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the total size of your home directory in a human-readable format</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> ~</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A super useful command to find the top 10 largest files/folders in your current directory</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> . <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-rh</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>How much space is left? (<code>df</code>)</strong>: Use <code>df</code> (disk free) to see the total storage available on the disk partition.</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show free space on the partition where your home directory is located</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span> <span class="at">-h</span> ~</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="basic-file-and-folder-operations" class="level4">
-<h4 class="anchored" data-anchor-id="basic-file-and-folder-operations">Basic File and Folder Operations</h4>
-<ul>
-<li><code>ls -lh</code>: <strong>L</strong>i<strong>s</strong>t files in a <strong>l</strong>ong, <strong>h</strong>uman-readable format.</li>
-<li><code>cd [directory]</code>: <strong>C</strong>hange <strong>d</strong>irectory. (<code>cd ~</code> goes home, <code>cd ..</code> goes up one level, <code>cd -</code> goes to the previous directory).</li>
-<li><code>pwd</code>: <strong>P</strong>rint <strong>w</strong>orking <strong>d</strong>irectory (shows you where you are).</li>
-<li><code>mkdir [directory_name]</code>: <strong>M</strong>a<strong>k</strong>e a new <strong>dir</strong>ectory.</li>
-<li><code>cp -r [source] [destination]</code>: <strong>C</strong>o<strong>p</strong>y a file or directory. Use <code>-r</code> (recursive) for directories.</li>
-<li><code>mv [source] [destination]</code>: <strong>M</strong>o<strong>v</strong>e or rename a file or directory.</li>
-<li><code>rm [file]</code>: <strong>R</strong>e<strong>m</strong>ove a file.</li>
-<li><code>rm -r [directory]</code>: Remove a directory and all its contents. <strong>USE WITH EXTREME CAUTION! There is no Recycle Bin on the command line. This action is permanent.</strong></li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="part-3-running-long-experiments" class="level3">
-<h3 class="anchored" data-anchor-id="part-3-running-long-experiments">Part 3: Running Long Experiments</h3>
-<p>If you run a script that takes hours and your SSH connection drops, your script will be terminated. Here are two ways to prevent that.</p>
-<section id="method-1-the-quick-dirty-way-nohup" class="level4">
-<h4 class="anchored" data-anchor-id="method-1-the-quick-dirty-way-nohup">Method 1: The Quick &amp; Dirty Way (<code>nohup</code> &amp; <code>&amp;</code>)</h4>
-<p>Use <code>nohup</code> (no hang up) to make your script ignore the disconnect signal, and <code>&amp;</code> to run it in the background.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nohup</span> python my_train_script.py <span class="at">--batch_size</span> 32 <span class="op">&gt;</span> training.log <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">&amp;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><code>nohup ... &amp;</code>: Runs the command in the background, immune to hangups.</li>
-<li><code>&gt; training.log</code>: Redirects the standard output (your <code>print</code> statements) to a file named <code>training.log</code>.</li>
-<li><code>2&gt;&amp;1</code>: Redirects the standard error stream to the same place as the standard output. This means both your print statements and any error messages will be saved in <code>training.log</code>.</li>
-<li>You can monitor the progress by “tailing” the log file:</li>
-</ul>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> <span class="at">-f</span> training.log</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="method-2-the-professional-way-tmux" class="level4">
-<h4 class="anchored" data-anchor-id="method-2-the-professional-way-tmux">Method 2: The Professional Way (<code>tmux</code>)</h4>
-<p>A terminal multiplexer like <code>tmux</code> is a far more powerful and flexible solution. It lets you create persistent sessions that you can detach from and re-attach to later.</p>
-<ul>
-<li><strong>Start a new named session</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">tmux</span> new <span class="at">-s</span> my_ml_session</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Run your script</strong>: Inside the new <code>tmux</code> window, just run your command normally.</li>
-</ul>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> my_train_script.py <span class="at">--batch_size</span> 32</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You can see the output directly here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><p><strong>Detach from the session</strong>: Press the key combination <code>Ctrl+b</code>, then release and press <code>d</code> (for detach). You’re now back in your normal shell, and the <code>tmux</code> session is running in the background. You can safely log out.</p></li>
-<li><p><strong>List running sessions</strong>:</p>
-<pre><code>tmux ls</code></pre></li>
-<li><p><strong>Re-attach to the session</strong>: When you log back in later, just attach to your session to pick up right where you left off.</p>
-<pre><code>tmux attach -t my_ml_session</code></pre></li>
-</ul>
-<p><code>tmux</code> is a complete game-changer for remote work. It’s worth learning a few more of its commands!</p>
-<hr>
+<p>The process is intuitive: 1. You compare your <strong>Query</strong> to every <strong>Key</strong> in the library to see how well they match. A common way to do this is with a dot product. A high score means a strong match. 2. You take all the scores and run them through a <code>softmax</code> function. This converts the scores into a probability distribution. These are your <strong>attention weights</strong>. A key with a high score will get a high weight. 3. You create a weighted sum of all the <strong>Values</strong> (the books’ contents) using your attention weights. Books with higher weights contribute more to the final result.</p>
+<p>This is captured in the famous Scaled Dot-Product Attention formula from the “Attention Is All You Need” paper: <span class="math display">\[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</span></p>
+<p>The division by <span class="math inline">\(\sqrt{d_k}\)</span> (the square root of the key dimension) is a scaling factor that helps stabilize the gradients during training, preventing the dot product scores from becoming too large.</p>
+<p>Let’s look at our from-scratch implementation.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># from_scratch/nn.py</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ScaledDotProductAttention(Module):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Computes Scaled Dot-Product Attention."""</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, q: Tensor, k: Tensor, v: Tensor, mask<span class="op">=</span><span class="va">None</span>) <span class="op">-&gt;</span> Tensor:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get the dimension of the key vectors</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        key_dim <span class="op">=</span> Tensor(k.shape[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Transpose the last two dimensions of the key tensor for matrix multiplication</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        key_transposed <span class="op">=</span> k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 1. Calculate scores: Query @ Key_transposed</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        scores <span class="op">=</span> q <span class="op">@</span> key_transposed</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 2. Scale the scores</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        scaled_scores <span class="op">=</span> scores <span class="op">/</span> key_dim.sqrt()</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 3. Apply mask if provided (e.g., for padding or causal attention)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> mask <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            scaled_scores <span class="op">=</span> scaled_scores <span class="op">+</span> mask</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 4. Apply softmax to get attention weights</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> softmax(scaled_scores)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 5. Multiply weights by Values to get the final output</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> weights <span class="op">@</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="a-simple-demonstration" class="level3">
+<h3 class="anchored" data-anchor-id="a-simple-demonstration">A Simple Demonstration</h3>
+<p>Let’s see this in action. We’ll create a simple scenario where our “Values” represent three distinct concepts, and we’ll watch how the attention weights shift based on our “Query.” To make the effect obvious, our query vector will have a large value in the dimension it’s “interested” in.</p>
+<div id="ca89c350" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">'../'</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.autograd.tensor <span class="im">import</span> Tensor</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.functional <span class="im">import</span> softmax</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Imagine our "Values" represent three concepts: "cat", "dog", "bird"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> Tensor(np.array([</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>],  <span class="co"># Vector for 'cat'</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>],  <span class="co"># Vector for 'dog'</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>]   <span class="co"># Vector for 'bird'</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>]))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># The "Keys" are labels for our values. We'll make them match the values for simplicity.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> Tensor(np.array([</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>]))</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_attention(Q, K, V):</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For this simple demo, we'll omit the scaling factor for a clearer result.</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> Q <span class="op">@</span> K.T</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> softmax(scores)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> weights</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Scenario 1: We are looking for "dog"</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a more "opinionated" query vector with a large magnitude in the 'dog' dimension.</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>query_dog <span class="op">=</span> Tensor([[<span class="fl">1.0</span>, <span class="fl">10.0</span>, <span class="fl">1.0</span>]]) </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>attention_weights_dog <span class="op">=</span> calculate_attention(query_dog, K, V)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Query: 'dog' ---"</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Attention Weights:</span><span class="ch">\n</span><span class="st">"</span>, np.<span class="bu">round</span>(attention_weights_dog.data, <span class="dv">2</span>))</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The weights show a very clear focus on the second item (index 1), which is 'dog'."</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Scenario 2: Now we are looking for "bird"</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>query_bird <span class="op">=</span> Tensor([[<span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">10.0</span>]])</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>attention_weights_bird <span class="op">=</span> calculate_attention(query_bird, K, V)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Query: 'bird' ---"</span>)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Attention Weights:</span><span class="ch">\n</span><span class="st">"</span>, np.<span class="bu">round</span>(attention_weights_bird.data, <span class="dv">2</span>))</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The weights have decisively shifted to the third item (index 2), which is 'bird'."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Query: 'dog' ---
+Attention Weights:
+ [[0. 1. 0.]]
+The weights show a very clear focus on the second item (index 1), which is 'dog'.
+
+--- Query: 'bird' ---
+Attention Weights:
+ [[0. 0. 1.]]
+The weights have decisively shifted to the third item (index 2), which is 'bird'.</code></pre>
+</div>
+</div>
 </section>
 </section>
-<section id="part-4-python-environments-with-conda" class="level3">
-<h3 class="anchored" data-anchor-id="part-4-python-environments-with-conda">Part 4: Python Environments with Conda</h3>
-<p>Never use the system’s default Python! It will lead to dependency conflicts. Always create isolated environments for each of your projects using <code>conda</code>.</p>
-<p>You can install <code>conda</code> by following the instructions on the <a href="https://www.anaconda.com/docs/getting-started/anaconda/install#linux-installer">Installing Anaconda Distribution</a> page.</p>
-<ul>
-<li><strong>Create an environment</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">--name</span> my-project-env python=3.12 git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Activate the environment</strong>: You must do this every time you start a new session.</li>
-</ul>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate my-project-env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Install packages</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install numpy pandas matplotlib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Install PyTorch with CUDA</strong>: This is critical. Go to the <a href="https://pytorch.org/get-started/locally/">official PyTorch website</a> and use their command generator to get the correct command for your server’s CUDA version.</li>
-</ul>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example for CUDA 12.1 - ALWAYS CHECK THE WEBSITE FOR THE LATEST COMMAND!</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install pytorch torchvision torchaudio pytorch-cuda=12.1 <span class="at">-c</span> pytorch <span class="at">-c</span> nvidia</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Deactivate</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>List and Delete Environments</strong>:</li>
-</ul>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env list</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> remove <span class="at">--name</span> my-project-env <span class="at">--all</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Best Practice: Use Environment Files</strong>: To make your research reproducible, save your environment’s dependencies to a file.</li>
-</ul>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export your current environment to a file</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env export <span class="op">&gt;</span> environment.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-create the exact same environment on another machine (or for a friend)</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> environment.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><strong>Using Your Environment in Jupyter</strong>: To make your Conda environment available as a kernel in Jupyter, you need <code>ipykernel</code>.</li>
-</ul>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this inside your activated environment</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install ipykernel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
-</section>
-<section id="part-5-transferring-files" class="level3">
-<h3 class="anchored" data-anchor-id="part-5-transferring-files">Part 5: Transferring Files</h3>
-<p>You’ll constantly need to move datasets, code, and results between your local machine and the server.</p>
-<section id="scp-secure-copy" class="level4">
-<h4 class="anchored" data-anchor-id="scp-secure-copy"><code>scp</code> (Secure Copy)</h4>
-<p><code>scp</code> works like <code>cp</code> but over the network. It’s simple for single files or small directories. We use the shortcut <code>my-server</code> that we defined in the SSH config file.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy a local file TO the remote server</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: scp uses a capital -P for port, but we don't need it when using a config file.</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> /path/to/local/file.txt my-server:~/remote/destination/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy a remote folder TO your local machine (using the -r flag for recursive)</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> my-server:~/path/on/server/results/ ./local/destination/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="rsync-the-superior-choice" class="level4">
-<h4 class="anchored" data-anchor-id="rsync-the-superior-choice"><code>rsync</code> (The Superior Choice)</h4>
-<p><code>rsync</code> is faster and more powerful. It only transfers the <em>differences</em> between files, which is incredibly efficient for syncing project directories where you’ve only changed a few code files.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sync a local project folder TO the remote server using the config file alias</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># -a: archive mode (preserves permissions, etc.)</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># -v: verbose (shows which files are being transferred)</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># -z: compresses data during transfer</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --progress: shows a progress bar for large files</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rsync</span> <span class="at">-avz</span> <span class="at">--progress</span> /path/to/local/project/ my-server:~/path/to/remote/project/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To make the remote directory an exact mirror (deleting files on the server that aren't on local), add --delete</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rsync</span> <span class="at">-avz</span> <span class="at">--progress</span> <span class="at">--delete</span> /path/to/local/project/ my-server:~/path/to/remote/project/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
+<section id="multi-head-attention-focusing-on-many-things-at-once" class="level2">
+<h2 class="anchored" data-anchor-id="multi-head-attention-focusing-on-many-things-at-once">Multi-Head Attention: Focusing on Many Things at Once</h2>
+<p>The Transformer paper took this one step further with <strong>Multi-Head Attention</strong>. The intuition is simple: instead of having one attention mechanism, let’s have several of them (“heads”) working in parallel. Each head can learn to focus on different aspects of the input. For example, when translating a sentence, one head might learn to track subject-verb agreement, while another tracks adjective-noun pairings.</p>
+<p>This is achieved by: 1. Creating separate <code>Linear</code> projection layers for the Queries, Keys, and Values for each head. 2. Splitting the input into multiple “heads” and applying Scaled Dot-Product Attention to each head in parallel. 3. Concatenating the results from all heads. 4. Passing the concatenated output through a final <code>Linear</code> layer.</p>
+<section id="a-structural-test" class="level3">
+<h3 class="anchored" data-anchor-id="a-structural-test">A Structural Test</h3>
+<p>At this stage, the output of an untrained <code>MultiHeadAttention</code> module is just a matrix of meaningless numbers. The most important thing to verify is its <strong>structure</strong>. A key property of these blocks is that the <strong>output shape is identical to the input shape</strong>. This is what allows us to stack them to create a deep network. Let’s test that.</p>
+<div id="bb7fb494" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> from_scratch.nn <span class="im">import</span> MultiHeadAttention</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define parameters</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>seq_len <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>hidden_size <span class="op">=</span> <span class="dv">32</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>num_heads <span class="op">=</span> <span class="dv">4</span> <span class="co"># hidden_size must be divisible by num_heads</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create some dummy input tensors</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> Tensor(np.random.randn(batch_size, seq_len, hidden_size))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> Tensor(np.random.randn(batch_size, seq_len, hidden_size))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>value <span class="op">=</span> Tensor(np.random.randn(batch_size, seq_len, hidden_size))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate and run our module</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>multi_head_attention <span class="op">=</span> MultiHeadAttention(hidden_size<span class="op">=</span>hidden_size, num_heads<span class="op">=</span>num_heads)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> multi_head_attention(q<span class="op">=</span>query, k<span class="op">=</span>key, v<span class="op">=</span>value)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Input shape:  (</span><span class="sc">{</span>batch_size<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>seq_len<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>hidden_size<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Output shape: </span><span class="sc">{</span>output<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> output.shape <span class="op">==</span> (batch_size, seq_len, hidden_size)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Success! The MultiHeadAttention module processed the input and produced an output of the correct shape."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Input shape:  (4, 10, 32)
+Output shape: (4, 10, 32)
+
+Success! The MultiHeadAttention module processed the input and produced an output of the correct shape.</code></pre>
+</div>
+</div>
 </section>
 </section>
-<section id="part-6-the-best-of-both-worlds---vs-code-remote-ssh" class="level3">
-<h3 class="anchored" data-anchor-id="part-6-the-best-of-both-worlds---vs-code-remote-ssh">Part 6: The Best of Both Worlds - VS Code Remote SSH</h3>
-<p>The VS Code “Remote - SSH” extension allows you to use your slick VS Code interface on your local machine with all the extensions you’ve set up, while all the code editing, execution, and terminal commands happen on the powerful remote server.</p>
-<section id="step-1-prerequisites" class="level4">
-<h4 class="anchored" data-anchor-id="step-1-prerequisites">Step 1: Prerequisites</h4>
-<ol type="1">
-<li>Install <a href="https://code.visualstudio.com/">Visual Studio Code</a> on your <strong>local machine</strong>.</li>
-<li>In VS Code, go to the Extensions view (click the icon on the left sidebar).</li>
-<li>Search for and install the <strong>“Remote - SSH”</strong> extension by Microsoft.</li>
-</ol>
-</section>
-<section id="step-2-connecting-to-your-server" class="level4">
-<h4 class="anchored" data-anchor-id="step-2-connecting-to-your-server">Step 2: Connecting to Your Server</h4>
-<p>The “Remote - SSH” extension will automatically read your <code>~/.ssh/config</code> file. This is the easiest way to connect.</p>
-<ol type="1">
-<li>Open the Command Palette: <code>Ctrl+Shift+P</code> (or <code>Cmd+Shift+P</code> on Mac).</li>
-<li>Type <strong><code>Remote-SSH: Connect to Host...</code></strong> and press Enter.</li>
-<li>You should see the alias you created earlier (<code>my-server</code>) in the list. Select it. If you don’t see it, you can manually enter the SSH command in the format <code>ssh my-server</code> or the full command discussed earlier.</li>
-<li>If prompted, enter your SSH key passphrase or password for the remote server.</li>
-</ol>
-<p>A new VS Code window will open. It will take a moment to connect and install a lightweight “VS Code Server” on the remote machine. Once connected, look at the green button in the bottom-left corner. It should say <code>SSH: my-server</code>, confirming you are connected!</p>
-</section>
-<section id="step-3-your-remote-workspace" class="level4">
-<h4 class="anchored" data-anchor-id="step-3-your-remote-workspace">Step 3: Your Remote Workspace</h4>
-<p>You are now controlling the remote server from within VS Code.</p>
-<ul>
-<li><strong>Open a Folder</strong>: Go to <code>File &gt; Open Folder...</code>. The file dialog that opens shows the filesystem <strong>of your remote server</strong>. Navigate to your project directory (e.g., <code>~/path/to/remote/project/</code>) and open it.</li>
-<li><strong>Integrated Terminal</strong>: Open a new terminal with <code>Ctrl+</code> ` (backtick) or <code>Terminal &gt; New Terminal</code>. This is a terminal <strong>on your remote server</strong>. You can run <code>gpustat</code>, <code>htop</code>, <code>conda activate my-project-env</code>, and any other command right here.</li>
-<li><strong>Editing Files</strong>: Simply click on files in the Explorer sidebar to open and edit them. The changes are saved directly on the remote server. No more <code>rsync</code>-ing your code after every small change!</li>
-</ul>
-</section>
-<section id="step-4-setting-up-your-python-environment" class="level4">
-<h4 class="anchored" data-anchor-id="step-4-setting-up-your-python-environment">Step 4: Setting Up Your Python Environment</h4>
-<p>This is the most critical step. You need to tell VS Code which Python interpreter (your Conda environment) to use for code completion, linting, and execution.</p>
-<ol type="1">
-<li>Open the Command Palette (<code>Ctrl+Shift+P</code> / <code>Cmd+Shift+P</code>).</li>
-<li>Type <strong><code>Python: Select Interpreter</code></strong>.</li>
-<li>A list of Python interpreters found on your remote server will appear. Find and select the one corresponding to your Conda environment (e.g., <code>~/conda/envs/my-project-env/bin/python</code>).</li>
-</ol>
-<p>Now, VS Code is fully aware of your project’s dependencies. You’ll get smart auto-completion and error checking based on the packages you installed in that environment.</p>
-</section>
-<section id="step-5-the-modern-ml-workflow-in-action" class="level4">
-<h4 class="anchored" data-anchor-id="step-5-the-modern-ml-workflow-in-action">Step 5: The Modern ML Workflow in Action</h4>
-<p>With everything set up, your workflow becomes incredibly smooth:</p>
-<ul>
-<li><strong>Jupyter Notebooks</strong>: Open any <code>.ipynb</code> file on your remote server. VS Code’s built-in Jupyter support will activate. You can run cells, and the computation will be executed by the Python kernel from your selected Conda environment on the powerful remote machine.</li>
-<li><strong>Git Integration</strong>: Although I would recommend using the command line, you can also use VS Code’s source control panel to stage, commit, push, and pull changes with Git, with all commands running directly on the remote server.</li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="conclusion" class="level3">
-<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
-<p>This guide has taken you from the fundamentals of SSH and the command line to a professional, hybrid workflow using VS Code.</p>
-<p>Happy training!</p>
-<p><em>PS: I keep discovering new things about linux and remote servers lol. Please share if you have any tips or tricks that I missed!</em></p>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>The Attention mechanism is arguably the most important concept in modern deep learning behind backpropagation itself. It broke the sequential bottleneck of RNNs and paved the way for parallelizable, highly effective models.</p>
+<p>Now that we have built this core component, we are finally ready to assemble the full <strong>Transformer</strong> architecture.</p>
 
 
 </section>
