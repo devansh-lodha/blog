@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/brick-kiln-vlm-benchmark/brick-kiln-vlm-benchmark.html",
       "/posts/energy_exploration/energy_exploration.html",
       "/posts/acm_vlm_tutorial/acm_vlm_tutorial.html",
       "/posts/bare_bones_09_vision_transformer/09_vision_transformer.html",

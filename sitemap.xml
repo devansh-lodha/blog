@@ -2,86 +2,90 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html</loc>
-    <lastmod>2025-06-15T17:36:23.124Z</lastmod>
+    <lastmod>2025-06-15T23:21:26.743Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/acm_vlm_tutorial/acm_vlm_tutorial.html</loc>
-    <lastmod>2025-06-15T17:36:22.700Z</lastmod>
+    <lastmod>2025-06-15T23:21:26.288Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_02_building_a_neural_network/02_building_a_neural_network.html</loc>
-    <lastmod>2025-06-15T17:36:22.710Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/ml_publication_trends/ml_publication_trends.html</loc>
-    <lastmod>2025-06-15T17:36:22.972Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
-    <lastmod>2025-06-15T17:36:23.104Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/energy_exploration/energy_exploration.html</loc>
-    <lastmod>2025-06-15T17:36:22.778Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_05_lstm_from_scratch/05_lstm_from_scratch.html</loc>
-    <lastmod>2025-06-15T17:36:22.714Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_04_rnn_from_scratch/04_rnn_from_scratch.html</loc>
-    <lastmod>2025-06-15T17:36:22.713Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
-    <lastmod>2025-06-15T17:36:22.964Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_09_vision_transformer/09_vision_transformer.html</loc>
-    <lastmod>2025-06-15T17:36:22.721Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
-    <lastmod>2025-06-15T17:36:22.673Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/processor_verilog/processor_verilog.html</loc>
-    <lastmod>2025-06-15T17:36:23.113Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_08_training_the_transformer/08_training_the_transformer.html</loc>
-    <lastmod>2025-06-15T17:36:22.718Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/remote_ssh_servers/remote_ssh_servers.html</loc>
-    <lastmod>2025-06-15T17:36:23.115Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_03_mlp_for_classification/03_mlp_for_classification.html</loc>
-    <lastmod>2025-06-15T17:36:22.712Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/illustrator_blog/illustrator_blog.html</loc>
-    <lastmod>2025-06-15T17:36:22.832Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
-    <lastmod>2025-06-15T17:36:22.831Z</lastmod>
-  </url>
-  <url>
-    <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
-    <lastmod>2025-06-15T17:36:22.770Z</lastmod>
+    <lastmod>2025-06-15T23:21:26.298Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_07_building_a_transformer/07_building_a_transformer.html</loc>
-    <lastmod>2025-06-15T17:36:22.717Z</lastmod>
+    <lastmod>2025-06-15T23:21:26.305Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/carvana_seg_resnet18/carvana_seg_resnet18.html</loc>
+    <lastmod>2025-06-15T23:21:26.391Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/histogram_matching/histogram_matching.html</loc>
+    <lastmod>2025-06-15T23:21:26.451Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/illustrator_blog/illustrator_blog.html</loc>
+    <lastmod>2025-06-15T23:21:26.452Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_03_mlp_for_classification/03_mlp_for_classification.html</loc>
+    <lastmod>2025-06-15T23:21:26.300Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/remote_ssh_servers/remote_ssh_servers.html</loc>
+    <lastmod>2025-06-15T23:21:26.734Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_08_training_the_transformer/08_training_the_transformer.html</loc>
+    <lastmod>2025-06-15T23:21:26.306Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/processor_verilog/processor_verilog.html</loc>
+    <lastmod>2025-06-15T23:21:26.733Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/index.html</loc>
+    <lastmod>2025-06-15T23:21:26.261Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_09_vision_transformer/09_vision_transformer.html</loc>
+    <lastmod>2025-06-15T23:21:26.309Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/matrix_factorization/matrix_factorization.html</loc>
+    <lastmod>2025-06-15T23:21:26.584Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_04_rnn_from_scratch/04_rnn_from_scratch.html</loc>
+    <lastmod>2025-06-15T23:21:26.301Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_05_lstm_from_scratch/05_lstm_from_scratch.html</loc>
+    <lastmod>2025-06-15T23:21:26.302Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/energy_exploration/energy_exploration.html</loc>
+    <lastmod>2025-06-15T23:21:26.398Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/otsu_thresholding/otsu_thresholding.html</loc>
+    <lastmod>2025-06-15T23:21:26.723Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/ml_publication_trends/ml_publication_trends.html</loc>
+    <lastmod>2025-06-15T23:21:26.592Z</lastmod>
+  </url>
+  <url>
+    <loc>https://devansh-lodha.github.io/blog/posts/brick-kiln-vlm-benchmark/brick-kiln-vlm-benchmark.html</loc>
+    <lastmod>2025-06-15T23:21:26.311Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_01_autograd_engine/01_autograd_engine.html</loc>
-    <lastmod>2025-06-15T17:36:22.709Z</lastmod>
+    <lastmod>2025-06-15T23:21:26.297Z</lastmod>
   </url>
   <url>
     <loc>https://devansh-lodha.github.io/blog/posts/bare_bones_06_the_attention_mechanism/06_the_attention_mechanism.html</loc>
-    <lastmod>2025-06-15T17:36:22.716Z</lastmod>
+    <lastmod>2025-06-15T23:21:26.304Z</lastmod>
   </url>
 </urlset>
