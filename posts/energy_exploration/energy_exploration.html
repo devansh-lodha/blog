@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Devansh Lodha">
+<meta name="dcterms.date" content="2025-06-09">
+<meta name="description" content="We’ll analyze global power plants and use Google Earth Engine to build a machine learning model that can see pollution from space. We collect and use features from multiple satellites to accurately detect when a power plant is active.">
+
+<title>Power Plants, Pollution, and Pixels – Devansh’s Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f8dd60e654e2b9c8d5523d7f632da173.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-bb815ccc591fed04ba3f41ececb64847.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-f8dd60e654e2b9c8d5523d7f632da173.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Devansh’s Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/"> 
+<span class="menu-text">about</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/blog/"> 
+<span class="menu-text">blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/publications/"> 
+<span class="menu-text">publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/projects/"> 
+<span class="menu-text">projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://devansh-lodha.github.io/repositories/"> 
+<span class="menu-text">repositories</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <div class="quarto-title-block"><div><h1 class="title">Power Plants, Pollution, and Pixels</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+                  <div>
+        <div class="description">
+          We’ll analyze global power plants and use Google Earth Engine to build a machine learning model that can see pollution from space. We collect and use features from multiple satellites to accurately detect when a power plant is active.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">computer vision</div>
+                <div class="quarto-category">data analysis</div>
+                <div class="quarto-category">code</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Devansh Lodha </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 9, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#a-world-of-power-the-global-landscape" id="toc-a-world-of-power-the-global-landscape" class="nav-link active" data-scroll-target="#a-world-of-power-the-global-landscape">A World of Power: The Global Landscape</a></li>
+  <li><a href="#the-reign-of-coal-a-global-concern" id="toc-the-reign-of-coal-a-global-concern" class="nav-link" data-scroll-target="#the-reign-of-coal-a-global-concern">The Reign of Coal: A Global Concern</a>
+  <ul class="collapse">
+  <li><a href="#capacity-not-just-count-a-better-metric-for-impact" id="toc-capacity-not-just-count-a-better-metric-for-impact" class="nav-link" data-scroll-target="#capacity-not-just-count-a-better-metric-for-impact">Capacity, Not Just Count: A Better Metric for Impact</a></li>
+  </ul></li>
+  <li><a href="#the-u.s.-story-emissions-under-the-microscope" id="toc-the-u.s.-story-emissions-under-the-microscope" class="nav-link" data-scroll-target="#the-u.s.-story-emissions-under-the-microscope">The U.S. Story: Emissions Under the Microscope</a></li>
+  <li><a href="#visualizing-the-efficiency-spectrum" id="toc-visualizing-the-efficiency-spectrum" class="nav-link" data-scroll-target="#visualizing-the-efficiency-spectrum">Visualizing the Efficiency Spectrum</a></li>
+  <li><a href="#always-on-a-look-at-plant-operating-time" id="toc-always-on-a-look-at-plant-operating-time" class="nav-link" data-scroll-target="#always-on-a-look-at-plant-operating-time">Always On? A Look at Plant Operating Time</a></li>
+  <li><a href="#state-of-emissions-whos-on-top" id="toc-state-of-emissions-whos-on-top" class="nav-link" data-scroll-target="#state-of-emissions-whos-on-top">State of Emissions: Who’s on Top?</a></li>
+  <li><a href="#model-1-predicting-co2-emissions-with-linear-regression" id="toc-model-1-predicting-co2-emissions-with-linear-regression" class="nav-link" data-scroll-target="#model-1-predicting-co2-emissions-with-linear-regression">Model 1: Predicting CO2 Emissions with Linear Regression</a></li>
+  <li><a href="#model-2-predicting-onoff-status-with-logistic-regression" id="toc-model-2-predicting-onoff-status-with-logistic-regression" class="nav-link" data-scroll-target="#model-2-predicting-onoff-status-with-logistic-regression">Model 2: Predicting On/Off Status with Logistic Regression</a></li>
+  <li><a href="#reality-check-accuracy-isnt-enough" id="toc-reality-check-accuracy-isnt-enough" class="nav-link" data-scroll-target="#reality-check-accuracy-isnt-enough">Reality Check: Accuracy Isn’t Enough</a>
+  <ul class="collapse">
+  <li><a href="#unpacking-the-success-which-feature-was-more-important" id="toc-unpacking-the-success-which-feature-was-more-important" class="nav-link" data-scroll-target="#unpacking-the-success-which-feature-was-more-important">Unpacking the Success: Which Feature Was More Important?</a></li>
+  </ul></li>
+  <li><a href="#the-challenge-of-predicting-emission-quantity" id="toc-the-challenge-of-predicting-emission-quantity" class="nav-link" data-scroll-target="#the-challenge-of-predicting-emission-quantity">The Challenge of Predicting Emission Quantity</a>
+  <ul class="collapse">
+  <li><a href="#the-final-insight-why-predicting-quantity-is-so-difficult" id="toc-the-final-insight-why-predicting-quantity-is-so-difficult" class="nav-link" data-scroll-target="#the-final-insight-why-predicting-quantity-is-so-difficult">The Final Insight: Why Predicting Quantity is So Difficult</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<p><em>This is based on the tutorial conducted by <a href="https://research.google/people/106902/?&amp;type=google">Alok Talekar</a> (Google Research) at the AI for Social Good, ACM India Summer School 2025</em></p>
+<p>Power plants are the backbone of our modern world, providing the energy that lights up our homes, powers our industries, and connects our communities. But this energy comes at a cost. The environmental impact of power generation, particularly from fossil fuels, is one of the most significant challenges of our time. Understanding this impact is the first step toward a sustainable future.</p>
+<p>In this post, we’ll embark on a data-driven journey to explore the world of power generation. We will use two key datasets:</p>
+<ol type="1">
+<li>The <strong>WRI Global Power Plant Database</strong>, a comprehensive, open-source database of power plants around the world.</li>
+<li>The <strong>U.S. Environmental Protection Agency (EPA) Hourly Emissions Data</strong>, which provides detailed information about the emissions of U.S. power plants.</li>
+</ol>
+<p>We’ll start by exploring these datasets to get a sense of the global and U.S. energy landscape. We’ll identify which countries are most reliant on coal, pinpoint the cleanest and most polluting coal plants in the U.S., and investigate their operational patterns.</p>
+<p>In the second half of our analysis, we’ll bring in a third powerful tool: <strong>Google Earth Engine</strong>. We will attempt to use satellite imagery to predict a power plant’s emissions and even determine if it’s running or not.</p>
+<p>Let’s get started!</p>
+<div id="3bdd4c54" class="cell" data-execution_count="29">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geodatasets</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ee</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, confusion_matrix</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> r2_score, mean_absolute_error</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize Google Earth Engine</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># This may require authentication if you haven't used it before.</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>ee.Initialize(project<span class="op">=</span><span class="st">"acm-summer-school-2025"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Google Earth Engine Initialized Successfully!"</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the datasets</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># The Global Power Plant Database from WRI</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>power_plants_df <span class="op">=</span> pd.read_csv(<span class="st">'https://raw.githubusercontent.com/wri/global-power-plant-database/refs/heads/master/output_database/global_power_plant_database.csv'</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># The EPA hourly emissions data for Q1 2024</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: The DtypeWarning indicates that some columns have mixed data types.</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># For our analysis, this is acceptable, but in a production environment, you might want to specify dtypes on load.</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>emissions_df <span class="op">=</span> pd.read_csv(<span class="st">'emissions-hourly-2024-q1.csv'</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(power_plants_df)<span class="sc">}</span><span class="ss"> power plants from the global database."</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(emissions_df)<span class="sc">}</span><span class="ss"> hourly emission records from the EPA dataset."</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows of each dataframe to get a feel for the data</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Global Power Plant Database:"</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>display(power_plants_df.head())</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">EPA Hourly Emissions Data:"</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>display(emissions_df.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Google Earth Engine Initialized Successfully!</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/1208587121.py:25: DtypeWarning: Columns (10) have mixed types. Specify dtype option on import or set low_memory=False.
+  power_plants_df = pd.read_csv('https://raw.githubusercontent.com/wri/global-power-plant-database/refs/heads/master/output_database/global_power_plant_database.csv')
+/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/1208587121.py:30: DtypeWarning: Columns (3,4,11,13,15,17,19,21,23,25,27,28,29,30) have mixed types. Specify dtype option on import or set low_memory=False.
+  emissions_df = pd.read_csv('emissions-hourly-2024-q1.csv')</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded 34936 power plants from the global database.
+Loaded 8393112 hourly emission records from the EPA dataset.
+
+Global Power Plant Database:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">country</th>
+<th data-quarto-table-cell-role="th">country_long</th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">gppd_idnr</th>
+<th data-quarto-table-cell-role="th">capacity_mw</th>
+<th data-quarto-table-cell-role="th">latitude</th>
+<th data-quarto-table-cell-role="th">longitude</th>
+<th data-quarto-table-cell-role="th">primary_fuel</th>
+<th data-quarto-table-cell-role="th">other_fuel1</th>
+<th data-quarto-table-cell-role="th">other_fuel2</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">estimated_generation_gwh_2013</th>
+<th data-quarto-table-cell-role="th">estimated_generation_gwh_2014</th>
+<th data-quarto-table-cell-role="th">estimated_generation_gwh_2015</th>
+<th data-quarto-table-cell-role="th">estimated_generation_gwh_2016</th>
+<th data-quarto-table-cell-role="th">estimated_generation_gwh_2017</th>
+<th data-quarto-table-cell-role="th">estimated_generation_note_2013</th>
+<th data-quarto-table-cell-role="th">estimated_generation_note_2014</th>
+<th data-quarto-table-cell-role="th">estimated_generation_note_2015</th>
+<th data-quarto-table-cell-role="th">estimated_generation_note_2016</th>
+<th data-quarto-table-cell-role="th">estimated_generation_note_2017</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>AFG</td>
+<td>Afghanistan</td>
+<td>Kajaki Hydroelectric Power Plant Afghanistan</td>
+<td>GEODB0040538</td>
+<td>33.0</td>
+<td>32.322</td>
+<td>65.1190</td>
+<td>Hydro</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>123.77</td>
+<td>162.90</td>
+<td>97.39</td>
+<td>137.76</td>
+<td>119.50</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>AFG</td>
+<td>Afghanistan</td>
+<td>Kandahar DOG</td>
+<td>WKS0070144</td>
+<td>10.0</td>
+<td>31.670</td>
+<td>65.7950</td>
+<td>Solar</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>18.43</td>
+<td>17.48</td>
+<td>18.25</td>
+<td>17.70</td>
+<td>18.29</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>AFG</td>
+<td>Afghanistan</td>
+<td>Kandahar JOL</td>
+<td>WKS0071196</td>
+<td>10.0</td>
+<td>31.623</td>
+<td>65.7920</td>
+<td>Solar</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>18.64</td>
+<td>17.58</td>
+<td>19.10</td>
+<td>17.62</td>
+<td>18.72</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+<td>SOLAR-V1-NO-AGE</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>AFG</td>
+<td>Afghanistan</td>
+<td>Mahipar Hydroelectric Power Plant Afghanistan</td>
+<td>GEODB0040541</td>
+<td>66.0</td>
+<td>34.556</td>
+<td>69.4787</td>
+<td>Hydro</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>225.06</td>
+<td>203.55</td>
+<td>146.90</td>
+<td>230.18</td>
+<td>174.91</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AFG</td>
+<td>Afghanistan</td>
+<td>Naghlu Dam Hydroelectric Power Plant Afghanistan</td>
+<td>GEODB0040534</td>
+<td>100.0</td>
+<td>34.641</td>
+<td>69.7170</td>
+<td>Hydro</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>406.16</td>
+<td>357.22</td>
+<td>270.99</td>
+<td>395.38</td>
+<td>350.80</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+<td>HYDRO-V1</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 36 columns</p>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+EPA Hourly Emissions Data:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">State</th>
+<th data-quarto-table-cell-role="th">Facility Name</th>
+<th data-quarto-table-cell-role="th">Facility ID</th>
+<th data-quarto-table-cell-role="th">Unit ID</th>
+<th data-quarto-table-cell-role="th">Associated Stacks</th>
+<th data-quarto-table-cell-role="th">Date</th>
+<th data-quarto-table-cell-role="th">Hour</th>
+<th data-quarto-table-cell-role="th">Operating Time</th>
+<th data-quarto-table-cell-role="th">Gross Load (MW)</th>
+<th data-quarto-table-cell-role="th">Steam Load (1000 lb/hr)</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Heat Input (mmBtu)</th>
+<th data-quarto-table-cell-role="th">Heat Input Measure Indicator</th>
+<th data-quarto-table-cell-role="th">Primary Fuel Type</th>
+<th data-quarto-table-cell-role="th">Secondary Fuel Type</th>
+<th data-quarto-table-cell-role="th">Unit Type</th>
+<th data-quarto-table-cell-role="th">SO2 Controls</th>
+<th data-quarto-table-cell-role="th">NOx Controls</th>
+<th data-quarto-table-cell-role="th">PM Controls</th>
+<th data-quarto-table-cell-role="th">Hg Controls</th>
+<th data-quarto-table-cell-role="th">Program Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>AL</td>
+<td>Barry</td>
+<td>3</td>
+<td>1</td>
+<td>CS0AAN</td>
+<td>2024-01-01</td>
+<td>0</td>
+<td>0.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>Pipeline Natural Gas</td>
+<td>NaN</td>
+<td>Tangentially-fired</td>
+<td>NaN</td>
+<td>Low NOx Burner Technology w/ Closed-coupled OF...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>ARP, CSNOX, CSOSG2, CSSO2G2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>AL</td>
+<td>Barry</td>
+<td>3</td>
+<td>1</td>
+<td>CS0AAN</td>
+<td>2024-01-01</td>
+<td>1</td>
+<td>0.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>Pipeline Natural Gas</td>
+<td>NaN</td>
+<td>Tangentially-fired</td>
+<td>NaN</td>
+<td>Low NOx Burner Technology w/ Closed-coupled OF...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>ARP, CSNOX, CSOSG2, CSSO2G2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>AL</td>
+<td>Barry</td>
+<td>3</td>
+<td>1</td>
+<td>CS0AAN</td>
+<td>2024-01-01</td>
+<td>2</td>
+<td>0.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>Pipeline Natural Gas</td>
+<td>NaN</td>
+<td>Tangentially-fired</td>
+<td>NaN</td>
+<td>Low NOx Burner Technology w/ Closed-coupled OF...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>ARP, CSNOX, CSOSG2, CSSO2G2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>AL</td>
+<td>Barry</td>
+<td>3</td>
+<td>1</td>
+<td>CS0AAN</td>
+<td>2024-01-01</td>
+<td>3</td>
+<td>0.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>Pipeline Natural Gas</td>
+<td>NaN</td>
+<td>Tangentially-fired</td>
+<td>NaN</td>
+<td>Low NOx Burner Technology w/ Closed-coupled OF...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>ARP, CSNOX, CSOSG2, CSSO2G2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>AL</td>
+<td>Barry</td>
+<td>3</td>
+<td>1</td>
+<td>CS0AAN</td>
+<td>2024-01-01</td>
+<td>4</td>
+<td>0.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>Pipeline Natural Gas</td>
+<td>NaN</td>
+<td>Tangentially-fired</td>
+<td>NaN</td>
+<td>Low NOx Burner Technology w/ Closed-coupled OF...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>ARP, CSNOX, CSOSG2, CSSO2G2</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 32 columns</p>
+</div>
+</div>
+</div>
+<section id="a-world-of-power-the-global-landscape" class="level2">
+<h2 class="anchored" data-anchor-id="a-world-of-power-the-global-landscape">A World of Power: The Global Landscape</h2>
+<p>First, let’s get a global perspective. The WRI database includes the coordinates of each power plant, which allows us to plot them on a world map. We’ll color-code the points by their primary fuel source to see how different energy types are distributed across the globe.</p>
+<div id="81aaaacb" class="cell" data-execution_count="8">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a GeoDataFrame from the power plants data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.GeoDataFrame(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    power_plants_df, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span>gpd.points_from_xy(power_plants_df.longitude, power_plants_df.latitude)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the coordinate reference system (CRS) to WGS84</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>gdf.set_crs(epsg<span class="op">=</span><span class="dv">4326</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a world map for context using the 'naturalearth_land' dataset</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># This dataset contains polygons for all landmasses.</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>world <span class="op">=</span> gpd.read_file(geodatasets.get_path(<span class="st">'naturalearth_land'</span>))</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">10</span>))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>world.plot(ax<span class="op">=</span>ax, color<span class="op">=</span><span class="st">'lightgray'</span>, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a color map for the most common fuel types</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>fuel_colors <span class="op">=</span> {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Hydro'</span>: <span class="st">'blue'</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Gas'</span>: <span class="st">'orange'</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Coal'</span>: <span class="st">'black'</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Oil'</span>: <span class="st">'purple'</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Solar'</span>: <span class="st">'gold'</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Wind'</span>: <span class="st">'green'</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Nuclear'</span>: <span class="st">'red'</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot each fuel type with its corresponding color</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> fuel, color <span class="kw">in</span> fuel_colors.items():</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filter for non-NA geometry to avoid errors</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    subset <span class="op">=</span> gdf[(gdf[<span class="st">'primary_fuel'</span>] <span class="op">==</span> fuel) <span class="op">&amp;</span> (gdf.geometry.notna())]</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> subset.empty:</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        subset.plot(ax<span class="op">=</span>ax, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span>color, markersize<span class="op">=</span><span class="dv">5</span>, label<span class="op">=</span>fuel, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Global Distribution of Power Plants by Primary Fuel Source'</span>)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Longitude'</span>)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Latitude'</span>)</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Fuel Type'</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">1.05</span>, <span class="dv">1</span>), loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Set map limits to avoid distortion from Antarctica</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="dv">60</span>, <span class="dv">90</span>)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-reign-of-coal-a-global-concern" class="level2">
+<h2 class="anchored" data-anchor-id="the-reign-of-coal-a-global-concern">The Reign of Coal: A Global Concern</h2>
+<p>While the map shows a diverse energy mix, fossil fuels, and particularly coal, have historically dominated. Coal is a major contributor to CO2 emissions, so let’s zoom in on which countries have the largest number of coal-fired power plants.</p>
+<div id="aa641f9f" class="cell" data-execution_count="9">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for coal power plants</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>coal_plants <span class="op">=</span> power_plants_df[power_plants_df[<span class="st">'primary_fuel'</span>] <span class="op">==</span> <span class="st">'Coal'</span>].copy()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by country and count the number of coal power plants</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>country_coal_counts <span class="op">=</span> coal_plants[<span class="st">'country_long'</span>].value_counts().nlargest(<span class="dv">10</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the bar plot</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>country_coal_counts.values, y<span class="op">=</span>country_coal_counts.index, palette<span class="op">=</span><span class="st">'Reds_r'</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 10 Countries by Number of Coal Power Plants'</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Coal Power Plants'</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Country'</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Add annotations to the bars</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(country_coal_counts):</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    plt.text(value, index, <span class="ss">f' </span><span class="sc">{</span>value<span class="sc">}</span><span class="ss">'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/1085953812.py:9: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=country_coal_counts.values, y=country_coal_counts.index, palette='Reds_r')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="capacity-not-just-count-a-better-metric-for-impact" class="level3">
+<h3 class="anchored" data-anchor-id="capacity-not-just-count-a-better-metric-for-impact">Capacity, Not Just Count: A Better Metric for Impact</h3>
+<p>While the number of plants is interesting, not all plants are created equal. A more accurate measure of a country’s reliance on coal is its total <strong>generation capacity</strong>. Let’s re-run our analysis, but this time summing the capacity in megawatts (MW) to see if the ranking changes.</p>
+<div id="8117415b" class="cell" data-execution_count="31">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by country and SUM the 'capacity_mw'</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>country_coal_capacity <span class="op">=</span> coal_plants.groupby(<span class="st">'country_long'</span>)[<span class="st">'capacity_mw'</span>].<span class="bu">sum</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).nlargest(<span class="dv">10</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the bar plot</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>country_coal_capacity.values, y<span class="op">=</span>country_coal_capacity.index, palette<span class="op">=</span><span class="st">'inferno_r'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 10 Countries by Total Coal Power Capacity (MW)'</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Total Capacity (in Gigawatts)'</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Country'</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Format the x-axis to be in Gigawatts (GW) for readability, since 1 GW = 1000 MW</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(plt.FuncFormatter(<span class="kw">lambda</span> x, pos: <span class="ss">f'</span><span class="sc">{</span>x<span class="op">/</span><span class="dv">1000</span><span class="sc">:.0f}</span><span class="ss"> GW'</span>))</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Add annotations</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(country_coal_capacity):</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    plt.text(value, index, <span class="ss">f' </span><span class="sc">{</span>value<span class="op">/</span><span class="dv">1000</span><span class="sc">:.1f}</span><span class="ss"> GW'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/1079351539.py:6: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=country_coal_capacity.values, y=country_coal_capacity.index, palette='inferno_r')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="the-u.s.-story-emissions-under-the-microscope" class="level2">
+<h2 class="anchored" data-anchor-id="the-u.s.-story-emissions-under-the-microscope">The U.S. Story: Emissions Under the Microscope</h2>
+<p>The global view shows that the United States has a significant number of coal power plants. To understand their environmental impact, we need more than just their location; we need to look at their emissions. For this, we’ll turn to the detailed hourly emissions data from the U.S. Environmental Protection Agency (EPA).</p>
+<p>Our goal is to identify which coal plants are the most and least efficient in terms of CO2 emissions. We’ll define “efficiency” as the amount of CO2 emitted per megawatt (MW) of electricity generated. A lower value means a “cleaner” or more efficient plant. Let’s dig in.</p>
+<div id="2661fa52" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter emissions_df for coal-fired units.</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We use str.contains('Coal', na=False) to catch different types like "Bituminous Coal".</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>coal_emissions_df <span class="op">=</span> emissions_df[emissions_df[<span class="st">'Primary Fuel Type'</span>].<span class="bu">str</span>.contains(<span class="st">'Coal'</span>, case<span class="op">=</span><span class="va">False</span>, na<span class="op">=</span><span class="va">False</span>)].copy()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean the data: We need positive power generation to calculate a meaningful emission rate.</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out rows where 'Gross Load (MW)' is zero or negative, or where CO2 data is missing.</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>valid_data_mask <span class="op">=</span> (coal_emissions_df[<span class="st">'Gross Load (MW)'</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (coal_emissions_df[<span class="st">'CO2 Mass (short tons)'</span>].notna())</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>coal_emissions_df_filtered <span class="op">=</span> coal_emissions_df[valid_data_mask].copy()</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate CO2 emissions per MW for each hourly record.</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>coal_emissions_df_filtered.loc[:, <span class="st">'CO2_per_MW'</span>] <span class="op">=</span> coal_emissions_df_filtered[<span class="st">'CO2 Mass (short tons)'</span>] <span class="op">/</span> coal_emissions_df_filtered[<span class="st">'Gross Load (MW)'</span>]</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># To get a stable measure of performance, we'll average the hourly rates for each facility.</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>facility_co2_performance <span class="op">=</span> coal_emissions_df_filtered.groupby([<span class="st">'Facility Name'</span>, <span class="st">'State'</span>])[<span class="st">'CO2_per_MW'</span>].mean().reset_index()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the plant with the lowest and highest average CO2 per MW.</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>cleanest_plant <span class="op">=</span> facility_co2_performance.loc[facility_co2_performance[<span class="st">'CO2_per_MW'</span>].idxmin()]</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>most_pollutant_plant <span class="op">=</span> facility_co2_performance.loc[facility_co2_performance[<span class="st">'CO2_per_MW'</span>].idxmax()]</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the results</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Cleanest vs. Most Pollutant U.S. Coal Plants (Q1 2024) ---"</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Cleanest Plant (Lowest Average CO2 per MW):"</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Facility Name: </span><span class="sc">{</span>cleanest_plant[<span class="st">'Facility Name'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  State: </span><span class="sc">{</span>cleanest_plant[<span class="st">'State'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Average CO2 Mass per MW: </span><span class="sc">{</span>cleanest_plant[<span class="st">'CO2_per_MW'</span>]<span class="sc">:.4f}</span><span class="ss"> short tons"</span>)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Most Pollutant Plant (Highest Average CO2 per MW):"</span>)</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Facility Name: </span><span class="sc">{</span>most_pollutant_plant[<span class="st">'Facility Name'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  State: </span><span class="sc">{</span>most_pollutant_plant[<span class="st">'State'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Average CO2 Mass per MW: </span><span class="sc">{</span>most_pollutant_plant[<span class="st">'CO2_per_MW'</span>]<span class="sc">:.4f}</span><span class="ss"> short tons"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Cleanest vs. Most Pollutant U.S. Coal Plants (Q1 2024) ---
+
+Cleanest Plant (Lowest Average CO2 per MW):
+  Facility Name: Apache Station
+  State: AZ
+  Average CO2 Mass per MW: 0.6573 short tons
+
+Most Pollutant Plant (Highest Average CO2 per MW):
+  Facility Name: Centralia
+  State: WA
+  Average CO2 Mass per MW: 11.2822 short tons</code></pre>
+</div>
+</div>
+</section>
+<section id="visualizing-the-efficiency-spectrum" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-efficiency-spectrum">Visualizing the Efficiency Spectrum</h2>
+<p>The numbers show a dramatic difference between the cleanest and most polluting plants. But where do all the other plants fall? A histogram will help us visualize the distribution of CO2 efficiency across all U.S. coal plants in the dataset. This gives us a better sense of whether the top and bottom performers are outliers or representative of broader trends.</p>
+<div id="161cd619" class="cell" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">7</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot a histogram of the average CO2 per MW for all facilities</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>sns.histplot(facility_co2_performance[<span class="st">'CO2_per_MW'</span>], bins<span class="op">=</span><span class="dv">50</span>, kde<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Add vertical lines to mark our specific plants of interest</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plt.axvline(cleanest_plant[<span class="st">'CO2_per_MW'</span>], color<span class="op">=</span><span class="st">'green'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="ss">f"Cleanest: </span><span class="sc">{</span>cleanest_plant[<span class="st">'Facility Name'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>plt.axvline(most_pollutant_plant[<span class="st">'CO2_per_MW'</span>], color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="ss">f"Most Polluting: </span><span class="sc">{</span>most_pollutant_plant[<span class="st">'Facility Name'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribution of CO2 Emission Efficiency Across U.S. Coal Plants'</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Average CO2 Mass (short tons) per Gross Load (MW)'</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Number of Facilities'</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'y'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="always-on-a-look-at-plant-operating-time" class="level2">
+<h2 class="anchored" data-anchor-id="always-on-a-look-at-plant-operating-time">Always On? A Look at Plant Operating Time</h2>
+<p>A plant’s total impact isn’t just about its emission rate; it’s also about how often it’s running. The EPA dataset includes an “Operating Time” column, which represents the fraction of an hour a unit was active (e.g., a value of 1.0 means it ran for the full hour).</p>
+<p>Does this uptime vary by state? Let’s analyze the average operating time for coal plants across the country to see which states run their plants most consistently.</p>
+<div id="aab5f6e7" class="cell" data-execution_count="12">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average operating time by state</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>state_avg_operating_time <span class="op">=</span> coal_emissions_df_filtered.groupby(<span class="st">'State'</span>)[<span class="st">'Operating Time'</span>].mean().sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the top 5 and bottom 5 states for a more focused visualization</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>top_5_states <span class="op">=</span> state_avg_operating_time.head(<span class="dv">5</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>bottom_5_states <span class="op">=</span> state_avg_operating_time.tail(<span class="dv">5</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>comparison_df <span class="op">=</span> pd.concat([top_5_states, bottom_5_states])</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the plot</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">'green'</span>] <span class="op">*</span> <span class="dv">5</span> <span class="op">+</span> [<span class="st">'red'</span>] <span class="op">*</span> <span class="dv">5</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>comparison_df.values, y<span class="op">=</span>comparison_df.index, palette<span class="op">=</span>colors)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Average Hourly Operating Time for Coal Plants by State (Q1 2024)'</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Average Operating Time (Fraction of Hour)'</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'State'</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="fl">0.95</span>, <span class="fl">1.005</span>) <span class="co"># Set x-axis limits to emphasize the differences</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Add annotations</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(comparison_df):</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    plt.text(value, index, <span class="ss">f' </span><span class="sc">{</span>value<span class="sc">:.4f}</span><span class="ss">'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span>state_avg_operating_time.mean(), color<span class="op">=</span><span class="st">'blue'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="ss">f'National Avg: </span><span class="sc">{</span>state_avg_operating_time<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">'</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/1003638993.py:12: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=comparison_df.values, y=comparison_df.index, palette=colors)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="state-of-emissions-whos-on-top" class="level2">
+<h2 class="anchored" data-anchor-id="state-of-emissions-whos-on-top">State of Emissions: Who’s on Top?</h2>
+<p>While uptime gives us a sense of plant activity, the most critical question is about the bottom line: which states produce the most CO2 from coal? Here, we’ll aggregate the total mass of CO2 emissions for each state from the first quarter of 2024.</p>
+<div id="666081c4" class="cell" data-execution_count="14">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Group by state and sum the total CO2 emissions</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>state_total_co2 <span class="op">=</span> coal_emissions_df_filtered.groupby(<span class="st">'State'</span>)[<span class="st">'CO2 Mass (short tons)'</span>].<span class="bu">sum</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the top 10 states</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>top_10_states_co2 <span class="op">=</span> state_total_co2.nlargest(<span class="dv">10</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the plot</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>))</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>top_10_states_co2.values, y<span class="op">=</span>top_10_states_co2.index, palette<span class="op">=</span><span class="st">'inferno'</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 10 States by Total CO2 Emissions from Coal (Q1 2024)'</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Total CO2 Emissions (in million short tons)'</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'State'</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Format the x-axis to be in millions of tons for readability</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> plt.gca()</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(plt.FuncFormatter(<span class="kw">lambda</span> x, pos: <span class="ss">f'</span><span class="sc">{</span>x<span class="op">/</span><span class="dv">1_000_000</span><span class="sc">:.1f}</span><span class="ss">M'</span>))</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Add annotations</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(top_10_states_co2):</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    plt.text(value, index, <span class="ss">f' </span><span class="sc">{</span>value<span class="op">/</span><span class="dv">1_000_000</span><span class="sc">:.2f}</span><span class="ss">M'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/247695014.py:9: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=top_10_states_co2.values, y=top_10_states_co2.index, palette='inferno')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="e5424178" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data Preparation</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Start with the dataframe that is only filtered for coal, not for gross load.</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># This ensures we keep the "Off" records (where Gross Load is 0 or NaN).</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>base_emissions_for_modeling <span class="op">=</span> emissions_df[emissions_df[<span class="st">'Primary Fuel Type'</span>].<span class="bu">str</span>.contains(<span class="st">'Coal'</span>, case<span class="op">=</span><span class="va">False</span>, na<span class="op">=</span><span class="va">False</span>)].copy()</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a clean DataFrame with plant locations</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>plant_locations <span class="op">=</span> power_plants_df[[<span class="st">'name'</span>, <span class="st">'latitude'</span>, <span class="st">'longitude'</span>]].drop_duplicates(subset<span class="op">=</span>[<span class="st">'name'</span>])</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge to add coordinates</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>hourly_data_with_coords <span class="op">=</span> pd.merge(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    base_emissions_for_modeling,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    plant_locations,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">'Facility Name'</span>,</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">'name'</span>,</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'inner'</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Select our two plants for the modeling exercise</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>plant_names_to_model <span class="op">=</span> [<span class="st">"Barry"</span>, <span class="st">"Gorgas"</span>]</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>base_df <span class="op">=</span> hourly_data_with_coords[hourly_data_with_coords[<span class="st">'Facility Name'</span>].isin(plant_names_to_model)].copy()</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(base_df)<span class="sc">}</span><span class="ss"> hourly records (both on and off) for modeling."</span>)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Google Earth Engine Function</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_recent_swir_feature(lat, lon, date_str, window_days<span class="op">=</span><span class="dv">14</span>):</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        point <span class="op">=</span> ee.Geometry.Point(lon, lat)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        end_date <span class="op">=</span> ee.Date(date_str).advance(<span class="dv">1</span>, <span class="st">'day'</span>)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>        start_date <span class="op">=</span> end_date.advance(<span class="op">-</span>window_days, <span class="st">'day'</span>)</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        image_collection <span class="op">=</span> (ee.ImageCollection(<span class="st">'COPERNICUS/S2_SR_HARMONIZED'</span>)</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>                           .filterBounds(point)</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>                           .filterDate(start_date, end_date)</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>                           .<span class="bu">filter</span>(ee.Filter.lt(<span class="st">'CLOUDY_PIXEL_PERCENTAGE'</span>, <span class="dv">20</span>)))</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> image_collection.size().getInfo() <span class="op">==</span> <span class="dv">0</span>: <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>        best_image <span class="op">=</span> image_collection.sort(<span class="st">'CLOUDY_PIXEL_PERCENTAGE'</span>).first()</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>        roi <span class="op">=</span> point.<span class="bu">buffer</span>(<span class="dv">500</span>)</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> best_image.select(<span class="st">'B11'</span>).reduceRegion(</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>            reducer<span class="op">=</span>ee.Reducer.mean(), geometry<span class="op">=</span>roi, scale<span class="op">=</span><span class="dv">20</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>        ).get(<span class="st">'B11'</span>)</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> stats.getInfo()</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Feature Calculation</span></span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>unique_plant_days <span class="op">=</span> base_df[[<span class="st">'Facility Name'</span>, <span class="st">'Date'</span>, <span class="st">'latitude'</span>, <span class="st">'longitude'</span>]].drop_duplicates().copy()</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(unique_plant_days)<span class="sc">}</span><span class="ss"> unique plant-days to process for satellite features."</span>)</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.auto <span class="im">import</span> tqdm</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>satellite_features <span class="op">=</span> []</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, row <span class="kw">in</span> tqdm(unique_plant_days.iterrows(), total<span class="op">=</span>unique_plant_days.shape[<span class="dv">0</span>], desc<span class="op">=</span><span class="st">"Fetching Satellite Features"</span>):</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>    feature <span class="op">=</span> get_recent_swir_feature(row[<span class="st">'latitude'</span>], row[<span class="st">'longitude'</span>], row[<span class="st">'Date'</span>])</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>    satellite_features.append(feature)</span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>unique_plant_days[<span class="st">'satellite_feature'</span>] <span class="op">=</span> satellite_features</span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the features back to create the final modeling dataframe</span></span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>model_df <span class="op">=</span> pd.merge(</span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a>    base_df,</span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a>    unique_plant_days[[<span class="st">'Facility Name'</span>, <span class="st">'Date'</span>, <span class="st">'satellite_feature'</span>]],</span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span>[<span class="st">'Facility Name'</span>, <span class="st">'Date'</span>],</span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'left'</span></span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean the final dataset</span></span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a>model_df.dropna(subset<span class="op">=</span>[<span class="st">'satellite_feature'</span>], inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Created final modeling dataset with </span><span class="sc">{</span><span class="bu">len</span>(model_df)<span class="sc">}</span><span class="ss"> records."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Found 2184 hourly records (both on and off) for modeling.
+Found 91 unique plant-days to process for satellite features.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Fetching Satellite Features: 100%|██████████| 91/91 [02:08&lt;00:00,  1.41s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Created final modeling dataset with 336 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+</div>
+</section>
+<section id="model-1-predicting-co2-emissions-with-linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="model-1-predicting-co2-emissions-with-linear-regression">Model 1: Predicting CO2 Emissions with Linear Regression</h2>
+<p>Our first challenge is to predict the <em>amount</em> of CO2 being emitted. We’ll build a simple linear regression model where:</p>
+<ul>
+<li><strong>Feature (X):</strong> The <code>satellite_feature</code> (our SWIR band value).</li>
+<li><strong>Target (y):</strong> The hourly <code>CO2 Mass (short tons)</code>.</li>
+</ul>
+<p>For this model, we <strong>must</strong> filter the data again to only include records where the plant was actually running (<code>Gross Load (MW) &gt; 0</code>), since predicting emissions for an “Off” plant doesn’t make sense.</p>
+<div id="e78ea04f" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For regression, we only use data where the plant is ON and emitting.</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>reg_df <span class="op">=</span> model_df[(model_df[<span class="st">'Gross Load (MW)'</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (model_df[<span class="st">'CO2 Mass (short tons)'</span>].notna())].copy()</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Using </span><span class="sc">{</span><span class="bu">len</span>(reg_df)<span class="sc">}</span><span class="ss"> records for the regression model (only 'On' states)."</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Define features (X) and target (y)</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>X_reg <span class="op">=</span> reg_df[[<span class="st">'satellite_feature'</span>]]</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>y_reg <span class="op">=</span> reg_df[<span class="st">'CO2 Mass (short tons)'</span>]</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train the model</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>regression_model <span class="op">=</span> LinearRegression()</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>regression_model.fit(X_reg, y_reg)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the model's coefficient</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Model Coefficient: </span><span class="sc">{</span>regression_model<span class="sc">.</span>coef_[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"A negative coefficient suggests that a lower SWIR value correlates with higher CO2 emissions."</span>)</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the relationship</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">7</span>))</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>sns.regplot(x<span class="op">=</span><span class="st">'satellite_feature'</span>, y<span class="op">=</span><span class="st">'CO2 Mass (short tons)'</span>, data<span class="op">=</span>reg_df,</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>            scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>:<span class="fl">0.2</span>, <span class="st">'s'</span>:<span class="dv">20</span>},</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>            line_kws<span class="op">=</span>{<span class="st">'color'</span>:<span class="st">'red'</span>, <span class="st">'linewidth'</span>:<span class="dv">2</span>})</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Satellite SWIR Feature vs. Hourly CO2 Emissions (for "On" Plants)'</span>)</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Average SWIR (Band 11) Value'</span>)</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'CO2 Mass (short tons)'</span>)</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Using 91 records for the regression model (only 'On' states).
+Model Coefficient: -0.0205
+A negative coefficient suggests that a lower SWIR value correlates with higher CO2 emissions.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-11-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="model-2-predicting-onoff-status-with-logistic-regression" class="level2">
+<h2 class="anchored" data-anchor-id="model-2-predicting-onoff-status-with-logistic-regression">Model 2: Predicting On/Off Status with Logistic Regression</h2>
+<p>Now for our classification task. We will use the <strong>full <code>model_df</code> dataset</strong>, which contains both “On” and “Off” states.</p>
+<ul>
+<li><strong>Feature (X):</strong> The <code>satellite_feature</code>.</li>
+<li><strong>Target (y):</strong> A new <code>on_off_status</code> column. If <code>Operating Time &gt; 0</code>, the plant is “On” (1). Otherwise, it’s “Off” (0).</li>
+</ul>
+<p>Let’s see how well a <strong>Logistic Regression</strong> model can distinguish between these two states.</p>
+<div id="3c4d31f2" class="cell" data-execution_count="24">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, confusion_matrix</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the data for classification using the full model_df</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>clf_df <span class="op">=</span> model_df.copy()</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>clf_df[<span class="st">'on_off_status'</span>] <span class="op">=</span> (clf_df[<span class="st">'Operating Time'</span>] <span class="op">&gt;</span> <span class="dv">0</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the class distribution to confirm we have both classes</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class distribution for the classification model:"</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(clf_df[<span class="st">'on_off_status'</span>].value_counts())</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Define features (X) and target (y)</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>X_clf <span class="op">=</span> clf_df[[<span class="st">'satellite_feature'</span>]]</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>y_clf <span class="op">=</span> clf_df[<span class="st">'on_off_status'</span>]</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train the logistic regression model</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>classification_model <span class="op">=</span> LogisticRegression()</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>classification_model.fit(X_clf, y_clf)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> classification_model.predict(X_clf)</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> accuracy_score(y_clf, predictions)</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Classification Model Accuracy: </span><span class="sc">{</span>accuracy<span class="sc">:.2%}</span><span class="ss">"</span>)</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a confusion matrix to see what we got right and what we got wrong.</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_clf, predictions)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>,</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'Predicted Off'</span>, <span class="st">'Predicted On'</span>],</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>            yticklabels<span class="op">=</span>[<span class="st">'Actual Off'</span>, <span class="st">'Actual On'</span>])</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Confusion Matrix: On/Off State Prediction'</span>)</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Actual Status'</span>)</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Predicted Status'</span>)</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Class distribution for the classification model:
+on_off_status
+0    244
+1     92
+Name: count, dtype: int64
+
+Classification Model Accuracy: 72.62%</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="reality-check-accuracy-isnt-enough" class="level2">
+<h2 class="anchored" data-anchor-id="reality-check-accuracy-isnt-enough">Reality Check: Accuracy Isn’t Enough</h2>
+<p>Our first attempt at modeling gave us a fascinating and very real-world result. The regression model struggled to find a pattern, and the classification model, despite a promising 72.6% accuracy, was cheating! The confusion matrix revealed that the model had simply learned to always predict “Off,” the most common state in our dataset. It wasn’t using the satellite data to make an intelligent decision.</p>
+<p>This is a valuable lesson: a high accuracy score can be misleading. A model is only useful if it learns the underlying patterns in the data.</p>
+<p>So, we go back to the drawing board. Our initial feature—the raw SWIR value—was too simple. We need to engineer more sophisticated features that provide a clearer signal of a power plant’s activity. Let’s try two new approaches:</p>
+<ol type="1">
+<li><strong>The SWIR Anomaly:</strong> Instead of the raw value, we’ll measure how much “hotter” or “brighter” a plant looks compared to its own normal “Off” state. This <em>relative change</em> should be a much stronger indicator of activity than the absolute value.</li>
+<li><strong>A Direct Pollutant Measurement (NO₂):</strong> We will bring in data from a different satellite, Sentinel-5P, which is designed to monitor air quality. We can measure the concentration of Nitrogen Dioxide (NO₂)—a key pollutant from burning fuel—directly over the power plant. A spike in NO₂ is a direct signature of combustion.</li>
+</ol>
+<p>With these two powerful new features, let’s see if we can build a model that genuinely learns.</p>
+<div id="17a64ad6" class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a new GEE function for Sentinel-5P NO2 data</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_daily_no2_feature(lat, lon, date_str):</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Fetches the mean NO2 concentration from Sentinel-5P for a given day."""</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        point <span class="op">=</span> ee.Geometry.Point(lon, lat)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        date <span class="op">=</span> ee.Date(date_str)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        image_collection <span class="op">=</span> (ee.ImageCollection(<span class="st">'COPERNICUS/S5P/NRTI/L3_NO2'</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                           .filterBounds(point)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                           .filterDate(date, date.advance(<span class="dv">1</span>, <span class="st">'day'</span>)))</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> image_collection.first()</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> image: <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        no2_band <span class="op">=</span> image.select(<span class="st">'NO2_column_number_density'</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>        roi <span class="op">=</span> point.<span class="bu">buffer</span>(<span class="dv">5000</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> no2_band.reduceRegion(</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>            reducer<span class="op">=</span>ee.Reducer.mean(), geometry<span class="op">=</span>roi, scale<span class="op">=</span><span class="dv">1000</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>        ).get(<span class="st">'NO2_column_number_density'</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> stats.getInfo()</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Engineer the New Features</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Get unique days from our hourly modeling dataframe</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>unique_days_df <span class="op">=</span> model_df[[<span class="st">'Facility Name'</span>, <span class="st">'Date'</span>, <span class="st">'latitude'</span>, <span class="st">'longitude'</span>, <span class="st">'satellite_feature'</span>]].drop_duplicates().copy()</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Calculate a "baseline" SWIR for each plant using its median "off" value</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>model_df[<span class="st">'on_off_status'</span>] <span class="op">=</span> (model_df[<span class="st">'Operating Time'</span>] <span class="op">&gt;</span> <span class="dv">0</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>off_states_df <span class="op">=</span> model_df[model_df[<span class="st">'on_off_status'</span>] <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>baseline_swir <span class="op">=</span> off_states_df.groupby(<span class="st">'Facility Name'</span>)[<span class="st">'satellite_feature'</span>].median().to_dict()</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Calculated Baseline SWIR values (when off):"</span>)</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(baseline_swir)</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Map the baseline to our unique days and calculate the anomaly</span></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>unique_days_df[<span class="st">'baseline_swir'</span>] <span class="op">=</span> unique_days_df[<span class="st">'Facility Name'</span>].<span class="bu">map</span>(baseline_swir)</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>unique_days_df[<span class="st">'swir_anomaly'</span>] <span class="op">=</span> unique_days_df[<span class="st">'satellite_feature'</span>] <span class="op">-</span> unique_days_df[<span class="st">'baseline_swir'</span>]</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Fetch the NO2 feature for each unique day</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.auto <span class="im">import</span> tqdm</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>no2_features <span class="op">=</span> []</span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, row <span class="kw">in</span> tqdm(unique_days_df.iterrows(), total<span class="op">=</span>unique_days_df.shape[<span class="dv">0</span>], desc<span class="op">=</span><span class="st">"Fetching NO2 Features"</span>):</span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    feature <span class="op">=</span> get_daily_no2_feature(row[<span class="st">'latitude'</span>], row[<span class="st">'longitude'</span>], row[<span class="st">'Date'</span>])</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>    no2_features.append(feature)</span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>unique_days_df[<span class="st">'no2_concentration'</span>] <span class="op">=</span> no2_features</span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Create the final, enhanced modeling dataframe by merging the new daily features back to the hourly data</span></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>enhanced_model_df <span class="op">=</span> pd.merge(</span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>    model_df,</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>    unique_days_df[[<span class="st">'Facility Name'</span>, <span class="st">'Date'</span>, <span class="st">'swir_anomaly'</span>, <span class="st">'no2_concentration'</span>]],</span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span>[<span class="st">'Facility Name'</span>, <span class="st">'Date'</span>],</span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'left'</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Clean the data: drop rows where we couldn't get a valid feature</span></span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a><span class="co"># This happens if a plant had no "off" state (no baseline) or if GEE failed.</span></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>enhanced_model_df.dropna(subset<span class="op">=</span>[<span class="st">'swir_anomaly'</span>, <span class="st">'no2_concentration'</span>], inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Created enhanced modeling dataset with </span><span class="sc">{</span><span class="bu">len</span>(enhanced_model_df)<span class="sc">}</span><span class="ss"> records."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Calculated Baseline SWIR values (when off):
+{'Barry': 1691.788358273937}</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Fetching NO2 Features: 100%|██████████| 14/14 [00:23&lt;00:00,  1.67s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Created enhanced modeling dataset with 48 records.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+</div>
+<div id="4868e112" class="cell" data-execution_count="28">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the final dataframe for classification</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>clf_df_enhanced <span class="op">=</span> enhanced_model_df.copy()</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the new class distribution</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class distribution for the enhanced model:"</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(clf_df_enhanced[<span class="st">'on_off_status'</span>].value_counts())</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Define features (X) and target (y)</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>X_clf_enhanced <span class="op">=</span> clf_df_enhanced[[<span class="st">'swir_anomaly'</span>, <span class="st">'no2_concentration'</span>]]</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>y_clf_enhanced <span class="op">=</span> clf_df_enhanced[<span class="st">'on_off_status'</span>]</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co"># It's good practice to scale features before logistic regression</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> scaler.fit_transform(X_clf_enhanced)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train the model</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>classification_model_enhanced <span class="op">=</span> LogisticRegression()</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>classification_model_enhanced.fit(X_scaled, y_clf_enhanced)</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>predictions_enhanced <span class="op">=</span> classification_model_enhanced.predict(X_scaled)</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>accuracy_enhanced <span class="op">=</span> accuracy_score(y_clf_enhanced, predictions_enhanced)</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Enhanced Classification Model Accuracy: </span><span class="sc">{</span>accuracy_enhanced<span class="sc">:.2%}</span><span class="ss">"</span>)</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the new confusion matrix</span></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>cm_enhanced <span class="op">=</span> confusion_matrix(y_clf_enhanced, predictions_enhanced)</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm_enhanced, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Greens'</span>,</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'Predicted Off'</span>, <span class="st">'Predicted On'</span>],</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>            yticklabels<span class="op">=</span>[<span class="st">'Actual Off'</span>, <span class="st">'Actual On'</span>])</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Confusion Matrix for Enhanced Model'</span>)</span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Actual Status'</span>)</span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Predicted Status'</span>)</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Class distribution for the enhanced model:
+on_off_status
+0    28
+1    20
+Name: count, dtype: int64
+
+Enhanced Classification Model Accuracy: 91.67%</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-14-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="unpacking-the-success-which-feature-was-more-important" class="level3">
+<h3 class="anchored" data-anchor-id="unpacking-the-success-which-feature-was-more-important">Unpacking the Success: Which Feature Was More Important?</h3>
+<p>Our enhanced model worked brilliantly, but which of our two new features did the model find more useful? For a logistic regression model, we can inspect the <strong>model coefficients</strong>. These numbers tell us how the model “weighs” each feature when making a decision. A larger coefficient (either positive or negative) means the feature has a stronger influence on the outcome.</p>
+<div id="c64a6dae" class="cell" data-execution_count="34">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the coefficients from the trained Logistic Regression model</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The model stores them in the .coef_ attribute. Since it's a binary classifier, we take the first (and only) row.</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> classification_model_enhanced.coef_[<span class="dv">0</span>]</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> [<span class="st">'SWIR Anomaly'</span>, <span class="st">'NO₂ Concentration'</span>]</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a pandas series for easy plotting. We use the absolute value for magnitude.</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>feature_importance_df <span class="op">=</span> pd.Series(<span class="bu">abs</span>(coefficients), index<span class="op">=</span>feature_names).sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span>feature_importance_df.values, y<span class="op">=</span>feature_importance_df.index, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Feature Influence (Coefficient Magnitude) for On/Off Classification Model'</span>)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Coefficient (Absolute Value)'</span>)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature'</span>)</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Add annotations to the bars</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(feature_importance_df):</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    plt.text(value, index, <span class="ss">f' </span><span class="sc">{</span>value<span class="sc">:.3f}</span><span class="ss">'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the actual coefficients to see the direction of the relationship</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model Coefficients:"</span>)</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, coef <span class="kw">in</span> <span class="bu">zip</span>(feature_names, coefficients):</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>coef<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">A positive coefficient means that an increase in that feature makes the model more likely to predict 'On'."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/lg/tqlb1wcn4nqgxx9bmgfhm3_r0000gn/T/ipykernel_12367/3706021534.py:11: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=feature_importance_df.values, y=feature_importance_df.index, palette='viridis')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model Coefficients:
+  SWIR Anomaly: 0.0000
+  NO₂ Concentration: -2.1792
+
+A positive coefficient means that an increase in that feature makes the model more likely to predict 'On'.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="the-challenge-of-predicting-emission-quantity" class="level2">
+<h2 class="anchored" data-anchor-id="the-challenge-of-predicting-emission-quantity">The Challenge of Predicting Emission Quantity</h2>
+<p>Our feature engineering was a success for the classification task. We built a model that can confidently tell us if a power plant is “On” or “Off”. But can we push our success further? The final and most difficult challenge remains: can we predict the <em>quantity</em> of CO2 emissions?</p>
+<p>For this, we will upgrade our modeling toolkit, using a <code>RandomForestRegressor</code>—a powerful model that can capture complex, non-linear patterns. We’ll train it on our high-quality features (<code>swir_anomaly</code>, <code>no2_concentration</code>) for the hours the plants were active.</p>
+<p>However, our rigorous data cleaning and fusion process has left us with a small, high-quality dataset of just 20 “On” events. This presents a new, critical question: do we have enough data for a model to learn such a complex relationship? Let’s find out.</p>
+<div id="7c880af1" class="cell" data-execution_count="30">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Prepare the data</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We use the same 'enhanced_model_df', but only for records where the plant was ON.</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>reg_df_enhanced <span class="op">=</span> enhanced_model_df[enhanced_model_df[<span class="st">'on_off_status'</span>] <span class="op">==</span> <span class="dv">1</span>].copy()</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Using </span><span class="sc">{</span><span class="bu">len</span>(reg_df_enhanced)<span class="sc">}</span><span class="ss"> 'On' records for the enhanced regression model."</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Define features (X) and target (y)</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> reg_df_enhanced[[<span class="st">'swir_anomaly'</span>, <span class="st">'no2_concentration'</span>]]</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> reg_df_enhanced[<span class="st">'CO2 Mass (short tons)'</span>]</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Split data into training and testing sets (80% train, 20% test)</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Initialize and train the RandomForestRegressor model</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co"># n_estimators is the number of trees in the forest.</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>rf_model <span class="op">=</span> RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">42</span>, oob_score<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>rf_model.fit(X_train, y_train)</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Make predictions on the unseen test data</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> rf_model.predict(X_test)</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Evaluate the model's performance</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> r2_score(y_test, y_pred)</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>mae <span class="op">=</span> mean_absolute_error(y_test, y_pred)</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">--- Enhanced Regression Model Results ---"</span>)</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"R-squared (R²): </span><span class="sc">{</span>r2<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean Absolute Error (MAE): </span><span class="sc">{</span>mae<span class="sc">:.2f}</span><span class="ss"> short tons"</span>)</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Out-of-Bag Score (OOB): </span><span class="sc">{</span>rf_model<span class="sc">.</span>oob_score_<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Visualize the results: Actual vs. Predicted</span></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test, y_pred, alpha<span class="op">=</span><span class="fl">0.7</span>, edgecolors<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>plt.plot([y.<span class="bu">min</span>(), y.<span class="bu">max</span>()], [y.<span class="bu">min</span>(), y.<span class="bu">max</span>()], <span class="st">'r--'</span>, lw<span class="op">=</span><span class="dv">2</span>) <span class="co"># y=x line</span></span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Actual vs. Predicted CO2 Emissions (Enhanced Model)'</span>)</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Actual Emissions (short tons)'</span>)</span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicted Emissions (short tons)'</span>)</span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Using 20 'On' records for the enhanced regression model.
+
+--- Enhanced Regression Model Results ---
+R-squared (R²): -0.63
+Mean Absolute Error (MAE): 135.17 short tons
+Out-of-Bag Score (OOB): -0.14</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="the-final-insight-why-predicting-quantity-is-so-difficult" class="level3">
+<h3 class="anchored" data-anchor-id="the-final-insight-why-predicting-quantity-is-so-difficult">The Final Insight: Why Predicting Quantity is So Difficult</h3>
+<p>Our final regression model struggled, even with our improved features. Why? The missing piece is the plant’s <strong>hourly operational load</strong>. A plant that is “On” is not always running at 100% capacity. Its output fluctuates based on energy demand.</p>
+<p>This final plot shows the direct relationship between the power generated each hour (Gross Load) and the CO2 emitted. We can see a clear linear trend, but also significant variance. Our satellite features are good at detecting the “On/Off” signal, but capturing this precise, fluctuating load from space is the true frontier—a challenge that requires even more sophisticated data.</p>
+<div id="06000eb0" class="cell" data-execution_count="32">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the same dataframe from our successful regression attempt</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This contains only 'On' records with valid emissions data</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>on_records_df <span class="op">=</span> enhanced_model_df[enhanced_model_df[<span class="st">'on_off_status'</span>] <span class="op">==</span> <span class="dv">1</span>].copy()</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">7</span>))</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>sns.regplot(</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>on_records_df,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">'Gross Load (MW)'</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'CO2 Mass (short tons)'</span>,</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    scatter_kws<span class="op">=</span>{<span class="st">'alpha'</span>: <span class="fl">0.5</span>},</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    line_kws<span class="op">=</span>{<span class="st">'color'</span>: <span class="st">'red'</span>, <span class="st">'linestyle'</span>: <span class="st">'--'</span>}</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Power Output vs. CO2 Emissions for "On" Plants'</span>)</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Gross Load (MW)'</span>)</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'CO2 Mass (short tons)'</span>)</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="energy_exploration_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>The feature importance chart tells the entire story in a single image: the direct measurement of NO₂ pollution was overwhelmingly the most important feature, so much so that the model learned to completely ignore the more subtle thermal-infrared signal.</p>
+<p>By incorporating data from a satellite specifically designed to monitor air quality (Sentinel-5P), we gave our model a direct, unambiguous signal of industrial activity.</p>
+<p>The success of the classification model, driven by this single powerful feature, and the informative struggle of the regression model, constrained by a lack of data, provide our key takeaways:</p>
+<ul>
+<li><strong>Go to the Source:</strong> When possible, use data that measures your target phenomenon as directly as possible. For monitoring pollution, a chemical trace from an air-quality satellite proved far more effective than an indirect heat signature.</li>
+<li><strong>Feature Engineering is About Signal, Not Just Cleverness:</strong> Our “SWIR anomaly” was a good idea, but the NO₂ data provided a much cleaner signal. The best feature isn’t the most complex; it’s the one with the least noise.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/devansh-lodha\.github\.io\/blog\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      if (authorPrefersDark) {
+          [baseTheme, altTheme] = [altTheme, baseTheme];
+      }
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "devansh-lodha/blog";
+    script.dataset.repoId = "R_kgDONVlj_w";
+    script.dataset.category = "General";
+    script.dataset.categoryId = "DIC_kwDONVlj_84CrcDP";
+    script.dataset.mapping = "title";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "top";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
