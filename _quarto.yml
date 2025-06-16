@@ -19,6 +19,8 @@ website:
         text: repositories
       - href: https://devansh-lodha.github.io/service/
         text: academic service
+      - href: https://devansh-lodha.github.io/assets/pdf/devansh_resume.pdf
+        text: resume
 
 format:
   html:
