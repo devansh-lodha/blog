@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/field_guide_to_tedx/field-guide-to-tedx.html",
       "/posts/brick-kiln-vlm-benchmark/brick-kiln-vlm-benchmark.html",
       "/posts/energy_exploration/energy_exploration.html",
       "/posts/acm_vlm_tutorial/acm_vlm_tutorial.html",
@@ -10,8 +11,8 @@
       "/posts/bare_bones_07_building_a_transformer/07_building_a_transformer.html",
       "/posts/bare_bones_06_the_attention_mechanism/06_the_attention_mechanism.html",
       "/posts/bare_bones_05_lstm_from_scratch/05_lstm_from_scratch.html",
-      "/posts/bare_bones_04_rnn_from_scratch/04_rnn_from_scratch.html",
       "/posts/bare_bones_03_mlp_for_classification/03_mlp_for_classification.html",
+      "/posts/bare_bones_04_rnn_from_scratch/04_rnn_from_scratch.html",
       "/posts/bare_bones_02_building_a_neural_network/02_building_a_neural_network.html",
       "/posts/bare_bones_01_autograd_engine/01_autograd_engine.html",
       "/posts/remote_ssh_servers/remote_ssh_servers.html",
@@ -20,8 +21,8 @@
       "/posts/satellite_solar_panel_detection/satellite_solar_panel_detection.html",
       "/posts/carvana_seg_resnet18/carvana_seg_resnet18.html",
       "/posts/matrix_factorization/matrix_factorization.html",
-      "/posts/histogram_matching/histogram_matching.html",
       "/posts/otsu_thresholding/otsu_thresholding.html",
+      "/posts/histogram_matching/histogram_matching.html",
       "/posts/illustrator_blog/illustrator_blog.html"
     ]
   }
