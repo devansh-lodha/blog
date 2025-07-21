@@ -1,0 +1,191 @@
+---
+title: "Unfiltered Lessons from Leading TEDx"
+author: "Devansh Lodha"
+date: "2025-07-22"
+description: "This is a collection of the lessons I learned about leadership, culture, and the surprising truths you uncover when you’re responsible for turning a shared dream into a reality."
+categories: [TEDx]
+image: "images/astronaut.png"
+format: html
+---
+
+{{< video https://www.youtube.com/embed/sWn-GvIeMOk?si=vqYLb1umNm_oVY0X >}}
+
+There’s a one-dimensional story I could tell you about my time leading TEDxIITGandhinagar. It’s the version that lives on my resume: “Led a cross-functional team of 80+ students to execute a globally recognized event.” It’s clean, professional, and utterly devoid of the truth.
+
+The truth is, leading a massive, year-long volunteer project is less like being a CEO and more like trying to conduct a symphony in the middle of a hurricane. It's a beautiful, chaotic, and profoundly human mess. It’s about navigating the maddening, brilliant, and contradictory realities of what it takes to bring a big idea to life.
+
+This is a collection of the raw, unfiltered lessons I learned in the trenches—lessons about leadership, culture, and the surprising truths you uncover when you’re responsible for turning a shared dream into a reality.
+
+### **Your Team Doesn't Need to Share Your Dream. They Need to Believe in Your Culture.**
+
+This was the first and most painful illusion to shatter.
+
+To understand why this lesson was so important, you have to understand my relationship with TED. It isn’t just a brand I admire; it's part of my intellectual DNA. I’ve been watching TED-Ed videos since the 6th grade, and it's no exaggeration to say that the organization's devotion to curiosity, reason, and the pursuit of knowledge helped spark my own passion for STEM and research.
+
+To go from being that kid, inspired by videos on the mysteries of the universe, to being the Licensee for TEDxIITGandhinagar was the definition of a full-circle moment. It felt like coming home. Because TED had been such a personal and transformative force for *me*, it created a powerful bias in my leadership style.
+
+I came into this role with a beautifully naive hypothesis: if I just found enough people who loved TEDx as much as I did, their passion would be the only fuel we’d need. I thought the dream was infectious.
+
+I was wrong.
+
+I quickly learned that my team of 80 wasn't a monolith; it was a vibrant ecosystem of 80 different dreams. Yes, some were there for the TEDx mission. But others were there to build a killer design portfolio. Some wanted to hone their marketing skills. Some were there for the community, the late-night work sessions that felt more like hanging out with friends than actual labor. And some, let’s be honest, some were there because "TEDx Core Team" looks damn good on a resume.
+
+My first instinct was frustration. How could I lead a team when my "why" wasn't their "why"? The friction was real. I saw amazing talent on my team whose primary passion lay elsewhere.
+
+The real job of a leader, I realized, isn't to be a missionary for your dream. It's to be an *architect of a culture* so compelling that it aligns all those disparate dreams towards a single goal. If I couldn't make them love the mission as much as I did, I had to make them love the *team* that was executing the mission.
+
+So, how do you do that?
+
+It wasn't about grand speeches; it was about small, consistent actions. It was bringing cookies to the first meeting with my design juniors. It wasn't just a nice gesture; it was a signal: "I care about you as people, not just as resources." It was taking the time to teach them software, not just because the event needed it, but because I knew it was a valuable skill *they* could carry forward. It was about creating an environment where our late-night work sessions, surrounded by the smell of spray paint and the buzz of creative energy, felt like a privilege, not a chore.
+
+The proof of this cultural ROI came after the event was over. In many student organizations, the cleanup is a ghost town. But while I was at the networking dinner, my design team, on their own initiative, had already started breaking down all our complex decorations. When I joined them later, it wasn't a task; it was a celebration. We were laughing, reminiscing, and wrapping up our shared project together. We had built a team that *wanted* to see the mission through to the absolute end, not because they were told to, but because they felt a collective sense of ownership and belonging. The dream they had bought into wasn't just "TEDx." It was *us*.
+
+### **The Goal of a Great Leader is to Make Themselves Redundant**
+
+This sounds like a paradox, but it became the single most effective operational principle I discovered.
+
+As a designer, my natural instinct is perfectionism. I want to control every pixel, every kerning pair, every hex code. My default assumption as a leader was that my job was to be the central hub of quality control: the final checkpoint through which all work must pass. I thought that to guarantee an amazing result, I needed to have my hands on everything.
+
+This approach is not only exhausting; it's also incredibly arrogant. It assumes that you are the sole source of quality on your team. It suffocates talent, creates bottlenecks, and turns creative, intelligent people into passive executors who just wait for their next instruction. It's the fastest way to build a team of people who are merely compliant, not committed.
+
+The turning point for me was seeing the strain this central-hub model put on our timeline and, more importantly, on my team's morale. I wasn't empowering them; I was managing them. And management is a low-ceiling game. I had to let go. I had to consciously, and at times painfully, work to make myself obsolete.
+
+Here's what that looked like in practice:
+
+**1. I Delegated Problems, Not Tasks.**
+
+There’s a world of difference between saying, "Make a brochure with these three points," and saying, "The sponsorship team needs a powerful tool to close deals. Work with them to figure out what that is and build it."
+
+The first approach creates a task-taker. The second creates a problem-solver.
+
+I made this our default mode of operation. When the sponsorship team needed new materials, I didn't gather the requirements myself. I literally created a WhatsApp group with the assigned designer and the sponsorship point of contact, and my opening message was essentially: "*You two are the experts. You own this from start to finish. My only job is to clear any roadblocks you face. Now go create something brilliant.*"
+
+The effect was immediate. My designer wasn't just pushing pixels around; they were thinking like a strategist. They were asking the sponsorship team critical questions, offering their own insights, and taking complete ownership of the outcome. They weren't working *for* me; they were working for the mission.
+
+**2. I Made Information Free.**
+
+A leader who holds information becomes a necessary bottleneck. A leader who democratizes information creates more leaders. I chose the latter. My team was privy to everything I knew. They understood our design budget constraints, the feedback from other departments, the strategic goals behind a marketing push.
+
+This wasn't just about being "transparent." It was a strategic move to make my team more autonomous. When your team understands the *context*, the "why" behind the work, they can make smart decisions without you. They don't need to ask for permission on every small choice, because they have the same framework you do. You've essentially open-sourced your own decision-making process. This frees you up to focus on the truly important, high-level challenges.
+
+**3. I Aggressively Gave Away the Credit.**
+
+This is the final, crucial step. When you give up control, you must also enthusiastically give up the credit. This cannot be an afterthought; it has to be a core part of the process.
+
+When a designer created a fantastic post for our social media, I didn't just approve it. I made sure to tag their personal handle in the post. In our team group chat, I would praise specific, ingenious contributions. This wasn't about making people feel good; it was about accurately attributing the victory. It reinforces the culture of ownership. When people know that their individual contribution will be seen, celebrated, and tied directly to their name, they are infinitely more motivated to bring their A-game next time.
+
+The ultimate proof that this philosophy worked? There were moments when I would see mind-blowing reels or designs go live on our Instagram page *after* they had already been published. My team was operating so independently and at such a high level that they didn't need my final sign-off. The most powerful moment came after the event. While I was occupied at the formal networking dinner, my design team, completely unprompted, had already organized themselves and taken down all of our intricate campus and hallway decorations.
+
+I had made myself redundant. And in doing so, I had unlocked the full, independent, creative power of my team. They didn't need me looking over their shoulder. The system we built, the culture we fostered, was working on its own. That is the true goal, and the greatest reward, of leadership.
+
+### **Your Toughest Conversations Will Be With Your Allies, Not Your Enemies**
+
+In any high-stakes project, you expect external challenges. You plan for vendors to be late, for budgets to be tight, for technology to fail. What you don't always plan for is that the most complex, draining, and character-defining conflicts won't come from the outside. They will come from within your own command structure, from the very people fighting alongside you in the trenches.
+
+This is the hard truth of peer leadership. When you're all volunteers, all driven, and all holding a piece of the puzzle, friction is not a possibility; it's a certainty. I learned that navigating these internal dynamics required a different kind of armor, not just passion and creativity, but a thick skin and a clear-eyed defense of standards.
+
+**The Battle Against "Good Enough"**
+
+There's a dangerous phrase that pops up when deadlines are tight and pressure is high: "It's good enough."
+
+In our event, this manifested in a predictable way. A well-meaning core from another department, under pressure to get something out *fast*, would take it upon themselves to "help" with a design task. They'd whip something up quickly in Canva, bypass my team entirely, and present it as a finished product. And frankly, it was almost always terrible.
+
+The initial reaction is pure, unfiltered rage. The audacity! You're struggling to keep up with your own department's deliverables, and now I have to spend my time fixing the mess you made in mine?
+
+But you can't say that. Not to an ally. So you take a breath, and you realize this isn't an attack; it's a clash of core values. Their immediate value was *speed*. They needed to check a box and move on. My team's core value was *excellence*. My responsibility as the Design Lead wasn't just to produce assets; it was to protect the integrity and quality of the entire event's visual brand. "Good enough" was a leaky faucet that, if left untended, would flood the whole project with mediocrity.
+
+This is where I had to learn to have the tough conversation. It wasn't about ego. It was about education. I had to calmly, firmly, and respectfully explain that design isn't just "making things look pretty." It's a technical skill. It requires expertise in visual hierarchy, typography, color theory, and the tools of the trade. I had to make the case that a hastily made design doesn't just look bad; it actively harms the brand, erodes credibility with sponsors, and disrespects the audience.
+
+The conversation shifted from "Don't do my job" to "Let my team of specialists do their job, so we can all succeed at the highest level." It was about establishing professional respect for the craft and assuring my peers that if they trusted our process, we would deliver excellence that would make their department shine, too.
+
+**The Paradox of the Talented Misfit**
+
+Even more challenging than fending off well-meaning intrusions is managing misalignment *within* your own core team. What happens when one of your most talented and essential allies is operating on a completely different frequency?
+
+I faced this constantly. I had a key partner who was brilliant and creative, but whose primary passion and commitment lay outside of our project. For them, our event was a creative outlet, not the all-consuming mission it was for me. This manifested in work that was often done hastily, at the last minute, and to a standard that was, frankly, "good enough." I'd find myself spending hours refactoring their work, essentially redoing it from scratch, just to get it to the level of quality I expected.
+
+My initial, immature approach was to make it about fairness. I'd point out the hours I was putting in, comparing our workloads. This is a rookie mistake. It never works. It just creates resentment and devolves into a pointless argument about who is busier or more committed. The response I'd get was a defensive shutdown: "You're the Lead; of course you have to do the work!"
+
+The real breakthrough came when I realized two things.
+
+First, I had to stop trying to win the argument about *effort* and make it entirely about the *output*. The only thing that mattered was the final product. My new mantra became: "The standard is the standard." I stopped talking about who did what and focused my feedback exclusively on the work itself. I would lead by example, putting in the hours to elevate every single deliverable to an exceptional level. Over time, this raised the quality bar for the entire team. The standard became so visibly high that "good enough" simply looked out of place.
+
+Second, and this was the hardest lesson, I had to accept their motivation for what it was and stop trying to change it. This person was not going to magically share my obsession. And that was okay. My job wasn't to be their life coach; it was to get the best possible work out of them for the project. By focusing on the objective quality of the work and leading by obsessive example, I created a dynamic where their contributions, when they came, had to meet a higher bar.
+
+These internal conflicts were exhausting. They tested my patience and my maturity. But they taught me the most critical lesson about leadership: You are the ultimate guardian of your team's standards. You have to be willing to have the awkward, uncomfortable conversations with your own allies to protect the quality of the work. Because in the end, that standard is the only thing that will be remembered.
+
+### **The Day the Universe Opened Up**
+
+There's a singular, electric moment just before a TEDx event begins. The house lights dim, a thousand quiet conversations hush into a collective, focused silence, and the air itself seems to hum with anticipation. For the audience, it is the start of a journey. For my team and me, it was the breathtaking crescendo of one, the moment the abstract universe we had painstakingly designed would finally be filled with its stars.
+
+**An Overture of Creation and Innovation**
+
+Our morning session was intentionally curated as a deep dive into the cosmos of creation. We wanted our audience to see how a spark of passion, when forged with discipline and vision, could reshape industries and lives.
+
+The stage first lit up with the fire of entrepreneurial spirit from Chef **Aanal Kotak**. She didn't just talk about food; she narrated a powerful story of "Passion to Power," showing how love for a craft could be scaled into a culinary empire that redefines tradition. This was immediately followed by the sharp, analytical mind of **Ridhi Singhai**. An engineer who dared to challenge the status quo, she walked us through her journey of building TintBox, her sustainable glassware brand. Her talk was a masterclass in purpose-driven innovation, taking us through the logic, the setbacks, and the sheer tenacity required to bring a responsible product to market, even facing the harsh scrutiny of *Shark Tank India*.
+
+From the world of products, we transitioned to the universe of stories with filmmaker and activist **Ritika Anand**. Her talk, "Originality is Key," was a powerful manifesto on the importance of unique voices. She argued compellingly that the most potent tool for driving social change is not imitation, but the courage to tell new, challenging, and authentic stories.
+
+To give these powerful words room to breathe, we deliberately shifted the medium. A stunning **Mime Act** took the stage, a silent, powerful interlude that captivated the audience through pure physical storytelling, proving that ideas can be transmitted without a single spoken word.
+
+The intellectual crescendo of our morning came with Dr. **Manish Gupta**, Director of Google DeepMind India. His talk on "AI: Inclusive and Transformative" was a forward-looking exploration into the very technology that is reshaping our world. He provided a clear, insightful vision into how artificial intelligence could be harnessed for profound human benefit. As he concluded and we broke for lunch, the auditorium was buzzing, charged with new ideas and perspectives.
+
+**The Echoes Beyond the Auditorium**
+
+But the energy in that room wasn't born in a day. It was the result of a year-long conversation we had been carefully nurturing with our community. The main event was the peak, but its foundations were laid through two critical initiatives.
+
+Our podcast, [**TEDxConversations**](https://www.youtube.com/@tedxiitgandhinagar), was the steady heartbeat of our organization. I poured countless hours into editing each episode, seeing it as our vital link to the community between events. We turned the microphones towards the brilliant minds in our own hallways, featuring esteemed IIT Gandhinagar professors who shared their journeys and research. This wasn't just content; it was community-building. It positioned our platform as a serious hub for intellectual discourse, making our audience not just consumers, but ongoing participants in a campus-wide dialogue. 
+
+We also knew that true engagement comes from active creation, not just passive consumption. This philosophy gave birth to **Episteme**, our series of hands-on pre-event workshops. We curated exclusive sessions designed to empower our community with new skills—from cooking masterclasses to deep dives into Virtual Reality. The undisputed highlight was a workshop conducted in collaboration with scientists from **ISRO**. This wasn't a lecture; it was an interactive immersion into space engineering, a chance for aspiring scientists and engineers to engage directly with their heroes. It was our commitment to the idea that our event shouldn't just be about watching stars on stage, but about giving our community the tools to reach for their own.
+
+**A Journey into the Human Spirit**
+
+The afternoon session began not with a speaker, but with pure art. The lights dimmed again, but this time, a single beam illuminated a table on the stage. What followed was magic. In a mesmerizing **Live Sand Art Performance**, a brilliant artist brought our "The Cosmos Within" theme to life before our eyes. With skillful, flowing movements, grains of sand were transformed into swirling galaxies, distant planets, and poignant human figures. It was a breathtaking, non-verbal narrative that recentered the entire audience on our core message, creating the perfect emotional canvas for the talks to come.
+
+This final act was a journey into the depths of the human cosmos—the universe of courage, creativity, and the indomitable will. We were honored with the presence of **Captain Akhilesh Saxena**, whose stories from the frontlines of the Kargil War and the boardrooms of corporate India provided a profound lesson in "Leading with Courage." Then, the stage exploded with the creative energy of **Gaurav Juyal**. His talk, "Play to Learn. Learn to Play," was an irresistible invitation to reconnect with the spirit of play not as a childish pastime, but as an essential engine for lifelong learning and innovation.
+
+The emotional core of the afternoon came from **Devendra Jhajharia**. As India's most decorated Paralympian, his story of "From Struggle to Gold" was one of almost superhuman resilience. The room was wrapped in a reverent silence as he spoke, his journey serving as a powerful, undeniable testament to the human capacity to overcome any obstacle. We closed with the dynamic insights of **Punit G.**, a visionary entrepreneur who took us on his unconventional journey from veterinary science to global business leadership, his story a masterclass in adaptability and the art of transforming unexpected turns into transformative opportunities.
+
+As the final speaker took their bow and the applause echoed through the hall, I stood at the back, taking it all in. The long nights, the heated debates, the endless spreadsheets, the creative breakthroughs, it had all converged into this. A living, breathing universe of ideas.
+
+### **A Lesson in Supercomputing: Why Your Team is More Powerful Than You Think**
+
+I knew my window of opportunity with Dr. Manish Gupta, the Director of Google DeepMind India, was closing. His talk just before the lunch break had been a brilliant exploration of AI's future, and I was determined not to miss the chance to speak with him. I spotted him at the speakers' lunch table. I approached his table, and what started as a simple thank you quickly evolved into one of the most formative conversations I've had in a while, especially when my own research advisor, Professor Nipun Batra, joined us. I asked Dr. Gupta about his journey, and he began to recount a story from his past at IBM, a story that was about building a supercomputer.
+
+He transported me back to the high-stakes world of early 2000s supercomputing. The landscape, he explained, was dominated by a single metric of success: the TOP500 list, a leaderboard decided by one benchmark, HPL, which measures a machine's raw number-crunching speed. But a far more rigorous and revealing test existed: the HPC Challenge.
+
+This wasn't a simple race. It was an olympic decathlon designed to stress every component of a machine's architecture. As he detailed the seven trials, I leaned in, the CS student in me completely captivated. It was a masterclass in system design bottlenecks:
+
+First came the raw power tests, **DGEMM** and **HPL**, to measure the theoretical peak floating-point performance. Simple, brute strength.
+
+Then, the memory trials. **STREAM** tested sustainable memory bandwidth, could you actually *feed* the processors with enough data, or would they sit idle, starved by the classic von Neumann bottleneck? This was followed by **RandomAccess**, a vicious test of memory *latency*, measuring how quickly the machine could update millions of tiny, non-contiguous pieces of data scattered across its memory. For a parallel machine, this is torture.
+
+Finally, the communication gauntlets. **FFTE** tested the network's ability to handle the complex "butterfly" exchange patterns of a Fast Fourier Transform. But the real monster, the trial designed to break a machine's spirit, was **PTRANS**. This Parallel Matrix Transpose was an all-to-all communication nightmare, forcing every single processor to talk to every other processor at the same time. It was a brutal stress test designed to find the weakest link in the communication fabric and shatter it.
+
+Into this arena, where the reigning champions like Japan's Earth Simulator were built on a "fast and narrow" philosophy of a few, massive, power-hungry processors, IBM brought a machine called Blue Gene/L.
+
+It was a "slow and wide" architecture, built with tens of thousands of smaller, slower, more power-efficient cores. The high-performance computing community was openly skeptical. They predicted it might be good at a few specific tasks but would utterly collapse under the communication hell of PTRANS.
+
+Here, Dr. Gupta paused, a knowing look in his eye. The skeptics, he said, had missed the machine's soul. The genius wasn't in the speed of the individual cores. It was in the breathtaking sophistication of the **network**. Blue Gene/L didn’t have one interconnect; it had *five* specialized ones—a 3D Torus for point-to-point messages, a Collective network for broadcast operations, a low-latency Barrier network for synchronization and more. This radical design meant that communication patterns that would cripple a conventional machine were offloaded to dedicated hardware, freeing the main processors to do what they did best: compute.
+
+The punchline was delivered at the 2005 Supercomputing Conference. Blue Gene/L didn't just win a category. It swept the entire HPC Challenge. It dominated in raw power, in memory bandwidth, in latency, and even in the communication gauntlet of PTRANS. This "slow and wide" absurdity, this radical bet against the grain, had not only become the most powerful machine on the planet, but it did so while being exponentially more power-efficient. It was a paradigm shift that fundamentally altered the course of computing.
+
+As he finished the story, the room around me dissolved. The chatter, the clinking of cutlery, it all faded into a low hum. A single, powerful thought echoed in my mind with the force of a thunderclap:
+
+*He was describing us.*
+
+We were not a professional event management company. We were not a small team of "fast and narrow" experts. We were a "slow and wide" architecture of eighty-plus student volunteers. Each of us was a single, "power-efficient" core, bringing our own unique skills, motivations, and varying levels of experience. On paper, a skeptic would have predicted our failure. They would have assumed we would collapse under the communication-intensive demands of coordinating five departments, dozens of stakeholders, and hundreds of moving parts.
+
+But they would have missed our secret. They would have missed our network.
+
+The cultural systems we had spent a year building were our specialized interconnects.
+
+Our culture of **radical transparency and open communication** was our high-bandwidth Collective network, ensuring information flowed freely to all nodes.
+
+Our philosophy of **delegating ownership** was our way of offloading complex tasks to specialized "cores": the empowered designers and coordinators who could execute without waiting for a central command.
+
+And the **deep bond of trust and camaraderie** we had fostered, the feeling that made people *want* to show up—that was our ultra-low-latency Barrier network, allowing us to synchronize and support each other in an instant, without friction.
+
+That conversation was the epiphany that tied my entire journey together. It gave me a new language to understand our success. It wasn't just the result of hard work or good management. It was a living demonstration of a profound architectural principle: a well-networked, massively parallel team, bound by a culture of trust and shared context, will always outperform a small group of disconnected experts.
+
+It was the most important lesson I learned. And it came not from a TED talk on a stage, but from a quiet conversation over lunch, long after the applause had faded.

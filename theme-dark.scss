@@ -1,5 +1,7 @@
 /*-- scss:defaults --*/
 
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
 // colors
 $body-bg: #1c1c1d;
 $body-color: #ffffff;
@@ -8,7 +10,7 @@ $input-bg: #1c1c1d;
 $popover-bg: #1c1c1d;
 
 // fonts
-$font-family: 'Roboto';
+$font-family: 'Lato';
 
 // code blocks
 $btn-code-copy-color-active: #FA2D48;

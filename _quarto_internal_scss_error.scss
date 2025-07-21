@@ -1,4 +1,4 @@
-// quarto-scss-analysis-annotation { "quarto-version": "1.6.39" }
+// quarto-scss-analysis-annotation { "quarto-version": "1.7.32" }
 
 // quarto-scss-analysis-annotation { "origin": "'use' section from format" }
 
@@ -1039,24 +1039,28 @@ $theme-name: null !default;
 
 // quarto-scss-analysis-annotation { "origin": "Defaults from user-defined SCSS" }
 
+/* theme-light.scss */
+
+// Add this line at the top
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
 
 // colors
-$body-bg: #1c1c1d;
-$body-color: #ffffff;
+$body-bg: #ffffff;
+$body-color: #000000;
 $link-color: #FA2D48;
-$input-bg: #1c1c1d;
-$popover-bg: #1c1c1d;
+$input-bg: #ffffff;
+[cite_start]$popover-bg: #ffffff; [cite: 2332]
 
-// fonts
-$font-family: 'Roboto';
+// Change this line
+$font-family: 'Lato'; [cite_start]// Was 'Roboto' [cite: 2332]
 
 // code blocks
 $btn-code-copy-color-active: #FA2D48;
-$code-block-bg: #3a3a3a;
+$code-color: #FA2D48;
 
 // navbar
-$navbar-bg: #1c1c1d;
-$navbar-fg: #
+$navbar-bg: #ffffff;
 
 // Heading font size customization
 $h1-font-size: 2rem !default;
@@ -1115,11 +1119,11 @@ $title-banner-image: null !default;
 
 
 $btn-code-copy-color: #6a737d !default;
-$btn-code-copy-color-active: #b392f0 !default;
+$btn-code-copy-color-active: #6f42c1 !default;
 
 // quarto-scss-analysis-annotation { "origin": "Defaults from Quarto's SCSS" }
 
-$code-copy-selector: "pre.sourceCode:hover > " !default;
+$code-copy-selector: "" !default;
 $code-white-space: pre !default;
 $tbl-cap-location: top !default;
 $sidebar-bg: if(variable-exists(body-bg), $body-bg, #fff) !default;
@@ -1397,11 +1401,14 @@ $link-weight: $font-weight-base !default;
 $link-decoration: null !default;
 
 // border colors
+/// if a theme does not provide body-color or body-bg
+/// defaults to boostrap own default value for theses variables (in _variables.scss)
 $border-color: mix(
-  if(variable-exists(body-color), $body-color, #fff),
-  $body-contrast-bg,
-  30%
+  if(variable-exists(body-color), $body-color, $gray-900),
+  if(variable-exists(body-bg), $body-bg, $white),
+  15%
 ) !default;
+/// Make sure table border are the same as the border color (in case change in bootstrap default)
 $table-border-color: $border-color !default;
 
 // code block colors
@@ -5202,7 +5209,6 @@ $grid-default-toc-mid-body: minmax(
 @import "mixins/banner";
 @include bsBanner("");
 
-
 // scss-docs-start import-stack
 // Configuration
 @import "variables-dark";
@@ -5215,6 +5221,7 @@ $grid-default-toc-mid-body: minmax(
 @import "type";
 @import "images";
 @import "containers";
+@import "light-dark";
 @import "grid";
 @import "tables";
 @import "forms";
@@ -10281,10 +10288,6 @@ $mermaid-node-fg-color: $primary !default;
   margin-right: 5px;
   background-color: transparent;
   z-index: 3;
-}
-
-.code-copy-button:focus {
-  outline: none;
 }
 
 .code-copy-button-tooltip {
