@@ -1,222 +1,166 @@
 ---
-title: "How to Debug a Bare-Metal Raspberry Pi 5 on macOS with GDB & OpenOCD"
+title: "how to debug a bare-metal raspberry pi 5 on macos with gdb & openocd"
 author: "Devansh Lodha"
 date: "2025-09-09"
-description: "A step-by-step technical guide for setting up and using the Raspberry Pi Debug Probe with OpenOCD and GDB to perform hardware-level debugging of a bare-metal program on the Raspberry Pi 5."
-categories: [Embedded, Operating Systems, Raspberry Pi, code]
-image: "images/astronaut.png"
+description: "a step-by-step technical guide for setting up and using the raspberry pi debug probe with openocd and gdb to perform hardware-level debugging of a bare-metal program on the raspberry pi 5."
+categories: [embedded, raspberry pi, code]
+image: "images/bare_metal.jpg"
 format: html
 ---
 
-## The "Flying Blind" Problem
+### the problem
 
-If you're developing a bare-metal operating system or kernel, you will inevitably face the "black screen of death." You've written your initial boot code, compiled it, copied your `kernel8.img` to an SD card, and powered on the device. The power light is on, but nothing appears on the serial console. The system has hung somewhere in the earliest stages of execution, long before your `println` or `printf` functions are operational.
+when developing bare-metal code, the system will eventually fail to boot with no serial output. without `printf`, you are debugging blind. a hardware debugger is the only way to gain direct control over the cpu and diagnose the state of the machine.
 
-This is the fundamental challenge of bare-metal development. Without an underlying OS to catch errors and print logs, you are flying blind. To solve this, we need to attach a hardware debugger: a tool that allows us to connect directly to the CPU, halt its execution, and inspect its state instruction by instruction.
+this guide details the complete workflow for debugging a bare-metal program on the raspberry pi 5 using the official debug probe on macos.
 
-This guide provides a complete, step-by-step workflow for debugging a bare-metal program on the Raspberry Pi 5, using a Mac, the official Raspberry Pi Debug Probe, and the open-source tools OpenOCD and GDB.
+### debug session architecture
 
-### The Architecture of a Debug Session
+the system consists of four components. gdb is the client application on your mac. openocd is the server that translates gdb's generic commands into hardware-specific protocols. the raspberry pi debug probe is the physical hardware adapter (a cmsis-dap compliant device). swd (serial wire debug) is the two-wire protocol used to communicate with the arm cortex cores on the pi 5.
 
-Our debugging environment consists of several distinct components that work in a chain:
+the control flow is: `gdb` -> `openocd` -> `debug probe` -> `pi 5 cpu`.
 
-1.  **GDB (The GNU Debugger):** This is the client application running on your Mac. It provides the command-line interface for you to control the target. It knows nothing about hardware.
-2.  **OpenOCD (Open On-Chip Debugger):** This is the server running on your Mac. GDB connects to OpenOCD using the GDB remote protocol over a local network socket. OpenOCD's job is to translate GDB's generic commands (e.g., "halt") into the specific hardware protocol required by the debug probe.
-3.  **The Raspberry Pi Debug Probe:** This is the physical hardware adapter. It is a CMSIS-DAP compliant probe, which is a standard interface for ARM debug tools. It translates commands from OpenOCD into low-level electrical signals.
-4.  **SWD (Serial Wire Debug):** This is the two-wire electrical protocol used to communicate with the ARM Cortex cores on the Raspberry Pi 5.
+### strategy: the parking stub
 
-The flow of a "halt" command looks like this:
-`You type "halt" in GDB` → `GDB sends remote protocol packet to OpenOCD` → `OpenOCD sends CMSIS-DAP commands to Probe` → `Probe sends SWD signals to Pi 5 CPU` → `CPU Halts`
+the pi 5 firmware establishes memory protection in high-privilege exception levels (el2/el3) during boot. this blocks gdb's `load` command, which needs to write your kernel to ram.
 
-### Strategy: Bypassing Firmware with a Parking Stub
+the strategy is to bypass this by booting a minimal "parking stub" from the sd card. this stub's only job is to put the cpu in a clean, unprotected infinite loop. with the cpu parked, we can connect the debugger, take control, and use `load` to overwrite the stub in ram with our actual kernel.
 
-A major hurdle on the Raspberry Pi 5 is its sophisticated secure boot process. The firmware executes in high-privilege ARM Exception Levels (EL2 and EL3) and configures the memory management unit (MMU) to protect system memory. If we let the Pi boot normally and then attach our debugger, we'll find that these protections are already active, causing GDB's `load` command to fail with a data abort.
+### prerequisites & installation
 
-The solution is to gain control of the CPU *before* it's locked down. We achieve this with a two-stage "chainloading" strategy:
+#### hardware
 
-1.  **Boot a "Parking Stub":** We place a minimal program on the SD card named `kernel8.img`. This program's only function is to place the CPU in a low-power infinite loop (`wfe`), doing nothing else. No memory is protected; no complex setup is performed.
-2.  **Debugger Takeover:** With the CPU peacefully "parked," we connect OpenOCD and GDB. Because the system is in a clean state, we have full access to the hardware. We can then use GDB's `load` command to overwrite the parking stub in RAM with our actual kernel and begin debugging it from its true entry point.
+* raspberry pi 5
+* raspberry pi debug probe
+* microsd card
+* macos machine
 
-## Prerequisites & Installation
+#### software (macos)
 
-### Hardware Checklist
+all tools are installed via [homebrew](https://brew.sh/).
 
-*   Raspberry Pi 5
-*   Raspberry Pi Debug Probe
-*   MicroSD card
-*   A macOS machine (instructions for Linux are similar, Windows may vary)
-
-### Software Installation (macOS)
-
-We will use [Homebrew](https://brew.sh/) to install the necessary tools. Open your terminal and run the following commands.
-
-1.  **Install OpenOCD:** The debug server.
+install openocd, the debug server.
 ```bash
 brew install open-ocd
-```
-2.  **Install the AArch64 GDB Cross-Debugger:** A version of GDB that understands the 64-bit ARM architecture.
+````
+
+install the aarch64 cross-compilation toolchain. this package provides the assembler (`as`), linker (`ld`), `objcopy`, and gdb. this is a critical step; do not just install `aarch64-elf-gdb`.
+
 ```bash
-brew install aarch64-elf-gdb
+brew install aarch64-elf-gcc
 ```
 
-### Installation Verification
+#### installation verification
 
-After installation, it is critical to verify that the tools are available in your shell's `PATH`. Close and re-open your terminal window, then run:
+after installation, you must verify that the tools are available in your shell's `path`. **close and re-open your terminal**, then run:
 
 ```bash
 which openocd
-# Expected output: /opt/homebrew/bin/openocd
+# expected: /opt/homebrew/bin/openocd
 
 which aarch64-elf-gdb
-# Expected output: /opt/homebrew/bin/aarch64-elf-gdb
+# expected: /opt/homebrew/bin/aarch64-elf-gdb
+
+which aarch64-elf-as
+# expected: /opt/homebrew/bin/aarch64-elf-as
 ```
 
-If either command reports "not found," your shell's `PATH` is not configured correctly. See the Troubleshooting section at the end of this guide for the definitive fix.
+if any command reports "not found," see the troubleshooting section.
 
-## Section 3: Configuration Files & The Parking Stub
+### configuration files & the parking stub
 
-With the toolchain installed, we now need to create the three sets of configuration files that orchestrate the debug session: the parking stub that runs on the Pi, the SD card configuration, and the scripts that control OpenOCD and GDB.
+#### the parking stub
 
-### 3.1. The Parking Stub: A Clean Slate for the CPU
+create a subdirectory `halt_stub` in your project.
 
-As discussed, we will boot the Pi into a minimal "parking" program to create a clean, unprotected environment. This stub consists of a single assembly file and a linker script.
+  * `halt_stub/start.s`:
 
-#### The Assembly Code (`halt_stub/start.s`)
-
-Create a subdirectory `halt_stub` in your project, and inside it, a file named `start.s`. This code's only purpose is to put the CPU into a low-power infinite loop.
+<!-- end list -->
 
 ```asm
 // halt_stub/start.s
-
 .section ".text.boot"
 .global _start
 
 _start:
-    // This is a "Wait For Event" instruction. It pauses the core
-    // until an external event (like a debugger halting it) occurs.
-    // It is the most power-efficient way to idle.
-    wfe
-
-    // Branch back to the wfe instruction, creating an infinite loop.
+    wfe // wait for event (low-power idle)
     b _start
 ```
 
-#### The Linker Script (`halt_stub/linker.ld`)
+  * `halt_stub/linker.ld`:
 
-In the same `halt_stub` directory, create `linker.ld`. This tells the linker the memory layout for our program.
+<!-- end list -->
 
-```markdown
+```c
 // halt_stub/linker.ld
-
-// The ENTRY point tells the loader where execution begins.
 ENTRY(_start)
-
 SECTIONS
 {
-    // Set the location counter to 0x80000. This is the physical
-    // memory address where the Raspberry Pi firmware (start*.elf)
-    // is hard-coded to load the kernel image before jumping to it.
-    // Our program must be linked to run at this specific address.
+    // the physical address the pi firmware expects for a kernel.
     . = 0x80000;
-    // Place all code from the .text.boot section at this address.
     .text : { *(.text.boot) }
 }
 ```
 
-#### Building the Stub
+  * `makefile` rule:
+    add this to your project's `makefile`.
 
-Add the following to your project's `Makefile` to assemble and link the stub. This requires the `aarch64-elf-gcc` toolchain installed previously.
+<!-- end list -->
 
 ```makefile
 ##----------------------------------------------------
-## Halt Stub for Chainloading
+## halt stub
 ##----------------------------------------------------
 .PHONY: halt_stub
 HALT_STUB_IMG = halt_stub/halt_stub.img
 
-# Define the toolchain prefix based on the Homebrew installation.
+# correct toolchain prefix for homebrew.
 CROSS_COMPILE = aarch64-elf-
 
 halt_stub: $(HALT_STUB_IMG)
 
 $(HALT_STUB_IMG): halt_stub/start.s halt_stub/linker.ld
-	@echo "Building halt stub..."
+	@echo "building halt stub..."
 	@$(CROSS_COMPILE)as -o halt_stub/start.o halt_stub/start.s
 	@$(CROSS_COMPILE)ld -T halt_stub/linker.ld -o halt_stub/halt_stub.elf halt_stub/start.o
 	@$(CROSS_COMPILE)objcopy -O binary halt_stub/halt_stub.elf $(HALT_STUB_IMG)
 ```
 
-Run `make halt_stub` to generate `halt_stub/halt_stub.img`.
+#### the sd card
 
-### 3.2. The Boot Medium: SD Card Configuration
+  * **format (macos):**
+    use the disk utility app. select the sd card device and click erase. set the format to `exfat` and the scheme to `master boot record (mbr)`. the mbr scheme is critical.
 
-A bootable SD card for the Raspberry Pi 5 requires a specific format, firmware files, a configuration file, and our kernel.
+  * **firmware:**
+    you need the official raspberry pi firmware. the most reliable source is a fresh raspberry pi os lite (64-bit) image. copy the contents of its `boot` partition to your sd card. the `overlays` directory is not needed for this workflow and can be deleted. [source](https://github.com/raspberrypi/firmware/tree/master/boot).
 
-#### Formatting the SD Card (macOS)
+  * **`config.txt`:**
+    create `config.txt` on the sd card root with this line:
 
-1.  Insert your SD card and open the **Disk Utility** application.
-2.  Select your SD card device from the list on the left (select the parent device, not the volume).
-3.  Click the **Erase** button.
-4.  In the dialog:
-    *   **Format:** Choose **ExFAT**.
-    *   **Scheme:** Choose **Master Boot Record (MBR)**. This is critical.
-5.  Click **Erase**.
+<!-- end list -->
 
-#### Firmware Files
-
-The Pi 5 will not boot without the official firmware. The most reliable method is to start with a full set of firmware files and remove what is not needed.
-
-1.  Download and flash a recent **Raspberry Pi OS Lite (64-bit)** image to a spare SD card.
-2.  Mount the `boot` partition of that card.
-3.  Copy all files from that `boot` partition to a temporary folder on your Mac.
-4.  You can now copy this collection of files to your bare-metal SD card.
-
-::: {.callout-note}
-**What do all these files do?**
-
-*   `bootcode.bin`: The first-stage bootloader, burned into the SoC's ROM. It's responsible for basic hardware init and loading the second stage.
-*   `start*.elf`: The second-stage bootloader (actually GPU firmware). This is the most complex part. It initializes SDRAM and loads the main kernel (`kernel8.img`).
-*   `fixup*.dat`: Data files used by `start.elf` to configure the SDRAM controller.
-*   `*.dtb` (Device Tree Blob): A data file describing the board's hardware. The main blob (`bcm2712-rpi-5-b.dtb`) is used by the firmware for setup.
-*   `overlays/`: Not needed for our bare-metal workflow. This directory can be safely deleted.
-:::
-
-#### Configuration File (`config.txt`)
-
-On the root of your SD card, create or edit `config.txt`. It must contain the following line to enable the SWD hardware interface on boot:
 ```markdown
 enable_jtag_gpio=1
 ```
 
-#### The File Shuffle
+#### openocd configuration
 
-The Pi bootloader is hard-coded to load a file named `kernel8.img`. We will use this to load our parking stub.
+  * `interface/cmsis-dap.cfg`:
 
-1.  Build your real kernel (e.g., with `make debug-build`). This produces `kernel8.img`. **Rename this file to `kernel8_real.img`**.
-2.  Build the parking stub with `make halt_stub`. This produces `halt_stub/halt_stub.img`. **Rename this file to `kernel8.img`**.
-3.  Copy the new `kernel8.img` (which is our stub) to the root of the SD card.
-
-### 3.3. The Translator: OpenOCD Configuration
-
-::: {.callout-tip}
-**Source of this Configuration**
-
-The following OpenOCD script is a robust configuration derived from community efforts and discussions on the official [Raspberry Pi Forums](https://forums.raspberrypi.com/). It contains the necessary hardware addresses and definitions for OpenOCD to correctly interface with the BCM2712 SoC.
-:::
-
-Create these files in your project directory.
-
-#### Interface Config (`interface/cmsis-dap.cfg`)
+<!-- end list -->
 
 ```tcl
 # interface/cmsis-dap.cfg
 adapter driver cmsis-dap
 ```
 
-#### Target Config (`target/raspberrypi5.cfg`)
+  * `target/raspberrypi5.cfg`:
+
+<!-- end list -->
 
 ```tcl
 # target/raspberrypi5.cfg
+# configuration derived from raspberry pi forums community work.
 transport select swd
 adapter speed 4000
 reset_config srst_push_pull srst_only
@@ -239,320 +183,138 @@ init
 $_CHIPNAME.cpu0 configure -event reset-init { halt }
 ```
 
-### 3.4. The Controller: GDB Automation (Optional)
+#### gdb automation (`.gdbinit`)
 
-To streamline the connection process, create a file named `.gdbinit` in your project's root directory. GDB automatically executes these commands on startup.
+create a `.gdbinit` file in your project root. gdb runs these commands on startup. this file automates the initial connection.
 
-```markdown
+```bash
 # .gdbinit
-# Connect to the OpenOCD server.
 target extended-remote :3333
-# Reset the target and keep it halted for a clean state.
 monitor reset halt
 ```
 
-## Section 4: The Step-by-Step Debugging Workflow
+### the debugging workflow
 
-With the toolchain installed and all configuration files in place, we can now execute the repeatable workflow to start a debug session. This process is divided into two phases: the one-time preparation of the binaries and SD card, and the per-session execution of the debug tools.
+#### 1\. build binaries
 
-### 4.1. Build Binaries and Prepare the SD Card
+build your real kernel with debug symbols. this is essential for gdb to map executable code back to your source files. in your makefile, ensure your build rule adds the `-g` flag to gcc/clang or `-C debuginfo=2` to rustc.
 
-This phase is performed once every time you change your kernel's source code.
-
-1.  **Build the Kernel:** Compile your main operating system with debug symbols included. A `Makefile` target for this is essential. For example:
 ```makefile
-# In your Makefile
-debug-build: RUSTFLAGS += -C debuginfo=2
+# example makefile rule for a debug build
+debug-build: CFLAGS += -g # or RUSTFLAGS += -C debuginfo=2
 debug-build: $(KERNEL_BIN)
 ```
-Run the command:
-```bash
-make debug-build
-```
-This will produce `kernel8.img` (your real kernel) and a corresponding ELF file with symbols in the `target/` directory.
 
-2.  **Build the Parking Stub:** If you haven't already, build the halt stub:
+run `make debug-build`.
+
+then, build the parking stub.
+
 ```bash
 make halt_stub
 ```
 
-3.  **Execute the "File Shuffle":**
-    *   Rename the real kernel you just built: `mv kernel8.img kernel8_real.img`.
-    *   Rename the parking stub to take its place: `mv halt_stub/halt_stub.img kernel8.img`.
+#### 2\. prepare the sd card
 
-4.  **Deploy to SD Card:** Copy the new `kernel8.img` (the stub) to the root of your prepared SD card, replacing any existing file. Ensure your `config.txt` and firmware files are also present.
+rename your real kernel: `mv kernel8.img kernel8_real.img`.
+rename the stub to take its place: `mv halt_stub/halt_stub.img kernel8.img`.
+copy the new `kernel8.img` (the stub) to the sd card root.
 
-### 4.2. Initiate the Debug Session
+#### 3\. connect and power on
 
-This is the per-session workflow you will execute every time you want to debug.
+insert the sd card into the pi 5.
+connect the debug probe cable from the pi's 3-pin debug header to the probe's port **'d' (debug)**.
+power on the pi. it will boot the stub and park itself.
 
-1.  **Insert the SD card** into the Raspberry Pi 5.
-2.  **Connect the Debug Probe:** Ensure the cable is connected from the Pi's 3-pin debug header to the port labeled **'D'** on the Debug Probe.
-3.  **Power On the Pi:** Connect the USB-C power supply. The Pi will boot, load the `kernel8.img` stub from the SD card, and immediately park itself in the `wfe` loop.
+#### 4\. launch debug tools
 
-4.  **Launch the Debug Servers:** This process requires two separate terminal windows.
+in terminal 1, start openocd. it will connect and wait for gdb. leave this running.
 
-    ::: panel-tabset
+```bash
+make openocd-pi5
+```
 
-    #### Terminal 1: OpenOCD Session
+in terminal 2, start gdb. it will start and, using `.gdbinit`, automatically connect and halt the target. you will be at the `(gdb)` prompt.
 
-    In your first terminal, navigate to your project root and start the OpenOCD server.
+```bash
+make gdb-pi5
+```
 
-    ```bash
-    make openocd-pi5
-    ```
+#### 5\. take control in gdb
 
-    **Expected Output:** OpenOCD will start, find the probe, and connect to the Pi. A successful connection is indicated when the server is up and waiting for GDB. The output should end with these lines:
+all subsequent commands are typed in terminal 2 at the `(gdb)` prompt.
 
-    ```txt
-    Info : starting gdb server for bcm2712.cpu0 on 3333
-    Info : Listening on port 3333 for gdb connections
-    ...
-    Info : Listening on port 6666 for tcl connections
-    Info : Listening on port 4444 for telnet connections
-    ```
-    **Leave this terminal running.** It is now the bridge to the hardware.
+*(Note: When copying commands from the blocks below, be sure to omit the leading `(gdb)` prompt.)*
 
-    #### Terminal 2: GDB Session
+load your real kernel into ram. this overwrites the stub.
 
-    Open a second terminal window and navigate to the same project root. Launch the GDB client.
-
-    ```bash
-    make gdb-pi5
-    ```
-
-    **Expected Output:** GDB will start. If you created the `.gdbinit` file, it will automatically connect to OpenOCD and reset the target. You will be greeted with the `(gdb)` prompt. The last lines of output in the OpenOCD terminal will confirm the connection:
-
-    ```txt
-    Info : accepting 'gdb' connection on tcp/3333
-    Info : New GDB Connection: 1, Target bcm2712.cpu0, state: halted
-    ```
-    You are now ready to take control.
-
-    :::
-
-### 4.3. Loading and Running the Kernel in GDB
-
-All subsequent commands are typed into the GDB prompt in **Terminal 2**.
-
-1.  **Load Your Kernel:** With the CPU halted in a clean state, you can now load your actual kernel (the one with debug symbols) from your Mac directly into the Pi's RAM.
 ```bash
 (gdb) load
 ```
-**Expected Output:** A series of lines indicating that the `.text`, `.rodata`, and `.data` sections have been successfully transferred. The command prompt will return without a "Load failed" error.
-```txt
-Loading section .text, size 0x... lma 0x80000
-Loading section .rodata, size 0x... lma 0x...
-...
-Transfer rate: ... KB/sec, ... bytes/write.
-(gdb) 
-```
 
-2.  **Set a Breakpoint:** Tell GDB where to stop execution. We'll break at the entry point of your main C or Rust function (e.g., `kernel_main`). You may need to use the fully-qualified name if you are using a language with name mangling (see the GDB Primer section for details).
+set a breakpoint. you may need to find your kernel's entry point first, as the name might be mangled by the compiler.
+
 ```bash
-(gdb) break 'kernel::kernel_main'
-```
-**Expected Output:** GDB confirms the breakpoint is set.
-```txt
-Breakpoint 1 at 0x.....: file src/main.rs, line 149.
+(gdb) info functions main
+# output shows the real name, e.g., 'kernel::main'
+(gdb) break 'kernel::main'
 ```
 
-3.  **Set the Program Counter:** The CPU is still halted at the parking stub's address. Manually set the Program Counter (`$pc`) to the start address of the kernel you just loaded.
+set the program counter to tell the cpu where to start executing.
+
 ```bash
 (gdb) set $pc = 0x80000
 ```
 
-4.  **Continue Execution:** Resume the CPU. It will begin executing your kernel's boot assembly and run until it hits the breakpoint you set.
+run.
+
 ```bash
 (gdb) continue
 ```
 
-**Success!** GDB will now report that it has hit your breakpoint and will display the corresponding line of source code.
+gdb will now report that it has hit your breakpoint. you have a live debug session.
 
-```txt
-Breakpoint 1, kernel::kernel_main () at src/main.rs:149
-149     // Your first line of code...
-(gdb)
-```
+### gdb primer
 
-You now have a live, running, and fully controllable debug session on your bare-metal Raspberry Pi 5.
+#### the text user interface (tui)
 
-## Section 5: A GDB Primer for Bare-Metal Development
+  * `ctrl+x` `a`: toggle tui mode (source, assembly, register, and command panes).
+  * `ctrl+x` `o`: cycle the active window for scrolling.
 
-The debugging environment is now live. GDB is a deep and powerful tool, but a small subset of its commands will handle 99% of your bare-metal debugging needs. This section serves as a technical primer and reference for those essential commands.
+#### key commands
 
-### 5.1. The Text User Interface (TUI)
+| command          | abbr. | description                                                   |
+| ---------------- | ----- | ------------------------------------------------------------- |
+| `continue`       | `c`   | resume execution until next breakpoint.                       |
+| `next`           | `n`   | execute current source line, stepping over function calls.    |
+| `step`           | `s`   | execute current source line, stepping into function calls.    |
+| `stepi`          | `si`  | step one assembly instruction.                                |
+| `finish`         |       | execute until the current function returns.                   |
+| `break <loc>`    | `b`   | set a breakpoint at a function, file:line, or \*address.       |
+| `info breakpoints` | `i b` | list all breakpoints.                                         |
+| `delete <num>`   | `d`   | delete a breakpoint by its number.                            |
+| `print/x <expr>` | `p/x` | print a variable or expression in hexadecimal.                |
+| `info registers` | `i r` | display all cpu registers.                                    |
+| `x/[n][f][u] <addr>` | `x`   | examine memory at `<addr>`.                                   |
+| `backtrace`      | `bt`  | display the call stack.                                       |
 
-By default, GDB operates as a standard command-line REPL. However, it includes a powerful "Text User Interface" (TUI) mode that provides a multi-pane view, invaluable for contextual debugging.
+### troubleshooting
 
-**To enable/disable TUI mode, press `Ctrl+X` then `A`.**
+#### "aarch64-elf-as: command not found"
 
-When enabled, your terminal splits into several windows:
-
-*   **Source Window:** Displays your source code, with an arrow `>` pointing to the current line of execution.
-*   **Assembly Window:** Shows the disassembled machine code corresponding to the current source line.
-*   **Register Window:** Displays the current state of all CPU registers.
-*   **Command Window:** The GDB prompt where you type commands.
-
-::: {.callout-tip}
-**Navigating TUI**
-
-*   `Ctrl+X` `A`: Toggle TUI mode on and off.
-*   `Ctrl+X` `O`: Cycle the active window (for scrolling with arrow keys).
-*   `Ctrl+X` `2`: Dedicate more space to the source/assembly windows.
-*   `Ctrl+X` `1`: Reset the window layout.
-:::
-
-### 5.2. Essential GDB Commands: A Cheat Sheet
-
-All commands can be abbreviated. The abbreviation is shown in parentheses.
-
-#### Execution Control
-
-These commands control the flow of the program on the target.
-
-| Command                     | Abbr. | Description                                                                                                                                              |
-| --------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `continue`                  | `c`   | Resume program execution until the next breakpoint is hit or the program halts/crashes.                                                                  |
-| `next`                      | `n`   | Execute the current source line. If the line contains a function call, the entire function is executed, and the debugger stops on the line *after* the call. |
-| `step`                      | `s`   | Execute the current source line. If the line contains a function call, the debugger will stop at the *first line inside* that function.                   |
-| `stepi`                     | `si`  | **Step one assembly instruction.** Your most granular tool, essential for debugging boot code and analyzing compiler output.                                |
-| `finish`                    |       | If you have stepped into a function, this command executes the remaining lines of that function and stops at the point of its return.                      |
-| `Ctrl+C`                    |       | Send an interrupt signal to the target, halting execution and returning control to the GDB prompt.                                                        |
-
-#### Breakpoint Management
-
-Breakpoints are traps that halt execution when a certain point in the code is reached.
-
-| Command                           | Abbr. | Description                                                                                                   |
-| --------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------- |
-| `break <function>`                | `b`   | Set a breakpoint at the entry of a function (e.g., `b 'kernel::kernel_main'`).                                |
-| `break <file>:<line>`             | `b`   | Set a breakpoint at a specific line number (e.g., `b main.rs:152`).                                           |
-| `break *<address>`                | `b`   | Set a breakpoint at a raw memory address (e.g., `b *0x80000`).                                                  |
-| `info breakpoints`                | `i b` | List all currently set breakpoints, including their number, status, and location.                             |
-| `delete <num>`                    | `d`   | Delete a breakpoint by its number (e.g., `d 1`).                                                              |
-
-#### State Inspection
-
-These commands allow you to inspect the state of the machine and memory.
-
-| Command                               | Abbr. | Description                                                                                                                                                                                                                                                            |
-| ------------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `print <expr>`                        | `p`   | Print the value of a variable or expression (e.g., `p my_counter`).                                                                                                                                                                                                    |
-| `print/x <expr>`                      | `p/x` | Print the value of a variable or expression in **hexadecimal**. This is essential for inspecting pointers, registers, and memory-mapped I/O (MMIO) values.                                                                                                                |
-| `info registers`                      | `i r` | Display the contents of all core CPU registers (`x0`-`x30`, `sp`, `pc`, etc.).                                                                                                                                                                                            |
-| `x/[N][F][U] <addr>`                  | `x`   | The "examine memory" command. It displays memory contents at a given address. <br> `N`: Count of units to display. <br> `F`: Format (`x`=hex, `d`=decimal, `t`=binary). <br> `U`: Unit size (`b`=byte, `h`=halfword(2), `w`=word(4), `g`=giant(8)). |
-| `backtrace`                           | `bt`  | Display the call stack, showing the chain of function calls that led to the current location. Invaluable for diagnosing how your program entered a fault state.                                                                                                       |
-| `list`                                | `l`   | Re-center the source code view around the current line of execution.                                                                                                                                                                                                   |
-
-::: {.callout-note}
-**Example: Inspecting a UART Register**
-
-Imagine the Raspberry Pi 5 UART's Flag Register (FR) is located at `0x10015018`. To view its raw 32-bit value in hexadecimal, you would use the `x` command:
+your shell's `path` is not configured correctly. for macos/zsh, the definitive fix is to add homebrew's environment setup to your profile. run this command once, then restart your terminal.
 
 ```bash
-(gdb) x/1wx 0x10015018
-```
-*   `x`: Examine memory
-*   `/1`: Show 1 unit.
-*   `w`: The unit is a word (4 bytes).
-*   `x`: Display in hex.
-*   `0x10015018`: The address.
-:::
-
-### 5.3. A Note on Symbols & Name Mangling
-
-In compiled languages like C++ and Rust, the compiler often "mangles" function names to include namespace or module information. This prevents naming collisions but means a function you wrote as `kernel_main` may not be findable by that simple name in GDB.
-
-**The Problem:** You type `break kernel_main` and GDB responds with `Function "kernel_main" not defined.`
-
-**The Solution:** Use GDB's `info functions` command with a regular expression to find the real, fully-qualified symbol name.
-
-```bash
-(gdb) info functions kernel_main
-All functions matching regular expression "kernel_main":
-
-File src/main.rs:
-146:	static fn kernel::kernel_main();
-```
-GDB has found the true name: `kernel::kernel_main`. You can now set a breakpoint on it, using single quotes to handle the special `::` characters.
-
-```bash
-(gdb) break 'kernel::kernel_main'
-Breakpoint 1 at 0x815d0: file src/main.rs, line 149.
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 ```
 
-## Section 6: Troubleshooting Common Issues
+#### "openocd fails to connect"
 
-Setting up a cross-platform, bare-metal debugging environment involves many moving parts. If you encounter an issue, it is likely one of the common problems detailed below.
+check the physical setup. is the pi powered on? is the probe on port **'d'**? is `config.txt` correct?
 
-::: panel-tabset
+#### "gdb `load` fails with data abort"
 
-#### Problem: "Command not found"
+you did not use the parking stub method. ensure `kernel8.img` on the sd card is the stub, and power-cycle the pi before starting the debug session.
 
-You run a `make` command and see an error like:
-```sh
-make: aarch64-elf-as: No such file or directory
-```
+-----
 
-**Cause:** This is a shell `PATH` issue. The tool (`aarch6g4-elf-as` in this case) is installed by Homebrew, but your terminal session does not know where to find it. This can also happen if the toolchain you installed uses a slightly different name prefix (e.g., `aarch64-none-elf-` vs `aarch64-elf-`).
-
-**Solution:**
-
-1.  **Verify the Tool's Real Name:** First, confirm the exact name of the binaries Homebrew installed. The `aarch64-elf-gcc` package depends on `aarch64-elf-binutils`, which provides the assembler and linker.
-    ```bash
-    brew list aarch64-elf-binutils
-    ```
-    Look for the path to the assembler, which will confirm the correct prefix (e.g., `.../bin/aarch64-elf-as`).
-
-2.  **Apply the Definitive `PATH` Fix (macOS/Zsh):** The most robust way to configure your shell is to use Homebrew's built-in environment command. Run this once:
-    ```bash
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-    ```
-3.  **Restart Your Terminal:** Completely quit and reopen your terminal application to ensure the new profile is loaded.
-4.  **Verify:** In the new terminal, confirm the shell can now find the tool:
-    ```bash
-    which aarch64-elf-as
-    # Expected output: /opt/homebrew/bin/aarch64-elf-as
-    ```
-
-#### Problem: OpenOCD Fails to Connect
-
-OpenOCD starts but errors out immediately, unable to find the target or reporting a protocol error.
-
-**Cause:** This is almost always a physical connection or initial state issue.
-
-**Solution Checklist:**
-
-1.  **Is the Pi Powered On?** The target must be powered *before* OpenOCD is launched.
-2.  **Is the Probe on Port 'D'?** For debugging, the cable *must* be connected to the port labeled **'D' (Debug)** on the Raspberry Pi Debug Probe, not 'U' (UART).
-3.  **Is `config.txt` Correct?** Your SD card's `config.txt` file must contain `enable_jtag_gpio=1`.
-4.  **Is the USB Cable Working?** Ensure the USB-C cable connecting the probe to your Mac is a data-capable cable and is securely connected. Try a different USB port.
-
-#### Problem: GDB `load` Fails with a "Data Abort"
-
-You successfully connect OpenOCD and GDB, but the `load` command fails with a "data abort" or "Load failed" error.
-
-**Cause:** The Pi 5's firmware has successfully booted and enabled memory protection. Your debugger is being blocked by the CPU's own security features from writing to the kernel's memory region (`0x80000`).
-
-**Solution:** You are not using the "Parking Stub" method correctly. The purpose of this method is to gain control *before* memory protection is enabled.
-
-1.  **Verify the File Shuffle:** Ensure the file named `kernel8.img` on your SD card is **the parking stub**, not your real kernel.
-2.  **Power Cycle:** A simple GDB `monitor reset halt` may not be enough to undo all firmware setup. A full physical power cycle (unplugging and replugging the Pi) is the most reliable way to ensure you are booting cleanly into the parking stub.
-3.  **Restart the Workflow:** After a power cycle, restart the entire debug session (launch OpenOCD, then launch GDB). The `load` command should now succeed against the cleanly parked target.
-
-#### Problem: Helper Scripts Fail (e.g., `minipush.rb`)
-
-You attempt to use a helper script from another tutorial (like `minipush.rb` for chainloading over UART) and it fails with dependency errors.
-
-**Cause:** These scripts often have their own language-specific dependencies (e.g., Ruby Gems, Python packages).
-
-**Solution:** While you can debug these dependencies (e.g., `gem install colorize` or `bundle install`), the "Parking Stub on SD Card" method described in this guide is intentionally more robust because it has **zero external script dependencies**. It relies only on the Pi's own reliable bootloader and the core GDB/OpenOCD toolchain. By booting the stub from the SD card, you bypass the need for a working serial upload protocol entirely.
-
-:::
-
-## Conclusion
-
-The journey to a stable hardware debugging environment is one of the most challenging—and rewarding—rites of passage in bare-metal development. While the initial setup is intricate, the payoff is immense. You have moved from "flying blind" to having a complete instrument panel for your operating system. You are no longer dependent on `println`; you can halt the CPU at will, inspect the precise state of any register or memory location, and step through your code one machine instruction at a time.
-
-You now possess the single most powerful tool for solving the complex problems that lie ahead, from initializing the MMU and setting up virtual memory to handling interrupts and writing device drivers. The "black screen of death" is no longer a dead end; it is simply the starting point of your next debug session.
+if you have questions or find issues with this guide, please leave a comment. this resource can be improved with your feedback.
