@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/pi5_debug/pi5_debug.html",
       "/posts/field_guide_to_tedx/field-guide-to-tedx.html",
       "/posts/brick-kiln-vlm-benchmark/brick-kiln-vlm-benchmark.html",
       "/posts/energy_exploration/energy_exploration.html",
